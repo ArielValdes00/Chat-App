@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "autoprefixer": "10.4.14",
+    "axios": "^1.4.0",
+    "framer-motion": "^10.12.18",
     "next": "13.4.8",
     "postcss": "8.4.24",
     "react": "18.2.0",
