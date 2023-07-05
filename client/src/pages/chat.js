@@ -1,15 +1,13 @@
 import React from 'react';
 import { getChats } from '@/utils/apiChats';
+import { ChatState } from '@/context/ChatProvider';
+import Navbar from '@/components/Navbar';
 
 const Chat = ({ chats }) => {
-
+    const { user } = ChatState();
   return (
     <div>
-        {chats.map((chat) => (
-            <div key={chat._id}>
-                <p>{chat.chatName}</p>
-            </div>
-        ))}
+        <Navbar/>
     </div>
   );
 };

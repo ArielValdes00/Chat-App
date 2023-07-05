@@ -1,14 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Login from "@/components/Login";
 import Register from "@/components/Register";
+import { useRouter } from "next/router";
 
 export default function Home() {
     const [changeForm, setChangeForm] = useState(false);
-
+    const router = useRouter()
     const handleChangeForm = () => {
         setChangeForm(!changeForm);
     };
+
+    useEffect(() => {
+        const userInfo = JSON.parse(localStorage.getItem('userIngo'));
+
+        if (userInfo) {
+            router.push("/chat")
+        }
+    }, [])
 
     return (
         <div className="h-screen bg-gray-100 grid place-items-center overflow-hidden">

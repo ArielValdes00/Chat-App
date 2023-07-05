@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const getChats = async () => {
     try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/chat`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_CHAT_URL}`);
         if(!response){
             console.log("no chats available");
             return [];
@@ -16,7 +16,7 @@ export const getChats = async () => {
 
 export const login = async (email, password) => {
     try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/login`, { email, password });
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_USER_URL}/login`, { email, password });
         return response.data;
     } catch (error) {
         console.log(error);
@@ -30,7 +30,7 @@ export const login = async (email, password) => {
 
 export const register = async (name, email, password) => {
     try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/register`, { name, email, password });
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_USER_URL}`, { name, email, password });
         return response.data;
     } catch (error) {
         console.log(error);

@@ -5,12 +5,14 @@ import Eye from '../../public/icons/eye.png';
 import EyeSlash from '../../public/icons/eye-slash.png';
 import Image from 'next/image';
 import Loader from '../../public/icons/loader.gif';
+import { useRouter } from 'next/router';
 
 const Login = ({ handleChange }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [emailError, setEmailError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [passwordError, setPasswordError] = useState("");
+    const router = useRouter()
 
     const [form, setForm] = useState({
         email: "",
@@ -28,9 +30,12 @@ const Login = ({ handleChange }) => {
             return;
         }
         try {
-            await login(form.email, form.password);
+            const res = await login(form.email, form.password);
+            localStorage.setItem('userInfo', JSON.stringify(res));
             setEmailError("");
             setPasswordError("");
+            setForm({ email: "", password: "" });
+            router.push("/chat")
             setIsLoading(true)
         } catch (error) {
             if (error.message === "Invalid Email") {
@@ -106,8 +111,8 @@ const Login = ({ handleChange }) => {
                 >
                     {isLoading ? (
                         <div className='flex items-center justify-center'>
-                            <span>Loading...</span>
                             <Image src={Loader} height={26} width={26} alt='Loading' />
+                            <span>Loading...</span>
                         </div>
                     ) : (
                         <span>Log in</span>

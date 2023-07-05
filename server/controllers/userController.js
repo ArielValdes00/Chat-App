@@ -33,9 +33,9 @@ export const authUser = async (req, res) => {
 
         const user = await User.findOne({ email });
 
-        if(!user) {
+        if (!user) {
             res.status(401).json({ message: "Invalid Email" });
-        } else if(await user.matchPassword(password.toString())) {
+        } else if (await user.matchPassword(password.toString())) {
             res.json({
                 _id: user._id,
                 name: user.name,
@@ -51,3 +51,14 @@ export const authUser = async (req, res) => {
     }
 }
 
+export const getUsers = async (req, res) => {
+    const keyword = req.query.search ? {
+        $or: [
+            { name: { $regex: req.query.search, $options: "i" } },
+            { name: { $regex: req.query.search, $options: "i" } },
+        ]
+    }
+        : {};
+    const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+    res.send(users);
+}
