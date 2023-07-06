@@ -40,9 +40,9 @@ const Navbar = () => {
     };
 
     return (
-        <div className='p-3'>
+        <div className='p-3 border-b'>
             {showSidebar && <Sidebar handleCloseSidebar={handleCloseSidebar} />}
-            {showModal && <Modal handleCloseModal={handleCloseModal} />}
+            {showModal && <Modal handleCloseModal={handleCloseModal} user={user}/>}
             {user && (
                 <div className='grid grid-cols-3'>
                     <div onClick={handleOpenSideBar} className="flex items-center gap-1 md:gap-3 bg-white rounded-full sm:w-2/3 md:w-2/3 lg:w-1/2 border ps-3 p-1">

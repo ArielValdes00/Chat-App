@@ -12,7 +12,7 @@ export default function Home() {
     };
 
     useEffect(() => {
-        const userInfo = JSON.parse(localStorage.getItem('userIngo'));
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
         if (userInfo) {
             router.push("/chat")

@@ -1,10 +1,8 @@
 import React from 'react'
 import CloseModal from '../../public/icons/close-modal.png';
-import { ChatState } from '@/context/ChatProvider';
 import Image from 'next/image';
 
-const Modal = ({ handleCloseModal }) => {
-    const { user } = ChatState()
+const Modal = ({ user, handleCloseModal }) => {
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
