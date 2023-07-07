@@ -7,7 +7,7 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
 
     return (
         <div className=''>
-            <SingleChat/>
+            <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>
         </div>
     )
 }

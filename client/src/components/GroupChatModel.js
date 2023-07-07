@@ -34,7 +34,6 @@ const GroupChatModel = ({ handleCloseModal }) => {
                 },
             };
             const { data } = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}?search=${search}`, config);
-            console.log(data);
             setSearchResult(data);
         } catch (error) {
             console.log(error)

@@ -6,7 +6,7 @@ import AddGroup from '../../public/icons/add-group.png';
 import Image from 'next/image';
 import GroupChatModel from './GroupChatModel';
 
-const Contacts = ({ fetchAgain, setFetchAgain }) => {
+const Contacts = ({ fetchAgain }) => {
 
     const [loggedUser, setLoggedUser] = useState();
     const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
@@ -29,8 +29,11 @@ const Contacts = ({ fetchAgain, setFetchAgain }) => {
 
     useEffect(() => {
         setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
-        fetchChats();
-    }, [fetchAgain]);
+        if (user && user.token) {
+          fetchChats();
+        }
+      }, [fetchAgain, user]);
+      
 
     const handleCloseModal = () => {
         setShowModal(false)
@@ -44,7 +47,7 @@ const Contacts = ({ fetchAgain, setFetchAgain }) => {
     return (
         <div>
             {showModal && <GroupChatModel handleCloseModal={handleCloseModal}/>}
-            <p className='p-3 border-b text-center font-extrabold text-xl'>My Chats</p>
+            <p className='p-3 border-b text-center font-extrabold text-2xl'>My Chats</p>
             <div onClick={handleOpenModal} className='border-b p-3 flex items-center justify-center gap-3 hover:bg-gray-100 cursor-pointer'>
                 <Image src={AddGroup} height={30} width={30} alt='Add Group'/>
                 <p className='font-bold'>New Group Chat</p>

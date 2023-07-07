@@ -8,9 +8,9 @@ const Chat = () => {
     const [fetchAgain, setFetchAgain] = useState(false);
     const { user } = ChatState();
     return (
-        <div className='h-screen overflow-hidden'>
+        <div className='h-screen'>
             <Navbar />
-            <div className='grid grid-cols-5 h-full pb-14'>
+            <div className='grid grid-cols-5'>
                 <Contacts fetchAgain={fetchAgain} />
                 <div className='col-span-4 border-l'>
                     <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />

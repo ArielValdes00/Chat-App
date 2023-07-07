@@ -2,3 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+.text-color-2 {
+    color: red;
+  }
+
+  .text-color-3 {
+    color: yellow; 
+  }
+  
+  .text-color-1 {
+    color: blue; 
+  }
+  
+ 
+  
+  
