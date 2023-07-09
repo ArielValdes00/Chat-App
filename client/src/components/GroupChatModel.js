@@ -4,13 +4,28 @@ import { ChatState } from '@/context/ChatProvider';
 import Image from 'next/image';
 import axios from 'axios';
 import Delete from '../../public/icons/delete.png';
+import { FaRegSmile } from 'react-icons/fa';
+import EmojiPanel from './EmojiPanel.js';
 
 const GroupChatModel = ({ handleCloseModal }) => {
     const { user, chats, setChats } = ChatState();
-    const [groupChatName, setGroupChatName] = useState();
+    const [groupChatName, setGroupChatName] = useState("");
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
+    const [showEmojiPanel, setShowEmojiPanel] = useState(false);
+
+    const toggleEmojiPanel = () => {
+        setShowEmojiPanel(prevState => !prevState);
+    };
+
+    const selectEmoji = (emoji, targetInput) => {
+        setShowEmojiPanel(false);
+        if (targetInput === 'groupChatName') {
+            console.log(groupChatName)
+            setGroupChatName(prevName => prevName + emoji);
+        }
+    };
 
     const handleGroup = (userToAdd) => {
         if (selectedUsers.includes(userToAdd)) {
@@ -84,13 +99,18 @@ const GroupChatModel = ({ handleCloseModal }) => {
                     />
                 </div>
                 <p className='text-center text-2xl font-bold'>Create Group Chat</p>
-                <form onSubmit={handleSubmit} className='flex flex-col gap-2'>
+                <form onSubmit={handleSubmit} className='flex flex-col gap-2 relative'>
+                    <button type="button" onClick={toggleEmojiPanel} className="px-3">
+                        <FaRegSmile size={30} />
+                    </button>
+                    {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput="groupChatName" />}
                     <label htmlFor='Chat Name'>Chat Name</label>
                     <input
                         onChange={(e) => setGroupChatName(e.target.value)}
                         type='text'
                         placeholder='Your Chat Name'
                         className='border p-1 ps-3'
+                        value={groupChatName}
                     />
                     <label htmlFor='Users'>Add Users</label>
                     <input

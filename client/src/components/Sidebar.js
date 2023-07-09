@@ -1,31 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import axios from 'axios';
 import { ChatState } from '@/context/ChatProvider';
-import Image from 'next/image';
-import Search from '../../public/icons/search.png';
 
-const Sidebar = ({ handleCloseSidebar }) => {
-    const [search, setSearch] = useState('');
-    const [searchResult, setSearchResult] = useState([]);
+const Sidebar = ({searchResult, setSearchResult, setSearch}) => {
+    
     const { user, setSelectedChat, chats, setChats } = ChatState();
-
-    const handleSearch = async () => {
-        if (!search) {
-            return setSearchResult([]);
-        }
-
-        try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}?search=${search}`, config);
-            setSearchResult(data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     const accessChat = async (userId) => {
         console.log(userId);
@@ -41,26 +20,16 @@ const Sidebar = ({ handleCloseSidebar }) => {
 
             if (!chats.find((chat) => chat._id === data._id)) setChats([data, ...chats]);
             setSelectedChat(data);
+            setSearch('');
+            setSearchResult([]);
         } catch (error) {
             console.log(error)
         }
     };
 
     return (
-        <div className="flex flex-col w-64 absolute left-0 top-0 bg-white z-40">
-            <div className='absolute bg-white z-10 relative h-screen'>
-                <div className="flex items-center gap-1 rounded-full gap-3 m-2 py-2 ps-2">
-                    <Image src={Search} height={20} width={20} alt="Search" className='ms-1' />
-                    <input
-                        className="outline-none placeholder-gray-500 w-2/3"
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search Users"
-                    />
-                    <button onClick={handleSearch} className='bg-gray-100 rounded-full px-3 py-2 me-2 text-sm'>Search</button>
-                </div>
-                <div className='mt-5'>
+        <div className="flex flex-col w-64 absolute left-0 bottom-0 bg-white z-40">
+            <div className='absolute bg-white z-10 relative h-[467px]'>
                     {searchResult?.map((user) => (
                         <div
                             key={user._id}
@@ -74,10 +43,6 @@ const Sidebar = ({ handleCloseSidebar }) => {
                             </div>
                         </div>
                     ))}
-                </div>
-            </div>
-            <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={handleCloseSidebar}>
-                <div className="absolute inset-0 bg-neutral-800 opacity-75"></div>
             </div>
         </div>
     );

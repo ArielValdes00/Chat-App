@@ -3,6 +3,7 @@ import { getSender } from "../config/config.js";
 import { ChatState } from '@/context/ChatProvider';
 import Info from '../../public/icons/info.png';
 import LeftArrow from '../../public/icons/left-arrow.png';
+import NoChats from '../../public/icons/no-chats.svg';
 import sendMessageIcon from '../../public/icons/send-message.png';
 import Image from 'next/image.js';
 import Modal from './Modal.js';
@@ -10,8 +11,10 @@ import UpdateGroupChatModal from './UpdateGroupChatModal.js';
 import axios from 'axios';
 import ScrollableChat from './ScrollableChat.js';
 import { io } from "socket.io-client";
+import { FaRegSmile } from 'react-icons/fa';
+import EmojiPanel from './EmojiPanel.js';
 
-const SingleChat = ({ fetchAgain, setFetchAgain }) => {
+const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
     const { user, setSelectedChat, selectedChat, notifications, setNotifications, handleShowContacts } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
@@ -21,6 +24,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const [showModalInfo, setShowModalInfo] = useState(false);
     const [showGroupChatModal, setShowGroupChatModal] = useState(false);
     const [socket, setSocket] = useState(null);
+    const [showEmojiPanel, setShowEmojiPanel] = useState(false);
+
+    const toggleEmojiPanel = () => {
+        setShowEmojiPanel(prevState => !prevState);
+    }
+    const selectEmoji = (emoji) => {
+        setShowEmojiPanel(false);
+        setNewMessage(prevMessage => prevMessage + emoji);
+    }
 
     const handleCloseModalInfo = () => {
         setShowModalInfo(false)
@@ -155,19 +167,19 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             {selectedChat ? (
                 <div className="uppercase font-bold text-lg ">
                     {!selectedChat.isGroupChat ? (
-                        <div className="flex justify-between items-center py-[13px] lg:px-5 px-3">
+                        <div className="flex justify-between items-center py-[12px] lg:px-5 px-3">
                             <div className="flex items-center gap-3">
                                 <Image src={LeftArrow}
                                     height={25}
                                     width={25}
                                     alt='Contact'
                                     className='me-1 lg:hidden'
-                                    onClick={handleShowContacts}
+                                    onClick={functionShowContact}
                                 />
                                 <img
                                     src={getSender(user, selectedChat.users).picture}
-                                    height={30}
-                                    width={30}
+                                    height={36}
+                                    width={36}
                                     alt={getSender(user, selectedChat.users).name}
                                     className="rounded-full"
                                 />
@@ -183,8 +195,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             />
                         </div>
                     ) : (
-                        <div className="flex justify-between items-center py-[13px] lg:px-5 px-3">
-                            <div className='flex items-center gap-3'>
+                        <div className="flex justify-between items-center py-[4px] lg:px-5 px-3">
+                            <div className='flex items-center gap-2'>
                                 <Image src={LeftArrow}
                                     height={25}
                                     width={25}
@@ -193,12 +205,27 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                     onClick={handleShowContacts} />
                                 <img
                                     src={selectedChat.picture}
-                                    height={30}
-                                    width={30}
+                                    height={36}
+                                    width={36}
                                     alt={selectedChat.name}
                                     className='rounded-full'
                                 />
-                                <p>{selectedChat.chatName}</p>
+                                <div>
+                                    <p className='mb-[-9px] mt-[5px]'>{selectedChat.chatName}</p>
+                                    <div className='flex gap-1'>
+                                        {[
+                                            ...selectedChat.users.filter(u => user.name !== u.name),
+                                            selectedChat.users.find(u => user.name === u.name)
+                                        ].map((u, index, arr) => (
+                                            <div key={u._id} className='text-[11px] font-normal lowercase capitalize'>
+                                                <p>
+                                                    {u.name === user.name ? "You" : u.name}
+                                                    {index !== arr.length - 1 ? "," : ""}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                             <Image
                                 src={Info}
@@ -211,7 +238,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         </div>
                     )}
                     <div>
-                        <div className="h-[70vh] border-t overflow-y-auto">
+                        <div className="h-[69vh] border-t overflow-y-auto">
                             <ScrollableChat messages={messages} />
                         </div>
                         <div>
@@ -222,7 +249,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             )}
                         </div>
                     </div>
-                    <form onSubmit={sendMessage} className="flex bg-gray-200 p-4 text-sm">
+                    <form onSubmit={sendMessage} className="flex bg-gray-200 p-4 text-sm relative">
+                        <button type="button" onClick={toggleEmojiPanel} className="px-3">
+                            <FaRegSmile size={30} />
+                        </button>
+                        {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} />}
                         <input
                             type="text"
                             placeholder="Message..."
@@ -236,7 +267,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     </form>
                 </div>
             ) : (
-                <div className='h-[70vh] flex flex-col items-center justify-center'>
+                <div className='h-[90vh] flex flex-col items-center justify-center gap-5 font-semibold'>
+                    <Image src={NoChats} height={350} width={350} alt='Chatify' />
                     <p className=''>Click on a user to start chatting</p>
                 </div>
             )}

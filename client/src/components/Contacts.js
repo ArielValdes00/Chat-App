@@ -8,12 +8,13 @@ import GroupChatModel from './GroupChatModel';
 import Search from '../../public/icons/search.png';
 import Sidebar from './Sidebar.js';
 
-const Contacts = ({ fetchAgain }) => {
+const Contacts = ({ fetchAgain, functionShowContact }) => {
 
     const [loggedUser, setLoggedUser] = useState();
-    const { selectedChat, setSelectedChat, user, chats, setChats, setShowContacts, showContacts } = ChatState();
+    const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
     const [showModal, setShowModal] = useState(false);
-    const [showSidebar, setShowSidebar] = useState(false);
+    const [search, setSearch] = useState('');
+    const [searchResult, setSearchResult] = useState([]);
 
     const fetchChats = async () => {
         try {
@@ -48,57 +49,78 @@ const Contacts = ({ fetchAgain }) => {
 
     const showChats = (chat) => {
         setSelectedChat(chat);
-        setShowContacts(!showContacts);
+        functionShowContact()
     };
 
-    const handleCloseSidebar = () => {
-        setShowSidebar(false)
+    const handleChangeToggleSearchUsers = (e) => {
+        const value = e.target.value;
+        setSearch(value)
     };
 
-    const handleOpenSideBar = () => {
-        setShowSidebar(true);
-    };
+    const handleSearch = async () => {
+        if (!search) {
+            return setSearchResult([]);
+        }
 
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}?search=${search}`, config);
+            setSearchResult(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
-        <div className='max-h-[100%]'>
-            {showSidebar && <Sidebar handleCloseSidebar={handleCloseSidebar} />}
+        <div className='h-[90vh] overflow-y-auto'>
+            {search.trim() !== "" && <Sidebar searchResult={searchResult} setSearchResult={setSearchResult} setSearch={setSearch} />}
             {showModal && <GroupChatModel handleCloseModal={handleCloseModal} />}
-            <div className='border-b'>
-                <div onClick={handleOpenSideBar} className="flex items-center justify-center gap-2 border mx-auto p-[5px] px-4 my-[10px] w-[230px] bg-white rounded-full ">
-                    <Image src={Search} height={20} width={20} alt="Search" />
-                    <input
-                        className="outline-none placeholder-gray-500"
-                        type="text"
-                        placeholder="Search Users"
-                    />
-                </div>
-            </div>
-            <div onClick={handleOpenModal} className='border-b p-3 flex items-center justify-center gap-3 hover:bg-gray-100 cursor-pointer'>
+            <div onClick={handleOpenModal} className='border-b py-[15px] flex items-center justify-center gap-3 hover:bg-gray-100 cursor-pointer'>
                 <Image src={AddGroup} height={30} width={30} alt='Add Group' />
                 <p className='font-bold'>New Group Chat</p>
+            </div>
+            <div className='border-b'>
+                <div className="flex items-center justify-center gap-2 border mx-auto p-[5px] my-[10px] w-1/2 lg:w-[190px] bg-white rounded-full">
+                    <input
+                        className="outline-none placeholder-gray-500 lg:w-2/3"
+                        type="text"
+                        placeholder="Search Users"
+                        onChange={handleChangeToggleSearchUsers}
+                        value={search}
+                    />
+                    <button
+                        onClick={handleSearch}
+                    >
+                        <Image src={Search} height={20} width={20} alt="Search" />
+                    </button>
+                </div>
             </div>
             {chats.map((chat) => (
                 <div key={chat._id}
                     onClick={() => showChats(chat)}
                     className='flex items-center gap-3 p-3 border-b cursor-pointer hover:bg-gray-100'
                 >
-                    <img src={getSender(loggedUser, chat.users).picture}
+                    <img
+                        src={getSender(loggedUser, chat.users)?.picture}
                         height={40}
                         width={40}
-                        alt={getSender(loggedUser, chat.users).name}
+                        alt={getSender(loggedUser, chat.users)?.name}
                         className='rounded-full'
                     />
                     <div>
                         <p className='text-lg capitalize'>
                             {!chat.isGroupChat
-                                ? getSender(loggedUser, chat.users).name
+                                ? getSender(loggedUser, chat.users)?.name
                                 : chat.chatName
                             }
                         </p>
                         {chat.latestMessage && (
                             <p className='text-sm'>
-                                <b>{chat.latestMessage.sender.name} : </b>
+                                <b>{chat.latestMessage.sender.name}: </b>
                                 {chat.latestMessage.content.length > 50
                                     ? chat.latestMessage.content.substring(0, 51) + "..."
                                     : chat.latestMessage.content}

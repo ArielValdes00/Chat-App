@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 .text-color-2 {
-    color: red;
+    color: #00FF00;
   }
 
   .text-color-3 {
-    color: yellow; 
+    color: #FFFF00; 
   }
   
   .text-color-1 {
-    color: blue; 
+    color: FFFFFF; 
   }
 
   
