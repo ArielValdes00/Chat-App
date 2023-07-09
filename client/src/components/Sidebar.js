@@ -47,9 +47,9 @@ const Sidebar = ({ handleCloseSidebar }) => {
     };
 
     return (
-        <div className="flex flex-col w-64 absolute border-l left-0 top-0 bg-white z-50">
+        <div className="flex flex-col w-64 absolute left-0 top-0 bg-white z-40">
             <div className='absolute bg-white z-10 relative h-screen'>
-                <div className="flex items-center gap-1 rounded-full border gap-3 m-2 py-2 ps-2">
+                <div className="flex items-center gap-1 rounded-full gap-3 m-2 py-2 ps-2">
                     <Image src={Search} height={20} width={20} alt="Search" className='ms-1' />
                     <input
                         className="outline-none placeholder-gray-500 w-2/3"

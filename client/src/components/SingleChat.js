@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { getSender } from "../config/config.js";
 import { ChatState } from '@/context/ChatProvider';
 import Info from '../../public/icons/info.png';
+import LeftArrow from '../../public/icons/left-arrow.png';
+import sendMessageIcon from '../../public/icons/send-message.png';
 import Image from 'next/image.js';
 import Modal from './Modal.js';
 import UpdateGroupChatModal from './UpdateGroupChatModal.js';
@@ -10,7 +12,7 @@ import ScrollableChat from './ScrollableChat.js';
 import { io } from "socket.io-client";
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-    const { user, setSelectedChat, selectedChat } = ChatState();
+    const { user, setSelectedChat, selectedChat, notifications, setNotifications, handleShowContacts } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
@@ -78,14 +80,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     useEffect(() => {
         if (socket) {
             socket.on("message recieved", (newMessageRecieved) => {
-                console.log("Message recieved:", newMessageRecieved);
-
                 if (!selectedChat || selectedChat._id !== newMessageRecieved.chat._id) {
-                    console.log("Not the selected chat");
-                    return;
+                    setNotifications([newMessageRecieved]);
+                    console.log("ring")
+                    setFetchAgain(!fetchAgain);
+                } else {
+                    setMessages((prevMessages) => [...prevMessages, newMessageRecieved]);
                 }
-
-                setMessages((prevMessages) => [...prevMessages, newMessageRecieved]);
             });
         }
     }, [socket, selectedChat]);
@@ -136,11 +137,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         }, timerLength);
     };
     return (
-        <div>
+        <div className='flex flex-col max-h-[100%]'>
             {showModalInfo && (
                 <Modal
                     handleCloseModal={handleCloseModalInfo}
-                    user={getSender(user, selectedChat.users)}
+                    userInfo={getSender(user, selectedChat.users)}
                 />
             )}
             {showGroupChatModal && (
@@ -152,10 +153,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 />
             )}
             {selectedChat ? (
-                <div className="uppercase font-bold text-lg border">
+                <div className="uppercase font-bold text-lg ">
                     {!selectedChat.isGroupChat ? (
-                        <div className="flex justify-between items-center py-3 px-5">
+                        <div className="flex justify-between items-center py-[13px] lg:px-5 px-3">
                             <div className="flex items-center gap-3">
+                                <Image src={LeftArrow}
+                                    height={25}
+                                    width={25}
+                                    alt='Contact'
+                                    className='me-1 lg:hidden'
+                                    onClick={handleShowContacts}
+                                />
                                 <img
                                     src={getSender(user, selectedChat.users).picture}
                                     height={30}
@@ -175,8 +183,23 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             />
                         </div>
                     ) : (
-                        <div className="flex justify-between items-center py-3 px-5">
-                            <p>{selectedChat.chatName}</p>
+                        <div className="flex justify-between items-center py-[13px] lg:px-5 px-3">
+                            <div className='flex items-center gap-3'>
+                                <Image src={LeftArrow}
+                                    height={25}
+                                    width={25}
+                                    alt='Contact'
+                                    className='me-1 lg:hidden'
+                                    onClick={handleShowContacts} />
+                                <img
+                                    src={selectedChat.picture}
+                                    height={30}
+                                    width={30}
+                                    alt={selectedChat.name}
+                                    className='rounded-full'
+                                />
+                                <p>{selectedChat.chatName}</p>
+                            </div>
                             <Image
                                 src={Info}
                                 height={30}
@@ -188,7 +211,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         </div>
                     )}
                     <div>
-                        <ScrollableChat messages={messages} />
+                        <div className="h-[70vh] border-t overflow-y-auto">
+                            <ScrollableChat messages={messages} />
+                        </div>
                         <div>
                             {istyping ? (
                                 <p className='text-sm font-base lowercase'>{`${getSender(user, selectedChat.users).name} is typing...`}</p>
@@ -197,7 +222,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             )}
                         </div>
                     </div>
-                    <form onSubmit={sendMessage} className="flex bg-gray-100 p-4 text-sm">
+                    <form onSubmit={sendMessage} className="flex bg-gray-200 p-4 text-sm">
                         <input
                             type="text"
                             placeholder="Message..."
@@ -205,13 +230,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             value={newMessage}
                             onChange={typingHandler}
                         />
-                        <button type="submit" className="px-4 bg-gray-200 rounded-full">
-                            Send
+                        <button type="submit" className="px-3">
+                            <Image src={sendMessageIcon} height={30} width={30} alt='Send Message' />
                         </button>
                     </form>
                 </div>
             ) : (
-                <p>Click on a user to start chatting</p>
+                <div className='h-[70vh] flex flex-col items-center justify-center'>
+                    <p className=''>Click on a user to start chatting</p>
+                </div>
             )}
         </div>
     );

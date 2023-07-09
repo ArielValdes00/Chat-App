@@ -120,8 +120,8 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handle
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
-            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[600px] lg:w-1/2'>
-                <div className='mb-8'>
+            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[500px] lg:w-[550px]'>
+                <div className='mb-5'>
                     <Image onClick={handleCloseModal}
                         src={CloseModal} height={28}
                         width={28}
@@ -134,7 +134,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handle
                     {selectedChat.users.map((user) => (
                         <div
                             key={user._id}
-                            className='flex items-center justify-center bg-gray-200 gap-2 rounded-full border px-3 cursor-pointer'>
+                            className='flex flex-wrap items-center justify-center bg-gray-200 gap-2 rounded-full border px-3 cursor-pointer'>
                             <p className='capitalize'>{user.name}</p>
                             <Image
                                 src={Delete}

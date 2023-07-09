@@ -74,8 +74,8 @@ const GroupChatModel = ({ handleCloseModal }) => {
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
-            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[600px] lg:w-1/2'>
-                <div className='mb-8'>
+            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[500px] lg:w-[550px]'>
+                <div className='mb-5'>
                     <Image onClick={handleCloseModal}
                         src={CloseModal} height={28}
                         width={28}
@@ -84,24 +84,24 @@ const GroupChatModel = ({ handleCloseModal }) => {
                     />
                 </div>
                 <p className='text-center text-2xl font-bold'>Create Group Chat</p>
-                <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
+                <form onSubmit={handleSubmit} className='flex flex-col gap-2'>
                     <label htmlFor='Chat Name'>Chat Name</label>
                     <input
                         onChange={(e) => setGroupChatName(e.target.value)}
                         type='text'
                         placeholder='Your Chat Name'
-                        className='border p-2'
+                        className='border p-1 ps-3'
                     />
                     <label htmlFor='Users'>Add Users</label>
                     <input
                         onChange={(e) => handleSearch(e.target.value)}
                         type='text'
                         placeholder='Add Users'
-                        className='border p-2'
+                        className='border p-1 ps-3'
                     />
-                    <div className='flex items-center gap-4'>
+                    <div className='flex items-center gap-4 flex-wrap'>
                         {selectedUsers.map((user) => (
-                            <div key={user._id} className='flex items-center justify-center bg-gray-200 gap-2 rounded-full border px-3 cursor-pointer'>
+                            <div key={user._id} className='border flex items-center justify-center bg-gray-200 gap-2 rounded-full px-3 cursor-pointer'>
                                 <p className='capitalize'>{user.name}</p>
                                 <Image
                                     src={Delete}
@@ -113,7 +113,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                             </div>
                         ))}
                     </div>
-                    {searchResult?.slice(0, 4).map((user) => (
+                    {searchResult?.slice(0, 3).map((user) => (
                         <div
                             key={user._id}
                             user={user}

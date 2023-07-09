@@ -3,7 +3,7 @@ import React from 'react';
 import { useRef, useEffect } from 'react';
 
 const ScrollableChat = ({ messages }) => {
-    const { user } = ChatState();
+    const { user, selectedChat } = ChatState();
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -16,33 +16,34 @@ const ScrollableChat = ({ messages }) => {
 
     const isGroupChat = messages.length > 0 && messages[0].chat.isGroupChat;
 
-const userColors = {}; 
-const users = messages.map((message) => message.sender._id);
-const uniqueUsers = [...new Set(users)];
-uniqueUsers.forEach((userId, index) => {
-  userColors[userId] = `text-color-${index + 1}`;
-});
+    const userColors = {};
+    const users = messages.map((message) => message.sender._id);
+    const uniqueUsers = [...new Set(users)];
+    uniqueUsers.forEach((userId, index) => {
+        userColors[userId] = `text-color-${index + 1}`;
+    });
 
-const getUserColor = (userId) => {
-    if (userId === user._id) {
-      return "text-black";
-    }
-    return userColors[userId] || "text-gray-200";
-  };
+    console.log(selectedChat)
+    const getUserColor = (userId) => {
+        if (userId === user._id) {
+            return "text-black";
+        }
+        return userColors[userId] || "text-gray-200";
+    };
 
     return (
-        <div className="flex flex-col gap-4 h-full mt-[2px] h-[463px] overflow-y-auto border-t pt-3 px-5">
+        <div className="flex flex-col gap-4 pt-3 px-5">
             {messages.map((message) => (
                 <div
                     key={message._id}
                     className={`flex justify-${message.sender._id === user._id ? "end ml-auto" : "start"}`}
                 >
-                    <div className={`p-2 px-5 rounded-full max-w-xs flex items-end gap-2 ${message.sender._id === user._id ? "bg-gray-200" : "bg-green-400"}`}>
+                    <div className={`p-2 px-5 rounded-full lowercase max-w-xs font-[500] flex items-end gap-3 ${message.sender._id === user._id ? "bg-gray-200" : "bg-blue-600 text-gray-100"}`}>
                         <div className='flex flex-col'>
                             {isGroupChat && (
-                                <p className={`text-sm font-base lowercase capitalize ${getUserColor(message.sender._id)}`}>{message.sender.name}</p>
+                                <p className={`text-[15px] capitalize mb-[-7px] ${getUserColor(message.sender._id)}`}>{message.sender.name}</p>
                             )}
-                            <p className="text-md font-base lowercase">{message.content}</p>
+                            <p className="text-[15px]">{message.content}</p>
                         </div>
                         <p className="text-[10px]">{formatTime(message.createdAt)}</p>
                     </div>

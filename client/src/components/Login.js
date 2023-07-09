@@ -31,12 +31,15 @@ const Login = ({ handleChange }) => {
         }
         try {
             const res = await login(form.email, form.password);
+            setIsLoading(true);
             localStorage.setItem('userInfo', JSON.stringify(res));
             setEmailError("");
             setPasswordError("");
             setForm({ email: "", password: "" });
-            router.push("/chat")
-            setIsLoading(true)
+            setTimeout(() => {
+                setIsLoading(false);
+                router.push("/chat");
+            }, 2000);
         } catch (error) {
             if (error.message === "Invalid Email") {
                 setEmailError("Invalid email. Please check your email address.");

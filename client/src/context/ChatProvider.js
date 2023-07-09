@@ -8,20 +8,28 @@ const ChatProvider = ({ children }) => {
     const [user, setUser] = useState();
     const [selectedChat, setSelectedChat] = useState();
     const [chats, setChats] = useState([]);
+    const [notificatons, setNotifications] = useState([]);
+    const [showContacts, setShowContacts] = useState(false);
 
     useEffect(() => {
-        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        setUser(userInfo);
-
-        if (!userInfo) {
-            router.push("/")
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        if (userInfo) {
+            setUser(userInfo);
         }
-    }, [])
+    }, [router]);
+
+    const handleShowContacts = () => {
+        setShowContacts(!showContacts);
+    }
+
 
     return <ChatContext.Provider value={{
         user, setUser,
         chats, setChats,
-        selectedChat, setSelectedChat
+        selectedChat, setSelectedChat,
+        notificatons, setNotifications,
+        handleShowContacts,
+        showContacts, setShowContacts
     }}>{children}</ChatContext.Provider>
 }
 

@@ -1,8 +1,10 @@
 import React from 'react'
 import CloseModal from '../../public/icons/close-modal.png';
 import Image from 'next/image';
+import { ChatState } from '@/context/ChatProvider';
 
-const Modal = ({ user, handleCloseModal }) => {
+const Modal = ({ userInfo, handleCloseModal }) => {
+    const { user } = ChatState();
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
@@ -15,14 +17,21 @@ const Modal = ({ user, handleCloseModal }) => {
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
-                <div className='flex flex-col gap-3 items-center text-4xl '>
-                    <img src={user.picture}
-                        height={250}
-                        width={250}
-                        alt={user.name} className='rounded-full'
-                    />
-                    <p className='capitalize'>{user.name}</p>
-                    <p>{user.email}</p>
+                <div className='flex flex-col gap-3 items-center text-4xl'>
+                    {user === userInfo ? (
+                        <p>se edita papaaaa</p>
+                    ) : (
+                        <div className='flex flex-col gap-3 items-center'>
+                            <img src={userInfo.picture}
+                                height={250}
+                                width={250}
+                                alt={userInfo.name} className='rounded-full'
+                            />
+                            <p className='capitalize'>{userInfo.name}</p>
+                            <p>{userInfo.email}</p>
+                        </div>
+                    )}
+
                 </div>
             </div>
             <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={handleCloseModal}>

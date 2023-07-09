@@ -1,19 +1,17 @@
 import { ChatState } from '@/context/ChatProvider'
 import Image from 'next/image';
 import React, { useState } from 'react';
-import Search from '../../public/icons/search.png';
 import Notification from '../../public/icons/notification.png';
 import User from '../../public/icons/user.png';
 import Logout from '../../public/icons/logout.png';
 import Modal from './Modal';
 import { useRouter } from 'next/router';
-import Sidebar from './Sidebar.js';
+import { getSender } from '@/config/config';
 
 const Navbar = () => {
-    const { user } = ChatState();
+    const { user, notifications, setSelectedChat } = ChatState();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [showSidebar, setShowSidebar] = useState(false);
     const router = useRouter();
 
     const handleMenuToggle = () => {
@@ -27,39 +25,36 @@ const Navbar = () => {
         setShowModal(false)
     };
 
-    const handleCloseSidebar = () => {
-        setShowSidebar(false)
-    };
-    const handleOpenSideBar = () => {
-        setShowSidebar(true);
-    };
-
     const handleLogout = () => {
         localStorage.removeItem("userInfo");
         router.push("/");
     };
 
+
     return (
         <div className='p-3 border-b'>
-            {showSidebar && <Sidebar handleCloseSidebar={handleCloseSidebar} />}
-            {showModal && <Modal handleCloseModal={handleCloseModal} user={user}/>}
+            {showModal && <Modal handleCloseModal={handleCloseModal} userInfo={user} />}
             {user && (
                 <div className='grid grid-cols-3'>
-                    <div onClick={handleOpenSideBar} className="flex items-center gap-1 md:gap-3 bg-white rounded-full sm:w-2/3 md:w-2/3 lg:w-1/2 border ps-3 p-1">
-                        <Image src={Search} height={20} width={20} alt="Search" />
-                        <input
-                            className="outline-none placeholder-gray-500 w-2/3"
-                            type="text"
-                            placeholder="Search Users"
-                            disabled
-                        />
+                    <div className='flex items-center'>
+                        <div className='relative'>
+                            <Image src={Notification} height={25} width={25} alt="Notification" />
+                            <span className='flex justify-center items-center text-sm p-[11px] rounded-full bg-red-700 text-white absolute top-[-5px] left-4 h-[4px] w-[4px]'>1</span>
+                            {notifications && notifications.map((notif) => (
+                                <div key={notif._id} onClick={() => { setSelectedChat(notif) }}>
+                                    {notif.chat.isGroup
+                                        ? `New Message In ${notif.chat.chatName}`
+                                        : `New Message In ${getSender(user, notif.chat.users).name}`
+                                    }
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <p className='flex items-center justify-center font-extrabold text-2xl'>CHATIFY</p>
+                    <p className='flex items-center justify-center font-extrabold text-4xl text-blue-600'>CHATIFY</p>
                     <div className='flex items-center gap-3 ml-auto'>
-                        <Image src={Notification} height={20} width={20} alt="Notification" className='me-2' />
                         <div onClick={handleMenuToggle} className='flex gap-2 items-center relative cursor-pointer'>
-                            <img src={user.picture} height={25} width={25} alt={user.name} className='rounded-full' />
-                            <p className='font-semibold text-lg capitalize'>{user.name}
+                            <img src={user.picture} height={27} width={27} alt={user.name} className='rounded-full' />
+                            <p className='font-semibold text-xl capitalize'>{user.name}
                                 <span className='ms-2 text-sm'>▼</span>
                             </p>
                         </div>

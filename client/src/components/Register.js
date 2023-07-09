@@ -6,6 +6,7 @@ import Loader from '../../public/icons/loader.gif';
 import Eye from '../../public/icons/eye.png';
 import EyeSlash from '../../public/icons/eye-slash.png';
 import { isValidName, isValidEmail, isValidPassword } from '@/utils/validation';
+import { useRouter } from 'next/router';
 
 const Register = ({ handleChange }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +19,7 @@ const Register = ({ handleChange }) => {
         password: "",
         confirmPassword: ""
     });
+    const router = useRouter();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -36,15 +38,18 @@ const Register = ({ handleChange }) => {
         ) {
             setIsLoading(true);
             try {
-                await register(form.name, form.email, form.password);
+                const res = await register(form.name, form.email, form.password);
+                localStorage.setItem('userInfo', JSON.stringify(res));
                 setTimeout(() => {
                     setIsLoading(false);
+                    router.push("/chat");
                 }, 2000);
             } catch (error) {
                 setEmailError(error.message)
                 setTimeout(() => {
                     setEmailError("")
                 }, 2000);
+                setIsLoading(false);
             }
         }
     };
