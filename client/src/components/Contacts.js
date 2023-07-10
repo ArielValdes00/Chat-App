@@ -26,6 +26,7 @@ const Contacts = ({ fetchAgain, functionShowContact }) => {
 
             const { data } = await axios.get(process.env.NEXT_PUBLIC_CHAT_URL, config);
             setChats(data);
+            console.log(chats);
         } catch (error) {
             console.log(error)
         }
@@ -105,11 +106,9 @@ const Contacts = ({ fetchAgain, functionShowContact }) => {
                     className='flex items-center gap-3 p-3 border-b cursor-pointer hover:bg-gray-100'
                 >
                     <img
-                        src={getSender(loggedUser, chat.users)?.picture}
-                        height={40}
-                        width={40}
+                        src={!chat.isGroupChat ? getSender(loggedUser, chat.users)?.picture : chat.picture}
                         alt={getSender(loggedUser, chat.users)?.name}
-                        className='rounded-full'
+                        className='rounded-full profile-img-contacts'
                     />
                     <div>
                         <p className='text-lg capitalize'>
@@ -120,7 +119,7 @@ const Contacts = ({ fetchAgain, functionShowContact }) => {
                         </p>
                         {chat.latestMessage && (
                             <p className='text-sm'>
-                                <b>{chat.latestMessage.sender.name}: </b>
+                                <b className='capitalize'>{chat.latestMessage.sender.name}: </b>
                                 {chat.latestMessage.content.length > 50
                                     ? chat.latestMessage.content.substring(0, 51) + "..."
                                     : chat.latestMessage.content}

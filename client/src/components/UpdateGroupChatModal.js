@@ -4,12 +4,30 @@ import { ChatState } from '@/context/ChatProvider';
 import Image from 'next/image';
 import axios from 'axios';
 import Delete from '../../public/icons/delete.png';
+import Edit from '../../public/icons/edit.png';
+import Confirm from '../../public/icons/confirm.png';
+import { getChatsFromServer, updateGroupPicture } from '@/utils/apiChats';
 
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handleCloseModal }) => {
     const [groupChatName, setGroupChatName] = useState();
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
-    const { selectedChat, setSelectedChat, user } = ChatState();
+    const { selectedChat, setSelectedChat, user, setChats } = ChatState();
+
+    const handleUploadInput = async (e) => {
+        const imageFile = e.target.files[0];
+        const response = await updateGroupPicture(imageFile, user, selectedChat._id);
+        setSelectedChat(prevChat => ({ ...prevChat, picture: response.data.picture }));
+
+        if (response) {
+            const chatInfo = await getChatsFromServer(user);
+
+            setChats(chatInfo);
+
+        } else {
+            console.error('An error occurred while updating the profile picture');
+        }
+    };
 
     const handleRename = async (e) => {
         e.preventDefault();
@@ -87,7 +105,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handle
 
     const handleAddUser = async (user1) => {
         if (selectedChat.users.find((u) => u._id === user1._id)) {
-            console.log("user Already in Gruop")
+            console.log("user Already in Group")
             return;
         }
 
@@ -120,8 +138,8 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handle
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
-            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[500px] lg:w-[550px]'>
-                <div className='mb-5'>
+            <div className='absolute flex flex-col items-center gap-3 bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[500px] lg:w-[550px]'>
+                <div className='mb-2'>
                     <Image onClick={handleCloseModal}
                         src={CloseModal} height={28}
                         width={28}
@@ -129,8 +147,26 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handle
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
+                <div className='flex items-center'>
+                    <img
+                        src={selectedChat.picture}
+                        alt={selectedChat.chatName} className='rounded-full profile-img-modal mx-3'
+                    />
+                    <input
+                        type="file"
+                        onChange={handleUploadInput}
+                        accept="image/*"
+                        id="upload-button"
+                        className="hidden"
+                    />
+                    <label
+                        htmlFor="upload-button"
+                    >
+                        <Image src={Edit} height={20} width={20} alt='Change Picture' />
+                    </label>
+                </div>
                 <p className='text-center text-2xl font-bold capitalize'>{selectedChat.chatName}</p>
-                <div className='flex items-center gap-4 mt-10'>
+                <div className='flex items-center gap-4 mt-1'>
                     {selectedChat.users.map((user) => (
                         <div
                             key={user._id}
@@ -146,48 +182,61 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handle
                         </div>
                     ))}
                 </div>
-                <div className='flex flex-col gap-2 mt-5'>
-                    <label htmlFor='Chat Name'>Chat Name</label>
-                    <div className='flex'>
+                <div className="flex flex-col gap-2 mt-1 w-2/3">
+                    <label htmlFor="chat-name" className="text-center font-semibold">
+                        Rename Group
+                    </label>
+                    <div className="flex relative">
                         <input
                             onChange={(e) => setGroupChatName(e.target.value)}
-                            type='text'
-                            placeholder='Your Chat Name'
-                            className='border p-2 w-full'
+                            type="text"
+                            placeholder="Your New Chat Name"
+                            className="border w-full rounded p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
                         />
                         <button
                             onClick={handleRename}
-                            type='button'
-                            className='border p-2 w-1/4'
-                        >Update</button>
+                            type="button"
+                        >
+                            <Image
+                                src={Confirm}
+                                height={25}
+                                width={25}
+                                alt='Confirm'
+                                className='absolute top-2 right-[-33px]'
+                            />
+                        </button>
                     </div>
-                    <label htmlFor='Users'>Add Users</label>
+                    <label htmlFor="users" className="text-center font-semibold">
+                        Add Users
+                    </label>
                     <input
                         onChange={(e) => handleSearch(e.target.value)}
-                        type='text'
-                        placeholder='Add Users'
-                        className='border p-2'
+                        type="text"
+                        placeholder="Add New Users"
+                        className="border rounded p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
+                        value={search}
                     />
-
                 </div>
-                {searchResult?.map((user) => (
-                    <div
-                        key={user._id}
-                        user={user}
-                        onClick={() => handleAddUser(user)}
-                        className='flex items-center gap-3 p-1 py-2 ps-3 hover:bg-gray-100 cursor-pointer'
-                    >
-                        <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
-                        <div>
-                            <p className='capitalize'>{user.name}</p>
-                            <p className='text-sm'><strong>Email: </strong>{user.email}</p>
+                <div className={`${search && "h-[102px]"} overflow-y-auto w-2/3`}>
+                    {searchResult?.map((user) => (
+                        <div
+                            key={user._id}
+                            user={user}
+                            onClick={() => handleAddUser(user)}
+                            className='flex items-center gap-3 py-1 ps-3 hover:bg-gray-100 cursor-pointer'
+                        >
+                            <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
+                            <div>
+                                <p className='capitalize'>{user.name}</p>
+                                <p className='text-sm'><strong>Email: </strong>{user.email}</p>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
                 <button
                     onClick={() => handleRemove(user)}
                     type='button'
-                    className='mt-2 bg-gray-100 border border-black px-5 mx-auto p-2 rounded-full'>
+                    className='bg-gray-100 border border-black px-5 mx-auto p-2 rounded-full font-semibold hover:bg-gray-200'>
                     Leave Chat
                 </button>
             </div>

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Notification from '../../public/icons/notification.png';
 import User from '../../public/icons/user.png';
 import Logout from '../../public/icons/logout.png';
-import Modal from './Modal';
+import Modal from './Modal.js';
 import { useRouter } from 'next/router';
 import { getSender } from '@/config/config';
 
@@ -53,7 +53,7 @@ const Navbar = () => {
                     <p className='flex items-center justify-center font-extrabold text-4xl text-blue-600'>CHATIFY</p>
                     <div className='flex items-center gap-3 ml-auto'>
                         <div onClick={handleMenuToggle} className='flex gap-2 items-center relative cursor-pointer'>
-                            <img src={user.picture} height={27} width={27} alt={user.name} className='rounded-full' />
+                            <img src={user.picture} alt={user.name} className='rounded-full profile-img-user' />
                             <p className='font-semibold text-xl capitalize'>{user.name}
                                 <span className='ms-2 text-sm'>▼</span>
                             </p>

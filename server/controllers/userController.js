@@ -1,5 +1,9 @@
 import { generateToken } from '../config/generateToken.js';
 import { User } from '../models/userModel.js';
+import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
+import { uploadImageToCloudinary } from '../config/uploadImagenToCloudinary.js';
+dotenv.config()
 
 export const registerUser = async (req, res) => {
     try {
@@ -62,3 +66,37 @@ export const getUsers = async (req, res) => {
     const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
     res.send(users);
 }
+
+export const getUserInfo = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        const userInfo = {
+            ...user.toObject(),
+            token: req.token
+        };
+        res.json(userInfo);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+export const updateProfilePicture = async (req, res) => {
+    try {
+        const imageFile = req.file;
+
+        const imageUrl = await uploadImageToCloudinary(imageFile);
+
+        await User.findByIdAndUpdate(req.user._id, { picture: imageUrl });
+
+        res.send('Profile picture updated');
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+

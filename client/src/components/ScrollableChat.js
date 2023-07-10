@@ -29,15 +29,22 @@ const ScrollableChat = ({ messages }) => {
         }
         return userColors[userId] || "text-gray-200";
     };
+    console.log(messages)
 
     return (
-        <div className="flex flex-col gap-4 pt-3 px-5">
+        <div className="flex flex-col gap-4 pt-3 px-3">
             {messages.map((message) => (
                 <div
                     key={message._id}
                     className={`flex justify-${message.sender._id === user._id ? "end ml-auto" : "start"}`}
                 >
-                    <div className={`p-2 px-5 rounded-full lowercase max-w-xs font-[500] flex items-end gap-3 ${message.sender._id === user._id ? "bg-gray-100" : "bg-blue-600 text-gray-100"}`}>
+                    {isGroupChat && message.sender._id !== user._id && (
+                        <img src={message.sender.picture}
+                        alt={message.sender._id}
+                        className='profile-img rounded-full me-2'
+                    />
+                    )}
+                    <div className={`p-1 px-3 rounded-xl lowercase max-w-xs font-[500] flex items-end gap-3 ${message.sender._id === user._id ? "bg-gray-100" : "bg-blue-600 text-gray-100"}`}>
                         <div className='flex flex-col'>
                             {isGroupChat && (
                                 <p className={`text-[15px] capitalize mb-[-7px] ${getUserColor(message.sender._id)}`}>{message.sender.name}</p>

@@ -4,15 +4,35 @@
 
 .text-color-2 {
     color: #00FF00;
-  }
+}
 
-  .text-color-3 {
+.text-color-3 {
     color: #FFFF00; 
-  }
+}
   
-  .text-color-1 {
+.text-color-1 {
     color: FFFFFF; 
-  }
 
+}
+
+.profile-img {
+    width: 36px;
+    height: 36px;
+}
+
+.profile-img-user {
+    width: 30px;
+    height: 30px;
+}
+
+.profile-img-contacts {
+    width: 40px;
+    height: 40px;
+}
+
+.profile-img-modal {
+    width: 140px;
+    height: 140px;
+}
   
   

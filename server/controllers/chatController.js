@@ -1,5 +1,6 @@
 import { User } from "../models/userModel.js";
 import { Chat } from "../models/chatModel.js";
+import { uploadImageToCloudinary } from "../config/uploadImagenToCloudinary.js";
 
 export const accessChat = async (req, res) => {
     const { userId } = req.body;
@@ -53,12 +54,16 @@ export const fetchChats = async (req, res) => {
             .populate("users", "-password")
             .populate("groupAdmin", "-password")
             .populate("latestMessage")
+            .populate("picture")
             .sort({ updatedAt: -1 })
             .then(async (results) => {
                 results = await User.populate(results, {
                     path: "latestMessage.sender",
-                    select: "name pic email",
+                    select: "name picture email",
                 });
+
+                console.log('fetchChats results:', results);
+
                 res.status(200).send(results);
             });
     } catch (error) {
@@ -68,11 +73,12 @@ export const fetchChats = async (req, res) => {
 };
 
 export const createGroupChat = async (req, res) => {
-    if (!req.body.users || !req.body.name) {
-        return res.status(400).send({ message: "Please Fill all the feilds" });
-    }
+    const name = req.body.name;
+    const users = JSON.parse(req.body.users);
 
-    var users = JSON.parse(req.body.users);
+    if (!users || !name) {
+        return res.status(400).send({ message: "Please Fill all the fields" });
+    }
 
     if (users.length < 2) {
         return res
@@ -80,14 +86,18 @@ export const createGroupChat = async (req, res) => {
             .send("More than 2 users are required to form a group chat");
     }
 
-    users.push(req.user);
+    users.push(req.body.userId);
 
     try {
+        const imageFile = req.file;
+        const imageUrl = await uploadImageToCloudinary(imageFile);
+
         const groupChat = await Chat.create({
             chatName: req.body.name,
             users: users,
             isGroupChat: true,
-            groupAdmin: req.user,
+            groupAdmin: req.body.userId,
+            picture: imageUrl 
         });
 
         const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
@@ -169,5 +179,36 @@ export const addToGroup = async (req, res) => {
         throw new Error("Chat Not Found");
     } else {
         res.json(added);
+    }
+};
+
+export const updateGroupPicture = async (req, res) => {
+    const { chatId } = req.body;
+
+    try {
+        const imageFile = req.file;
+        const imageUrl = await uploadImageToCloudinary(imageFile);
+
+        const updatedChat = await Chat.findByIdAndUpdate(
+            chatId,
+            {
+                picture: imageUrl,
+            },
+            {
+                new: true,
+            }
+        )
+            .populate("users", "-password")
+            .populate("groupAdmin", "-password");
+
+        if (!updatedChat) {
+            res.status(404);
+            throw new Error("Chat Not Found");
+        } else {
+            res.json(updatedChat);
+        }
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message);
     }
 };

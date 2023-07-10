@@ -42,3 +42,51 @@ export const register = async (name, email, password) => {
     }
 }
 
+export const getUserInfoFromServer = async (user) => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}/userInfo`, {
+        headers: {
+            'Authorization': `Bearer ${user.token}`
+        }
+    });
+
+    return response.data;
+}
+
+export const getChatsFromServer = async (user) => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_CHAT_URL}`, {
+        headers: {
+            'Authorization': `Bearer ${user.token}`
+        }
+    });
+
+    return response.data;
+}
+
+export const uploadImage = async (imageFile, user) => {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_USER_URL}/updateimage`, formData, {
+        headers: {
+            'Authorization': `Bearer ${user.token}`
+        }
+    });
+
+    return response;
+}
+
+export const updateGroupPicture = async (imageFile, user, chatId) => {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.append('chatId', chatId);
+
+    const response = await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/update-picture`, formData, {
+        headers: {
+            'Authorization': `Bearer ${user.token}`
+        }
+    });
+
+    return response;
+}
+
+

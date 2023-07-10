@@ -127,7 +127,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
             console.log(error)
         }
     };
-
     const typingHandler = (e) => {
         setNewMessage(e.target.value);
 
@@ -148,6 +147,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
             }
         }, timerLength);
     };
+
     return (
         <div className='flex flex-col max-h-[100%]'>
             {showModalInfo && (
@@ -181,7 +181,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
                                     height={36}
                                     width={36}
                                     alt={getSender(user, selectedChat.users).name}
-                                    className="rounded-full"
+                                    className="rounded-full bg-cover"
                                 />
                                 {getSender(user, selectedChat.users).name}
                             </div>
@@ -205,10 +205,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
                                     onClick={handleShowContacts} />
                                 <img
                                     src={selectedChat.picture}
-                                    height={36}
-                                    width={36}
                                     alt={selectedChat.name}
-                                    className='rounded-full'
+                                    className='rounded-full profile-img'
                                 />
                                 <div>
                                     <p className='mb-[-9px] mt-[5px]'>{selectedChat.chatName}</p>
@@ -216,7 +214,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
                                         {[
                                             ...selectedChat.users.filter(u => user.name !== u.name),
                                             selectedChat.users.find(u => user.name === u.name)
-                                        ].map((u, index, arr) => (
+                                        ]?.map((u, index, arr) => (
                                             <div key={u._id} className='text-[11px] font-normal lowercase capitalize'>
                                                 <p>
                                                     {u.name === user.name ? "You" : u.name}
@@ -251,7 +249,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
                     </div>
                     <form onSubmit={sendMessage} className="flex bg-gray-200 p-4 text-sm relative">
                         <button type="button" onClick={toggleEmojiPanel} className="px-3">
-                            <FaRegSmile size={30} />
+                                <FaRegSmile size={30} className='bg-yellow-300 rounded-full border-none'/>
                         </button>
                         {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} />}
                         <input

@@ -10,6 +10,7 @@ import EmojiPanel from './EmojiPanel.js';
 const GroupChatModel = ({ handleCloseModal }) => {
     const { user, chats, setChats } = ChatState();
     const [groupChatName, setGroupChatName] = useState("");
+    const [groupChatImage, setGroupChatImage] = useState("")
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
@@ -22,7 +23,6 @@ const GroupChatModel = ({ handleCloseModal }) => {
     const selectEmoji = (emoji, targetInput) => {
         setShowEmojiPanel(false);
         if (targetInput === 'groupChatName') {
-            console.log(groupChatName)
             setGroupChatName(prevName => prevName + emoji);
         }
     };
@@ -62,7 +62,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         if (!groupChatName || !selectedUsers) {
-            console.log(kcyo)
+            console.log("complete all fields")
             return;
         }
 
@@ -72,15 +72,16 @@ const GroupChatModel = ({ handleCloseModal }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            const { data } = await axios.post(
-                `${process.env.NEXT_PUBLIC_CHAT_URL}/group`,
-                {
-                    name: groupChatName,
-                    users: JSON.stringify(selectedUsers.map((user) => user._id)),
-                },
-                config
-            );
-            setChats([data, ...chats]);
+
+            const formData = new FormData();
+            formData.append('userId', user._id)
+            formData.append('name', groupChatName);
+            formData.append('users', JSON.stringify(selectedUsers.map((user) => user._id)));
+            formData.append('image', groupChatImage);
+
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_CHAT_URL}/group`, formData, config);
+            setChats([...chats, data]);
+            console.log(chats)
 
         } catch (error) {
             console.log(error)
@@ -90,7 +91,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
             <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[500px] lg:w-[550px]'>
-                <div className='mb-5'>
+                <div className='mb-2'>
                     <Image onClick={handleCloseModal}
                         src={CloseModal} height={28}
                         width={28}
@@ -100,6 +101,11 @@ const GroupChatModel = ({ handleCloseModal }) => {
                 </div>
                 <p className='text-center text-2xl font-bold'>Create Group Chat</p>
                 <form onSubmit={handleSubmit} className='flex flex-col gap-2 relative'>
+                    <input
+                        onChange={(e) => setGroupChatImage(e.target.files[0])}
+                        type='file'
+                        className='border p-1 ps-3'
+                    />
                     <button type="button" onClick={toggleEmojiPanel} className="px-3">
                         <FaRegSmile size={30} />
                     </button>
