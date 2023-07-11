@@ -15,7 +15,7 @@ import { FaRegSmile } from 'react-icons/fa';
 import EmojiPanel from './EmojiPanel.js';
 
 const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
-    const { user, setSelectedChat, selectedChat, notifications, setNotifications, handleShowContacts } = ChatState();
+    const { user, selectedChat, notifications, setNotifications, handleShowContacts } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
@@ -93,8 +93,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
         if (socket) {
             socket.on("message recieved", (newMessageRecieved) => {
                 if (!selectedChat || selectedChat._id !== newMessageRecieved.chat._id) {
-                    setNotifications([newMessageRecieved]);
-                    console.log("ring")
+                    setNotifications((prevNotifications) => [newMessageRecieved, ...prevNotifications]);
                     setFetchAgain(!fetchAgain);
                 } else {
                     setMessages((prevMessages) => [...prevMessages, newMessageRecieved]);
@@ -117,7 +116,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
             const { data } = await axios.post(process.env.NEXT_PUBLIC_MESSAGE_URL,
                 {
                     content: newMessage,
-                    chatId: selectedChat,
+                    chatId: selectedChat._id,
                 },
                 config
             );
@@ -181,7 +180,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
                                     height={36}
                                     width={36}
                                     alt={getSender(user, selectedChat.users).name}
-                                    className="rounded-full bg-cover"
+                                    className="rounded-full bg-cover profile-img"
                                 />
                                 {getSender(user, selectedChat.users).name}
                             </div>
@@ -249,7 +248,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
                     </div>
                     <form onSubmit={sendMessage} className="flex bg-gray-200 p-4 text-sm relative">
                         <button type="button" onClick={toggleEmojiPanel} className="px-3">
-                                <FaRegSmile size={30} className='bg-yellow-300 rounded-full border-none'/>
+                            <FaRegSmile size={30} className='bg-yellow-300 rounded-full border-none' />
                         </button>
                         {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} />}
                         <input
@@ -266,7 +265,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, functionShowContact }) => {
                 </div>
             ) : (
                 <div className='h-[90vh] flex flex-col items-center justify-center gap-5 font-semibold'>
-                    <Image src={NoChats} height={350} width={350} alt='Chatify' />
+                    <Image src={NoChats} priority={true} height={250} width={350} alt='Chatify' />
                     <p className=''>Click on a user to start chatting</p>
                 </div>
             )}

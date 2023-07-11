@@ -32,13 +32,13 @@ export const sendMessage = async (req, res) => {
     try {
         var message = await Message.create(newMessage);
         message = await Message.findById(message._id)
-            .populate("sender", "name pic")
+            .populate("sender", "name picture")
             .populate("chat")
             .exec();
 
         message = await User.populate(message, {
             path: "chat.users",
-            select: "name pic email",
+            select: "name picture email",
         });
 
         await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });

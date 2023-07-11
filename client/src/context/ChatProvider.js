@@ -8,7 +8,7 @@ const ChatProvider = ({ children }) => {
     const [user, setUser] = useState();
     const [selectedChat, setSelectedChat] = useState();
     const [chats, setChats] = useState([]);
-    const [notificatons, setNotifications] = useState([]);
+    const [notifications, setNotifications] = useState([]);
     const [showContacts, setShowContacts] = useState(false);
 
     useEffect(() => {
@@ -27,7 +27,7 @@ const ChatProvider = ({ children }) => {
         user, setUser,
         chats, setChats,
         selectedChat, setSelectedChat,
-        notificatons, setNotifications,
+        notifications, setNotifications,
         handleShowContacts,
         showContacts, setShowContacts
     }}>{children}</ChatContext.Provider>

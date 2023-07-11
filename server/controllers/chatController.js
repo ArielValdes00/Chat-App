@@ -62,8 +62,6 @@ export const fetchChats = async (req, res) => {
                     select: "name picture email",
                 });
 
-                console.log('fetchChats results:', results);
-
                 res.status(200).send(results);
             });
     } catch (error) {

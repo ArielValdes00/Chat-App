@@ -11,7 +11,7 @@ import Sidebar from './Sidebar.js';
 const Contacts = ({ fetchAgain, functionShowContact }) => {
 
     const [loggedUser, setLoggedUser] = useState();
-    const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
+    const { setSelectedChat, user, chats, setChats } = ChatState();
     const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState('');
     const [searchResult, setSearchResult] = useState([]);
@@ -26,7 +26,6 @@ const Contacts = ({ fetchAgain, functionShowContact }) => {
 
             const { data } = await axios.get(process.env.NEXT_PUBLIC_CHAT_URL, config);
             setChats(data);
-            console.log(chats);
         } catch (error) {
             console.log(error)
         }
@@ -78,7 +77,6 @@ const Contacts = ({ fetchAgain, functionShowContact }) => {
 
     return (
         <div className='h-[90vh] overflow-y-auto'>
-            {search.trim() !== "" && <Sidebar searchResult={searchResult} setSearchResult={setSearchResult} setSearch={setSearch} />}
             {showModal && <GroupChatModel handleCloseModal={handleCloseModal} />}
             <div onClick={handleOpenModal} className='border-b py-[15px] flex items-center justify-center gap-3 hover:bg-gray-100 cursor-pointer'>
                 <Image src={AddGroup} height={30} width={30} alt='Add Group' />
@@ -100,34 +98,37 @@ const Contacts = ({ fetchAgain, functionShowContact }) => {
                     </button>
                 </div>
             </div>
-            {chats.map((chat) => (
-                <div key={chat._id}
-                    onClick={() => showChats(chat)}
-                    className='flex items-center gap-3 p-3 border-b cursor-pointer hover:bg-gray-100'
-                >
-                    <img
-                        src={!chat.isGroupChat ? getSender(loggedUser, chat.users)?.picture : chat.picture}
-                        alt={getSender(loggedUser, chat.users)?.name}
-                        className='rounded-full profile-img-contacts'
-                    />
-                    <div>
-                        <p className='text-lg capitalize'>
-                            {!chat.isGroupChat
-                                ? getSender(loggedUser, chat.users)?.name
-                                : chat.chatName
-                            }
-                        </p>
-                        {chat.latestMessage && (
-                            <p className='text-sm'>
-                                <b className='capitalize'>{chat.latestMessage.sender.name}: </b>
-                                {chat.latestMessage.content.length > 50
-                                    ? chat.latestMessage.content.substring(0, 51) + "..."
-                                    : chat.latestMessage.content}
+            {search.trim() !== "" ? <Sidebar searchResult={searchResult} setSearchResult={setSearchResult} setSearch={setSearch} /> : (
+                chats.map((chat) => (
+                    <div key={chat._id}
+                        onClick={() => showChats(chat)}
+                        className='flex items-center gap-3 p-3 border-b cursor-pointer hover:bg-gray-100'
+                    >
+                        <img
+                            src={!chat.isGroupChat ? getSender(loggedUser, chat.users)?.picture : chat.picture}
+                            alt={getSender(loggedUser, chat.users)?.name}
+                            className='rounded-full profile-img-contacts'
+                        />
+                        <div>
+                            <p className='text-lg capitalize'>
+                                {!chat.isGroupChat
+                                    ? getSender(loggedUser, chat.users)?.name
+                                    : chat.chatName
+                                }
                             </p>
-                        )}
+                            {chat.latestMessage && (
+                                <p className='text-sm'>
+                                    <b className='capitalize'>{chat.latestMessage.sender.name}: </b>
+                                    {chat.latestMessage.content.length > 50
+                                        ? chat.latestMessage.content.substring(0, 51) + "..."
+                                        : chat.latestMessage.content}
+                                </p>
+                            )}
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))
+            )}
+
         </div>
     );
 }

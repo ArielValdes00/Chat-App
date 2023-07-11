@@ -28,7 +28,7 @@ const Sidebar = ({searchResult, setSearchResult, setSearch}) => {
     };
 
     return (
-        <div className="flex flex-col w-64 absolute left-0 bottom-0 bg-white z-40">
+        <div className="flex flex-col bg-white z-40">
             <div className='absolute bg-white z-10 relative h-[467px]'>
                     {searchResult?.map((user) => (
                         <div

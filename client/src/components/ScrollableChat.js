@@ -3,7 +3,7 @@ import React from 'react';
 import { useRef, useEffect } from 'react';
 
 const ScrollableChat = ({ messages }) => {
-    const { user, selectedChat } = ChatState();
+    const { user } = ChatState();
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -29,8 +29,6 @@ const ScrollableChat = ({ messages }) => {
         }
         return userColors[userId] || "text-gray-200";
     };
-    console.log(messages)
-
     return (
         <div className="flex flex-col gap-4 pt-3 px-3">
             {messages.map((message) => (
@@ -39,8 +37,9 @@ const ScrollableChat = ({ messages }) => {
                     className={`flex justify-${message.sender._id === user._id ? "end ml-auto" : "start"}`}
                 >
                     {isGroupChat && message.sender._id !== user._id && (
-                        <img src={message.sender.picture}
-                        alt={message.sender._id}
+                        <img 
+                        src={message.sender.picture}
+                        alt={message.sender.name}
                         className='profile-img rounded-full me-2'
                     />
                     )}
