@@ -1,8 +1,13 @@
 import axios from "axios";
 
-export const getChats = async () => {
+export const getChats = async (user) => {
     try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_CHAT_URL}`);
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_CHAT_URL}`, config);
         if(!response){
             console.log("no chats available");
             return [];

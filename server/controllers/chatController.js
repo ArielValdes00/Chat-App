@@ -1,10 +1,13 @@
 import { User } from "../models/userModel.js";
 import { Chat } from "../models/chatModel.js";
 import { uploadImageToCloudinary } from "../config/uploadImagenToCloudinary.js";
+import mongoose from "mongoose";
 
 export const accessChat = async (req, res) => {
     const { userId } = req.body;
-
+    const userIdObjectId = new mongoose.Types.ObjectId(userId);
+    const reqUserIdObjectId = new mongoose.Types.ObjectId(req.user._id);
+    
     if (!userId) {
         console.log("UserId param not sent with request");
         return res.sendStatus(400);
@@ -12,11 +15,9 @@ export const accessChat = async (req, res) => {
 
     var isChat = await Chat.find({
         isGroupChat: false,
-        $and: [
-            { users: { $elemMatch: { $eq: req.user._id } } },
-            { users: { $elemMatch: { $eq: userId } } },
-        ],
+        users: { $all: [reqUserIdObjectId, userIdObjectId] },
     })
+
         .populate("users", "-password")
         .populate("latestMessage");
 
@@ -31,7 +32,7 @@ export const accessChat = async (req, res) => {
         var chatData = {
             chatName: "sender",
             isGroupChat: false,
-            users: [req.user._id, userId],
+            users: [reqUserIdObjectId, userIdObjectId],
         };
 
         try {
@@ -50,7 +51,7 @@ export const accessChat = async (req, res) => {
 
 export const fetchChats = async (req, res) => {
     try {
-        Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
+        Chat.find({ users: { $in: [req.user._id] } })
             .populate("users", "-password")
             .populate("groupAdmin", "-password")
             .populate("latestMessage")
@@ -61,7 +62,6 @@ export const fetchChats = async (req, res) => {
                     path: "latestMessage.sender",
                     select: "name picture email",
                 });
-
                 res.status(200).send(results);
             });
     } catch (error) {
@@ -95,7 +95,7 @@ export const createGroupChat = async (req, res) => {
             users: users,
             isGroupChat: true,
             groupAdmin: req.body.userId,
-            picture: imageUrl 
+            picture: imageUrl
         });
 
         const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
@@ -210,3 +210,26 @@ export const updateGroupPicture = async (req, res) => {
         throw new Error(error.message);
     }
 };
+
+export const deleteChat = async (req, res) => {
+    const { chatId } = req.params;
+
+    try {
+        const chat = await Chat.findById(chatId);
+
+        if (!chat) {
+            res.status(404);
+            throw new Error("Chat not found");
+        }
+
+        chat.deletedBy.addToSet(req.user._id);
+        await chat.save();
+
+        res.status(200).json({ message: "Chat deleted successfully" });
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message);
+    }
+};
+
+

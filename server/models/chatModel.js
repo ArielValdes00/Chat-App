@@ -24,6 +24,10 @@ const chatModel = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
+        deletedBy: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }],
         picture: {
             type: String,
             default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"

@@ -6,7 +6,6 @@ import { ChatState } from '@/context/ChatProvider';
 import SingleChat from '@/components/SingleChat';
 
 const Chat = () => {
-    const [fetchAgain, setFetchAgain] = useState(false);
     const { showContacts, handleShowContacts } = ChatState();
     const useWindowSize = () => {
         const [windowSize, setWindowSize] = useState({
@@ -43,7 +42,7 @@ const Chat = () => {
                     animate={size.width < 1024 ? { x: !showContacts ? 0 : -100, opacity: !showContacts ? 1 : 0 } : {}}
                     transition={{ duration: 0.5 }}
                 >
-                    <Contacts fetchAgain={fetchAgain} functionShowContact={handleShowContacts} />
+                    <Contacts functionShowContact={handleShowContacts} />
                 </motion.div>
                 <motion.div
                     className={`${showContacts ? "block" : "hidden lg:block"} col-span-5 lg:col-span-4 border-l`}
@@ -51,7 +50,7 @@ const Chat = () => {
                     animate={size.width < 1024 ? { x: showContacts ? 0 : 100, opacity: showContacts ? 1 : 0 } : {}}
                     transition={{ duration: 0.5 }}
                 >
-                    <SingleChat fetchAgain={fetchAgain} functionShowContact={handleShowContacts} setFetchAgain={setFetchAgain} />
+                    <SingleChat functionShowContact={handleShowContacts} />
                 </motion.div>
             </div>
         </div>

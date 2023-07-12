@@ -7,8 +7,6 @@ const Sidebar = ({searchResult, setSearchResult, setSearch}) => {
     const { user, setSelectedChat, chats, setChats } = ChatState();
 
     const accessChat = async (userId) => {
-        console.log(userId);
-
         try {
             const config = {
                 headers: {

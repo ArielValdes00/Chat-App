@@ -29,31 +29,36 @@ const ScrollableChat = ({ messages }) => {
         }
         return userColors[userId] || "text-gray-200";
     };
+    
     return (
         <div className="flex flex-col gap-4 pt-3 px-3">
-            {messages.map((message) => (
-                <div
-                    key={message._id}
-                    className={`flex justify-${message.sender._id === user._id ? "end ml-auto" : "start"}`}
-                >
-                    {isGroupChat && message.sender._id !== user._id && (
-                        <img 
-                        src={message.sender.picture}
-                        alt={message.sender.name}
-                        className='profile-img rounded-full me-2'
-                    />
-                    )}
-                    <div className={`p-1 px-3 rounded-xl lowercase max-w-xs font-[500] flex items-end gap-3 ${message.sender._id === user._id ? "bg-gray-100" : "bg-blue-600 text-gray-100"}`}>
-                        <div className='flex flex-col'>
-                            {isGroupChat && (
-                                <p className={`text-[15px] capitalize mb-[-7px] ${getUserColor(message.sender._id)}`}>{message.sender.name}</p>
+            {messages.map((message) => {
+                if (!message.deletedBy.includes(user._id)) {
+                    return (
+                        <div
+                            key={message._id}
+                            className={`flex justify-${message.sender._id === user._id ? "end ml-auto" : "start"}`}
+                        >
+                            {isGroupChat && message.sender._id !== user._id && (
+                                <img
+                                    src={message.sender.picture}
+                                    alt={message.sender.name}
+                                    className='profile-img rounded-full me-2'
+                                />
                             )}
-                            <p className="text-[15px]">{message.content}</p>
+                            <div className={`p-1 px-3 rounded-xl lowercase max-w-xs font-[500] flex items-end gap-3 ${message.sender._id === user._id ? "bg-gray-100" : "bg-blue-600 text-gray-100"}`}>
+                                <div className='flex flex-col'>
+                                    {isGroupChat && (
+                                        <p className={`text-[15px] capitalize mb-[-7px] ${getUserColor(message.sender._id)}`}>{message.sender.name}</p>
+                                    )}
+                                    <p className="text-[15px]">{message.content}</p>
+                                </div>
+                                <p className="text-[10px]">{formatTime(message.createdAt)}</p>
+                            </div>
                         </div>
-                        <p className="text-[10px]">{formatTime(message.createdAt)}</p>
-                    </div>
-                </div>
-            ))}
+                    );
+                }
+            })}
             <div ref={messagesEndRef} />
         </div>
     );

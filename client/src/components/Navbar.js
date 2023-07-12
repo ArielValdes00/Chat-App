@@ -45,7 +45,6 @@ const Navbar = () => {
             document.removeEventListener("mousedown", handleOutsideClick);
         };
     }, []);
-    console.log(notifications)
 
     return (
         <div className='p-3 border-b'>
@@ -89,17 +88,17 @@ const Navbar = () => {
                     <div className='flex items-center gap-3 ml-auto profile-container'>
                         <div onClick={() => setIsMenuOpen(true)} className='flex gap-2 items-center relative cursor-pointer'>
                             <img src={user.picture} alt={user.name} className='rounded-full profile-img-user' />
-                            <p className='font-semibold text-xl capitalize'>{user.name}
+                            <p className='font-semibold text-xl capitalize hidden md:block'>{user.name}
                                 <span className='ms-2 text-sm'>▼</span>
                             </p>
                         </div>
                         {isMenuOpen && (
-                            <ul className='absolute right-2 top-12 mt-2 bg-white text-black rounded-md border'>
-                                <div className='flex items-center gap-3 px-5 lg:px-10 py-2 cursor-pointer hover:bg-gray-100' onClick={handleOpenModal}>
+                            <ul className='absolute right-5 top-12 mt-2 bg-white text-black rounded-md border z-40 shadow-lg'>
+                                <div className='flex items-center gap-3 px-5 lg:px-7 py-2 cursor-pointer hover:bg-gray-100' onClick={handleOpenModal}>
                                     <Image src={User} height={16} width={16} alt='User'></Image>
                                     <span>My Profile</span>
                                 </div>
-                                <div className='flex items-center gap-3 px-5 lg:px-10 py-2 cursor-pointer hover:bg-gray-100' onClick={handleLogout}>
+                                <div className='flex items-center gap-3 px-5 lg:px-7 py-2 cursor-pointer hover:bg-gray-100' onClick={handleLogout}>
                                     <Image src={Logout} height={16} width={16} alt="Logout"></Image>
                                     <span>Logout</span>
                                 </div>

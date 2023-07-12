@@ -3,7 +3,7 @@ import CloseModal from '../../public/icons/close-modal.png';
 import { ChatState } from '@/context/ChatProvider';
 import Image from 'next/image';
 import axios from 'axios';
-import Delete from '../../public/icons/delete.png';
+import Delete from '../../public/icons/delete-user.png';
 import { FaRegSmile } from 'react-icons/fa';
 import EmojiPanel from './EmojiPanel.js';
 

@@ -3,12 +3,12 @@ import CloseModal from '../../public/icons/close-modal.png';
 import { ChatState } from '@/context/ChatProvider';
 import Image from 'next/image';
 import axios from 'axios';
-import Delete from '../../public/icons/delete.png';
+import Delete from '../../public/icons/delete-user.png';
 import Edit from '../../public/icons/edit.png';
 import Confirm from '../../public/icons/confirm.png';
 import { getChatsFromServer, updateGroupPicture } from '@/utils/apiChats';
 
-const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handleCloseModal }) => {
+const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
     const [groupChatName, setGroupChatName] = useState();
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
@@ -48,7 +48,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handle
             );
 
             setSelectedChat(data);
-            setFetchAgain(!fetchAgain);
         } catch (error) {
             console.log(error)
         }
@@ -95,7 +94,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handle
             );
             handleCloseModal()
             user1._id === user._id ? setSelectedChat() : setSelectedChat(data);
-            setFetchAgain(!fetchAgain);
             fetchMessages();
         } catch (error) {
             console.log(error)
@@ -129,7 +127,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages, handle
             );
 
             setSelectedChat(data);
-            setFetchAgain(!fetchAgain);
         } catch (error) {
             console.log(error)
         }

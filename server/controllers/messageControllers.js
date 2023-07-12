@@ -49,3 +49,26 @@ export const sendMessage = async (req, res) => {
         throw new Error(error.message);
     }
 };
+
+export const deleteAllMessages = async (req, res) => {
+    const { chatId } = req.params;
+
+    try {
+        const chat = await Chat.findById(chatId);
+
+        if (!chat) {
+            res.status(404);
+            throw new Error("Chat not found");
+        }
+
+        await Message.updateMany(
+            { chat: chatId },
+            { $addToSet: { deletedBy: req.user._id } }
+        );
+
+        res.json({ message: 'All messages are deleted' });
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message);
+    }
+};

@@ -22,14 +22,13 @@ const ChatProvider = ({ children }) => {
         setShowContacts(!showContacts);
     }
 
-
     return <ChatContext.Provider value={{
         user, setUser,
         chats, setChats,
         selectedChat, setSelectedChat,
         notifications, setNotifications,
         handleShowContacts,
-        showContacts, setShowContacts
+        showContacts, setShowContacts,
     }}>{children}</ChatContext.Provider>
 }
 

@@ -7,36 +7,28 @@ import Image from 'next/image';
 import GroupChatModel from './GroupChatModel';
 import Search from '../../public/icons/search.png';
 import Sidebar from './Sidebar.js';
+import { getChats } from '@/utils/apiChats';
 
-const Contacts = ({ fetchAgain, functionShowContact }) => {
+const Contacts = ({ functionShowContact }) => {
 
     const [loggedUser, setLoggedUser] = useState();
-    const { setSelectedChat, user, chats, setChats } = ChatState();
+    const { setSelectedChat, user, chats, setChats, selectedChat } = ChatState();
     const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState('');
     const [searchResult, setSearchResult] = useState([]);
 
-    const fetchChats = async () => {
-        try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-
-            const { data } = await axios.get(process.env.NEXT_PUBLIC_CHAT_URL, config);
-            setChats(data);
-        } catch (error) {
-            console.log(error)
-        }
-    };
-
     useEffect(() => {
         setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
         if (user && user.token) {
+            const fetchChats = async () => {
+                const chatsData = await getChats(user);
+                const filteredChats = chatsData.filter((chat) => !chat.latestMessage || !chat.latestMessage.deletedBy.includes(user._id));
+        
+                setChats(filteredChats)            
+            };
             fetchChats();
         }
-    }, [fetchAgain, user]);
+    }, [user, selectedChat]);
 
 
     const handleCloseModal = () => {
