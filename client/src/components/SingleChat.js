@@ -16,10 +16,10 @@ import ScrollableChat from './ScrollableChat.js';
 import { io } from "socket.io-client";
 import { FaRegSmile } from 'react-icons/fa';
 import EmojiPanel from './EmojiPanel.js';
-import { getChats } from '@/utils/apiChats';
+import { getChats, readMessages } from '@/utils/apiChats';
 
 const SingleChat = ({ functionShowContact }) => {
-    const { user, selectedChat, setNotifications, setSelectedChat, setChats } = ChatState();
+    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
@@ -68,7 +68,7 @@ const SingleChat = ({ functionShowContact }) => {
         return () => {
             newSocket.disconnect();
         };
-    }, [user, selectedChat]);
+    }, [user, selectedChat, notifications]);
 
     const fetchMessages = async () => {
         if (!selectedChat) return;
@@ -89,6 +89,8 @@ const SingleChat = ({ functionShowContact }) => {
 
             setMessages(filteredMessages);
             socket.emit("join chat", selectedChat._id)
+            socket.emit('message read', { chatId: selectedChat._id, userId: user._id });
+            await readMessages(selectedChat, user)
         } catch (error) {
             console.log(error)
         }
@@ -101,6 +103,8 @@ const SingleChat = ({ functionShowContact }) => {
                     setNotifications((prevNotifications) => [newMessageRecieved, ...prevNotifications]);
                 } else {
                     setMessages((prevMessages) => [...prevMessages, newMessageRecieved]);
+                    readMessages(selectedChat, user);
+                    socket.emit('message read', { chatId: selectedChat._id, userId: user._id });
                     if (user && user.token) {
                         const fetchChats = async () => {
                             const chatsData = await getChats(user);
@@ -114,7 +118,7 @@ const SingleChat = ({ functionShowContact }) => {
             });
         }
         fetchMessages();
-    }, [socket, selectedChat]);
+    }, [socket, selectedChat, notifications]);
 
     const sendMessage = async (e) => {
         e.preventDefault()
@@ -216,8 +220,7 @@ const SingleChat = ({ functionShowContact }) => {
                 },
             };
 
-            const res = await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/${selectedChat._id}`, null, config);
-            console.log(res);
+            await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/${selectedChat._id}`, null, config);
             setSelectedChat(null);
         } catch (error) {
             console.log(error);

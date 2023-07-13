@@ -7,12 +7,12 @@ import Image from 'next/image';
 import GroupChatModel from './GroupChatModel';
 import Search from '../../public/icons/search.png';
 import Sidebar from './Sidebar.js';
-import { getChats } from '@/utils/apiChats';
+import { getChats, readMessages } from '@/utils/apiChats';
 
 const Contacts = ({ functionShowContact }) => {
 
     const [loggedUser, setLoggedUser] = useState();
-    const { setSelectedChat, user, chats, setChats, selectedChat } = ChatState();
+    const { setSelectedChat, user, chats, setChats, selectedChat, notifications } = ChatState();
     const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState('');
     const [searchResult, setSearchResult] = useState([]);
@@ -23,12 +23,12 @@ const Contacts = ({ functionShowContact }) => {
             const fetchChats = async () => {
                 const chatsData = await getChats(user);
                 const filteredChats = chatsData.filter((chat) => !chat.latestMessage || !chat.latestMessage.deletedBy.includes(user._id));
-        
-                setChats(filteredChats)            
+
+                setChats(filteredChats)
             };
             fetchChats();
         }
-    }, [user, selectedChat]);
+    }, [user, selectedChat, notifications]);
 
 
     const handleCloseModal = () => {
@@ -39,9 +39,10 @@ const Contacts = ({ functionShowContact }) => {
         setShowModal(true)
     };
 
-    const showChats = (chat) => {
+    const showChats = async (chat) => {
         setSelectedChat(chat);
         functionShowContact()
+        await readMessages(chat, user)
     };
 
     const handleChangeToggleSearchUsers = (e) => {
@@ -108,14 +109,21 @@ const Contacts = ({ functionShowContact }) => {
                                     : chat.chatName
                                 }
                             </p>
-                            {chat.latestMessage && (
-                                <p className='text-sm'>
-                                    <b className='capitalize'>{chat.latestMessage.sender.name}: </b>
-                                    {chat.latestMessage.content.length > 50
-                                        ? chat.latestMessage.content.substring(0, 51) + "..."
-                                        : chat.latestMessage.content}
-                                </p>
-                            )}
+                            <div className='flex gap-2'>
+                                {chat.hasUnreadMessages && (
+                                    <span className='flex justify-center items-center text-sm w-5 h-5 rounded-full bg-blue-600 text-white'>{notifications.length}</span>
+                                )}
+                                {chat.latestMessage && (
+                                    <p className='text-sm'>
+                                        {chat.isGroupChat &&
+                                            <b className='capitalize'>{chat.latestMessage.sender.name}: </b>
+                                        }
+                                        {chat.latestMessage.content.length > 40
+                                            ? chat.latestMessage.content.substring(0, 41) + "..."
+                                            : chat.latestMessage.content}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ))

@@ -54,7 +54,7 @@ const Modal = ({ userInfo, handleCloseModal }) => {
                                 <label
                                     htmlFor="upload-button"
                                 >
-                                    <Image src={Edit} height={20} width={20} alt='Change Picture' />
+                                    <Image src={Edit} height={20} width={20} alt='Change Picture' className='cursor-pointer' />
                                 </label>
                             </div>
                             <p className='capitalize'>{userInfo.name}</p>

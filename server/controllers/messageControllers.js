@@ -19,7 +19,7 @@ export const sendMessage = async (req, res) => {
     const { content, chatId } = req.body;
 
     if (!content || !chatId) {
-        console.log("Datos inválidos pasados en la solicitud");
+        console.log("Complete all Fields");
         return res.sendStatus(400);
     }
 
@@ -41,14 +41,38 @@ export const sendMessage = async (req, res) => {
             select: "name picture email",
         });
 
-        await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
-
+        await Chat.updateOne(
+            { _id: chatId },
+            { $set: { hasUnreadMessages: true, latestMessage: message } }
+        );
         res.json(message);
     } catch (error) {
         res.status(400);
         throw new Error(error.message);
     }
 };
+
+export const readMessages = async (req, res) => {
+    const { chatId } = req.body;
+    
+    try {
+        await Chat.updateOne(
+            { _id: chatId },
+            { $set: { hasUnreadMessages: false } }
+        );
+
+        await Message.updateMany(
+            { chat: chatId, readBy: { $ne: req.user._id } },
+            { $addToSet: { readBy: req.user._id } }
+        );
+
+        res.sendStatus(204);
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message);
+    }
+};
+
 
 export const deleteAllMessages = async (req, res) => {
     const { chatId } = req.params;

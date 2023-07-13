@@ -8,14 +8,14 @@ export const getChats = async (user) => {
             },
         };
         const response = await axios.get(`${process.env.NEXT_PUBLIC_CHAT_URL}`, config);
-        if(!response){
+        if (!response) {
             console.log("no chats available");
             return [];
         }
         return response.data;
     } catch (error) {
         console.log(error);
-        return[];
+        return [];
     }
 }
 
@@ -94,4 +94,16 @@ export const updateGroupPicture = async (imageFile, user, chatId) => {
     return response;
 }
 
+export const readMessages = async (chat, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        await axios.post(`${process.env.NEXT_PUBLIC_MESSAGE_URL}/read`, { chatId: chat._id }, config);
+    } catch (error) {
+        console.error(error);
+    }
+}
 

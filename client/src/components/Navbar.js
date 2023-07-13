@@ -9,10 +9,9 @@ import { useRouter } from 'next/router';
 import { getSender } from '@/config/config';
 
 const Navbar = () => {
-    const { user, notifications, setSelectedChat, setNotifications, handleShowContacts } = ChatState();
+    const { user } = ChatState();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [showNotifications, setShowNotifications] = useState(false);
     const router = useRouter();
 
     const handleOpenModal = () => {
@@ -26,14 +25,9 @@ const Navbar = () => {
         localStorage.removeItem("userInfo");
         router.push("/");
     };
-    const clickedNotifications = (notif) => {
-        handleShowContacts()
-        setSelectedChat(notif.chat);
-        setNotifications(notifications.filter((n) => n !== notif));
-    }
+
     const handleOutsideClick = (e) => {
-        if (e.target.closest(".notification-container, .profile-container") === null) {
-            setShowNotifications(false);
+        if (e.target.closest(".profile-container") === null) {
             setIsMenuOpen(false)
         }
     };
@@ -50,42 +44,11 @@ const Navbar = () => {
         <div className='p-3 border-b'>
             {showModal && <Modal handleCloseModal={handleCloseModal} userInfo={user} />}
             {user && (
-                <div className='grid grid-cols-3'>
-                    <div className='flex items-center'>
-                        <div className='relative notification-container' onClick={() => setShowNotifications(true)}>
-                            <Image src={Notification} height={25} width={25} alt="Notification" />
-                            {notifications.length > 0 &&
-                                <span className='flex justify-center items-center text-sm p-[11px] rounded-full bg-red-700 text-white absolute top-[-5px] left-4 h-[4px] w-[4px]'>{notifications.length}</span>
-                            }
-                            <div className={`absolute w-[210px] mt-1 bg-white text-black ${showNotifications || !notifications && "border"} rounded-md shadow-lg`}>
-                                {showNotifications && notifications.map((notif) => (
-                                    <div
-                                        key={notif._id}
-                                        onClick={() => clickedNotifications(notif)}
-                                        className=' hover:bg-gray-100 cursor-pointer border-b'>
-                                        <div className='p-2'>
-                                            {notif.chat.isGroupChat
-                                                ? (
-                                                    <div className='flex items-center gap-3'>
-                                                        <img src={notif.chat.picture} className='profile-img rounded-full' />
-                                                        <p className='font-semibold text-sm'>{`New Message From ${notif.chat.chatName}.`}</p>
-                                                    </div>
-                                                )
-                                                : (
-                                                    <div className='flex items-center gap-3'>
-                                                        <img src={getSender(user, notif.chat.users).picture} className='profile-img rounded-full' />
-                                                        <p className='font-semibold text-sm'>{`New Message From ${getSender(user, notif.chat.users).name}.`}</p>
-                                                    </div>
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                <div className='flex items-center justify-between px-4'>
+                    <div>
+                        <p className='font-extrabold text-4xl text-blue-600'>CHATIFY</p>
                     </div>
-                    <p className='flex items-center justify-center font-extrabold text-4xl text-blue-600'>CHATIFY</p>
-                    <div className='flex items-center gap-3 ml-auto profile-container'>
+                    <div className='flex items-center gap-3 profile-container'>
                         <div onClick={() => setIsMenuOpen(true)} className='flex gap-2 items-center relative cursor-pointer'>
                             <img src={user.picture} alt={user.name} className='rounded-full profile-img-user' />
                             <p className='font-semibold text-xl capitalize hidden md:block'>{user.name}

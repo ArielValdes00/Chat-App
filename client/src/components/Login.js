@@ -121,7 +121,9 @@ const Login = ({ handleChange }) => {
                         <span>Log in</span>
                     )}
                 </button>
-                <p className="my-1">Forgot your password?</p>
+                <p className="my-1">
+                    Don't have an account?
+                </p>
                 <button
                     type='button'
                     onClick={handleChange}

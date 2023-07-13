@@ -144,10 +144,11 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
-                <div className='flex items-center'>
+                <div className='flex items-center relative'>
                     <img
                         src={selectedChat.picture}
-                        alt={selectedChat.chatName} className='rounded-full profile-img-modal mx-3'
+                        alt={selectedChat.chatName}
+                        className='rounded-full profile-img-modal'
                     />
                     <input
                         type="file"
@@ -159,7 +160,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                     <label
                         htmlFor="upload-button"
                     >
-                        <Image src={Edit} height={20} width={20} alt='Change Picture' />
+                        <Image src={Edit} height={20} width={20} alt='Change Picture' className='absolute ms-2' />
                     </label>
                 </div>
                 <p className='text-center text-2xl font-bold capitalize'>{selectedChat.chatName}</p>
@@ -168,14 +169,16 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                         <div
                             key={user._id}
                             className='flex flex-wrap items-center justify-center bg-gray-200 gap-2 rounded-full border px-3 cursor-pointer'>
-                            <p className='capitalize'>{user.name}</p>
-                            <Image
-                                src={Delete}
-                                height={10}
-                                width={10}
-                                alt='Delete'
-                                onClick={() => handleRemove(user)}
-                            />
+                            <div className='flex flex-nowrap items-center'>
+                                <p className='capitalize truncate' >{user.name}</p>
+                                <Image
+                                    src={Delete}
+                                    height={10}
+                                    width={10}
+                                    alt='Delete'
+                                    onClick={() => handleRemove(user)}
+                                />
+                            </div>
                         </div>
                     ))}
                 </div>

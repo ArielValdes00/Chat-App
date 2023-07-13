@@ -6,6 +6,7 @@ import chatRoutes from './routes/chat.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import cors from 'cors';
 import { Server } from 'socket.io';
+import { Message } from './models/messageModel.js';
 
 const app = express()
 dotenv.config()
@@ -54,6 +55,14 @@ io.on("connection", (socket) => {
             socket.in(user._id).emit("message recieved", newMessageRecieved);
         });
     })
+    socket.on("message read", async (data) => {
+        const { chatId, userId } = data;
+
+        await Message.updateMany(
+            { chat: chatId, readBy: { $ne: userId } },
+            { $addToSet: { readBy: userId } }
+        );
+    });
     socket.off("disconnect", () => {
         console.log("USER DISCONNECTED");
         socket.leave(userData._id);

@@ -20,6 +20,10 @@ const chatModel = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Message"
         },
+        hasUnreadMessages: {
+            type: Boolean,
+            default: false
+        },
         groupAdmin: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"

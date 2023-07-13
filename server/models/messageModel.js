@@ -17,6 +17,10 @@ const messageModel = mongoose.Schema(
         deletedBy: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
+        }],
+        readBy: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
         }]
     },
     {
