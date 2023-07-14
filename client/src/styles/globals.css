@@ -33,5 +33,9 @@
     width: 140px;
     height: 140px;
 }
+
+.animate__animated.animate__fadeIn {
+    --animate-duration: .5s;
+  }
   
   

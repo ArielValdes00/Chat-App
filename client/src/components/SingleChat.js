@@ -109,8 +109,8 @@ const SingleChat = ({ functionShowContact }) => {
                         const fetchChats = async () => {
                             const chatsData = await getChats(user);
                             const filteredChats = chatsData.filter((chat) => !chat.latestMessage || !chat.latestMessage.deletedBy.includes(user._id));
-                    
-                            setChats(filteredChats)            
+
+                            setChats(filteredChats)
                         };
                         fetchChats();
                     }
@@ -173,12 +173,12 @@ const SingleChat = ({ functionShowContact }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-    
+
             await axios.put(`${process.env.NEXT_PUBLIC_MESSAGE_URL}/${selectedChat._id}`, null, config);
-    
+
             const res = await axios.get(`${process.env.NEXT_PUBLIC_MESSAGE_URL}/${selectedChat._id}`, config);
             const updatedMessages = res.data;
-    
+
             setMessages((prevMessages) =>
                 prevMessages.map((message) => {
                     const updatedMessage = updatedMessages.find((m) => m._id === message._id);
@@ -188,7 +188,7 @@ const SingleChat = ({ functionShowContact }) => {
                     return message;
                 })
             );
-    
+
             setIsMenuOpen(false);
             fetchMessages();
         } catch (error) {
@@ -350,14 +350,15 @@ const SingleChat = ({ functionShowContact }) => {
                         <button type="button" onClick={toggleEmojiPanel} className="px-3">
                             <FaRegSmile size={30} className='bg-yellow-300 rounded-full border-none' />
                         </button>
-                        {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} />}
                         <input
                             type="text"
                             placeholder="Message..."
                             className="w-full p-2 py-3 outline-none rounded-lg ps-4"
                             value={newMessage}
                             onChange={typingHandler}
+                            name='sendMessage'
                         />
+                        {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput={"sendMessage"} position={"bottom-16 left-6"}/>}
                         <button type="submit" className="px-3">
                             <Image src={sendMessageIcon} height={30} width={30} alt='Send Message' />
                         </button>

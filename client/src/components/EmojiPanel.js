@@ -1,10 +1,10 @@
 import React from 'react';
 
-const EmojiPanel = ({ onSelect, targetInput }) => {
+const EmojiPanel = ({ onSelect, targetInput, position }) => {
     const emojis = ['😀', '😁', '😂', '🤣', '😃', '😄', '😅', '😆','🦖', '🚀', '🚗', '🚲', '🛵', '🛴', '🛹', '🛬', '🛳️', '🚁', '🚂', '🚆'];
 
     return (
-        <div className='flex flex-wrap absolute top-0 bg-gray-200 border'>
+        <div className={`flex gap-1 flex-wrap absolute max-w-sm ${position} bg-gray-200 border border-black rounded-lg p-1`}>
             {emojis.map(emoji => (
                 <button
                     key={emoji}

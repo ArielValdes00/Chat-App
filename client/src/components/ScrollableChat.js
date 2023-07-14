@@ -50,22 +50,22 @@ const ScrollableChat = ({ messages }) => {
                                     className='profile-img rounded-full me-2'
                                 />
                             )}
-                            <div className={`p-2 pb-[6px] px-3 rounded-xl lowercase max-w-sm lg:max-w-lg font-[500] flex items-end gap-3 ${message.sender._id === user._id ? "bg-gray-100" : "bg-blue-600 text-gray-100"}`}>
+                            <div className={`p-2 pb-[6px] px-3 rounded-xl lowercase max-w-sm lg:max-w-xl font-[500] flex items-end gap-3 ${message.sender._id === user._id ? "bg-gray-100" : "bg-blue-600 text-gray-100"}`}>
                                 <div className='flex flex-col leading-6'>
                                     {isGroupChat && (
                                         <p className={`text-[15px] capitalize ${getUserColor(message.sender._id)}`}>{message.sender.name}</p>
                                     )}
                                     <p className="text-[15px] leading-[20px]">{message.content}</p>
                                 </div>
-                                <div className='flex items-center gap-2'>
+                                <div className='flex items-center justify-center gap-2'>
                                     <p className="text-[10px]">{formatTime(message.createdAt)}</p>
                                     {message.sender._id === user._id && (
                                         <div>
                                             {
                                                 message.readBy.includes(getSender(user, message.chat.users)) ? (
-                                                    <Image src={TickBlue} height={28} width={28} alt='Viewed' />
+                                                    <Image src={TickBlue} height={23} width={23} alt='Viewed' />
                                                 ) : (
-                                                    <Image src={TickDark} height={28} width={28} alt='Sended' />
+                                                    <Image src={TickDark} height={23} width={23} alt='Sended' />
                                                 )
                                             }
                                         </div>

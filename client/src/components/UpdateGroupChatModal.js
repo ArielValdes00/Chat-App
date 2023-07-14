@@ -7,6 +7,7 @@ import Delete from '../../public/icons/delete-user.png';
 import Edit from '../../public/icons/edit.png';
 import Confirm from '../../public/icons/confirm.png';
 import { getChatsFromServer, updateGroupPicture } from '@/utils/apiChats';
+import 'animate.css';
 
 const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
     const [groupChatName, setGroupChatName] = useState();
@@ -135,7 +136,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
-            <div className='absolute flex flex-col items-center gap-3 bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[500px] lg:w-[550px]'>
+            <div className='absolute flex flex-col items-center gap-3 bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[500px] lg:w-[550px] animate__animated animate__fadeIn'>
                 <div className='mb-2'>
                     <Image onClick={handleCloseModal}
                         src={CloseModal} height={28}
@@ -164,12 +165,12 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                     </label>
                 </div>
                 <p className='text-center text-2xl font-bold capitalize'>{selectedChat.chatName}</p>
-                <div className='flex items-center gap-4 mt-1'>
+                <div className='flex flex-wrap justify-center items-center gap-2 mt-1'>
                     {selectedChat.users.map((user) => (
                         <div
                             key={user._id}
-                            className='flex flex-wrap items-center justify-center bg-gray-200 gap-2 rounded-full border px-3 cursor-pointer'>
-                            <div className='flex flex-nowrap items-center'>
+                            className='flex flex-wrap items-center justify-center bg-gray-200 rounded-full border px-3 cursor-pointer'>
+                            <div className='flex flex-nowrap items-center gap-2'>
                                 <p className='capitalize truncate' >{user.name}</p>
                                 <Image
                                     src={Delete}

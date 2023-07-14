@@ -4,8 +4,10 @@ import { ChatState } from '@/context/ChatProvider';
 import Image from 'next/image';
 import axios from 'axios';
 import Delete from '../../public/icons/delete-user.png';
+import Edit from '../../public/icons/edit.png';
 import { FaRegSmile } from 'react-icons/fa';
 import EmojiPanel from './EmojiPanel.js';
+import 'animate.css';
 
 const GroupChatModel = ({ handleCloseModal }) => {
     const { user, chats, setChats } = ChatState();
@@ -15,6 +17,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
     const [showEmojiPanel, setShowEmojiPanel] = useState(false);
+    const [previewImage, setPreviewImage] = useState(null);
 
     const toggleEmojiPanel = () => {
         setShowEmojiPanel(prevState => !prevState);
@@ -81,16 +84,22 @@ const GroupChatModel = ({ handleCloseModal }) => {
 
             const { data } = await axios.post(`${process.env.NEXT_PUBLIC_CHAT_URL}/group`, formData, config);
             setChats([...chats, data]);
-            console.log(chats)
+            handleCloseModal();
 
         } catch (error) {
             console.log(error)
         }
     };
+    const groupImage = (e) => {
+        const file = e.target.files[0];
+        setGroupChatImage(file);
+        setPreviewImage(URL.createObjectURL(file));
+    };
+
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
-            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[500px] lg:w-[550px]'>
+            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[500px] lg:w-[550px] animate__animated animate__fadeIn'>
                 <div className='mb-2'>
                     <Image onClick={handleCloseModal}
                         src={CloseModal} height={28}
@@ -99,33 +108,28 @@ const GroupChatModel = ({ handleCloseModal }) => {
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
-                <p className='text-center text-2xl font-bold'>Create Group Chat</p>
-                <form onSubmit={handleSubmit} className='flex flex-col gap-2 relative'>
-                    <input
-                        onChange={(e) => setGroupChatImage(e.target.files[0])}
-                        type='file'
-                        className='border p-1 ps-3'
-                    />
-                    <button type="button" onClick={toggleEmojiPanel} className="px-3">
-                        <FaRegSmile size={30} />
-                    </button>
-                    {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput="groupChatName" />}
-                    <label htmlFor='Chat Name'>Chat Name</label>
-                    <input
-                        onChange={(e) => setGroupChatName(e.target.value)}
-                        type='text'
-                        placeholder='Your Chat Name'
-                        className='border p-1 ps-3'
-                        value={groupChatName}
-                    />
-                    <label htmlFor='Users'>Add Users</label>
-                    <input
-                        onChange={(e) => handleSearch(e.target.value)}
-                        type='text'
-                        placeholder='Add Users'
-                        className='border p-1 ps-3'
-                    />
-                    <div className='flex items-center gap-4 flex-wrap'>
+                <p className='text-center text-2xl font-bold mb-4'>Create Group Chat</p>
+                <form onSubmit={handleSubmit} className='flex flex-col gap-4 items-center relative'>
+                    <div className='flex items-center relative'>
+                        <img
+                            src={!groupChatImage ? "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" : previewImage}
+                            alt={'user'}
+                            className='rounded-full profile-img-modal'
+                        />
+                        <input
+                            type="file"
+                            onChange={(e) => groupImage(e)}
+                            accept="image/*"
+                            id="upload-button"
+                            className="hidden"
+                        />
+                        <label
+                            htmlFor="upload-button"
+                        >
+                            <Image src={Edit} height={20} width={20} alt='Change Picture' className='absolute ms-2' />
+                        </label>
+                    </div>
+                    <div className='flex items-center gap-2 justify-center w-full flex-wrap'>
                         {selectedUsers.map((user) => (
                             <div key={user._id} className='border flex items-center justify-center bg-gray-200 gap-2 rounded-full px-3 cursor-pointer'>
                                 <p className='capitalize'>{user.name}</p>
@@ -139,21 +143,51 @@ const GroupChatModel = ({ handleCloseModal }) => {
                             </div>
                         ))}
                     </div>
-                    {searchResult?.slice(0, 3).map((user) => (
-                        <div
-                            key={user._id}
-                            user={user}
-                            onClick={() => handleGroup(user)}
-                            className='flex items-center gap-3 p-1 py-2 ps-3 hover:bg-gray-100 cursor-pointer'
-                        >
-                            <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
-                            <div>
-                                <p className='capitalize'>{user.name}</p>
-                                <p className='text-sm'><strong>Email: </strong>{user.email}</p>
-                            </div>
+                    <div className='w-2/3 flex flex-col gap-2'>
+                        <label htmlFor='groupChatName' className='text-center font-semibold'>Chat Name</label>
+                        <div className='flex relative'>
+                            {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput="groupChatName" position={"top-0"}/>}
+                            <input
+                                onChange={(e) => setGroupChatName(e.target.value)}
+                                type='text'
+                                placeholder='Your Chat Name'
+                                className="border w-full rounded p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
+                                name='groupChatName'
+                                value={groupChatName}
+                            />
+                            <button type="button" onClick={toggleEmojiPanel} className="px-3 absolute top-[2px] right-[-50px]">
+                                <FaRegSmile size={30} className='bg-yellow-300 rounded-full mt-[4px]' />
+                            </button>
                         </div>
-                    ))}
-                    <button type='submit' className='mt-2 bg-gray-100 border border-black px-5 mx-auto p-2 rounded-full'>Create Group</button>
+                    </div>
+                    <div className='w-2/3 flex flex-col items-center gap-2'>
+                        <label htmlFor='Users' className='text-center font-semibold'>Add Users</label>
+                        <input
+                            onChange={(e) => handleSearch(e.target.value)}
+                            type='text'
+                            placeholder='Add Users'
+                            className="border w-full rounded p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
+                        />
+                    </div>
+                    <div className='w-2/3 flex flex-col gap-2'>
+                        <div className={`${search && "h-[104px]"} overflow-y-auto`}>
+                            {searchResult?.slice(0, 3).map((user) => (
+                                <div
+                                    key={user._id}
+                                    user={user}
+                                    onClick={() => handleGroup(user)}
+                                    className='flex items-center gap-3 py-1 ps-3 hover:bg-gray-100 cursor-pointer'
+                                >
+                                    <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
+                                    <div>
+                                        <p className='capitalize'>{user.name}</p>
+                                        <p className='text-sm'><strong>Email: </strong>{user.email}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <button type='submit' className='bg-gray-100 border border-black px-5 mx-auto p-2 rounded-full hover:bg-gray-200'>Create Group</button>
                 </form >
             </div>
             <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={handleCloseModal}>

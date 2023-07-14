@@ -4,6 +4,7 @@ import Edit from '../../public/icons/edit.png';
 import Image from 'next/image';
 import { ChatState } from '@/context/ChatProvider';
 import { getUserInfoFromServer, uploadImage } from '@/utils/apiChats';
+import 'animate.css';
 
 const Modal = ({ userInfo, handleCloseModal }) => {
     const { user, setUser } = ChatState();
@@ -13,7 +14,6 @@ const Modal = ({ userInfo, handleCloseModal }) => {
         const response = await uploadImage(imageFile, user);
 
         if (response) {
-            console.log('Profile picture updated');
             const userInfo = await getUserInfoFromServer(user);
 
             setUser(userInfo);
@@ -26,8 +26,8 @@ const Modal = ({ userInfo, handleCloseModal }) => {
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
-            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative px-16'>
-                <div className='mb-10'>
+            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative px-16 animate__animated animate__fadeIn'>
+                <div className='mb-5'>
                     <Image onClick={handleCloseModal}
                         src={CloseModal} height={28}
                         width={28}
