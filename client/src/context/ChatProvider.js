@@ -10,6 +10,7 @@ const ChatProvider = ({ children }) => {
     const [chats, setChats] = useState([]);
     const [notifications, setNotifications] = useState([]);
     const [showContacts, setShowContacts] = useState(false);
+    const [loader, setLoader] = useState(false);
 
     useEffect(() => {
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -29,6 +30,7 @@ const ChatProvider = ({ children }) => {
         notifications, setNotifications,
         handleShowContacts,
         showContacts, setShowContacts,
+        loader, setLoader
     }}>{children}</ChatContext.Provider>
 }
 

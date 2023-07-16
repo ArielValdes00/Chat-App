@@ -6,6 +6,7 @@ import axios from 'axios';
 import Delete from '../../public/icons/delete-user.png';
 import Edit from '../../public/icons/edit.png';
 import Confirm from '../../public/icons/confirm.png';
+import Loader from '../../public/icons/loader.gif';
 import { getChatsFromServer, updateGroupPicture } from '@/utils/apiChats';
 import 'animate.css';
 
@@ -13,7 +14,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
     const [groupChatName, setGroupChatName] = useState();
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
-    const { selectedChat, setSelectedChat, user, setChats } = ChatState();
+    const { selectedChat, setSelectedChat, user, setChats, loader, setLoader } = ChatState();
 
     const handleUploadInput = async (e) => {
         const imageFile = e.target.files[0];
@@ -62,6 +63,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
         }
 
         try {
+            setLoader(true);
             const config = {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
@@ -69,6 +71,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
             };
             const { data } = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}?search=${search}`, config);
             setSearchResult(data);
+            setLoader(false);
         } catch (error) {
             console.log(error)
         }
@@ -218,21 +221,23 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                         value={search}
                     />
                 </div>
-                <div className={`${search && "h-[102px]"} overflow-y-auto w-2/3`}>
-                    {searchResult?.map((user) => (
-                        <div
-                            key={user._id}
-                            user={user}
-                            onClick={() => handleAddUser(user)}
-                            className='flex items-center gap-3 py-1 ps-3 hover:bg-gray-100 cursor-pointer'
-                        >
-                            <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
-                            <div>
-                                <p className='capitalize'>{user.name}</p>
-                                <p className='text-sm'><strong>Email: </strong>{user.email}</p>
+                <div className={`${search && "h-[104px]"} overflow-y-auto w-2/3`}>
+                    {loader
+                        ? <Image src={Loader} height={30} width={30} alt='Loader' className='mx-auto' />
+                        : searchResult.slice(0, 3).map((user) => (
+                            <div
+                                key={user._id}
+                                user={user}
+                                onClick={() => handleAddUser(user)}
+                                className='flex items-center gap-3 py-1 ps-3 hover:bg-gray-100 cursor-pointer'
+                            >
+                                <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
+                                <div>
+                                    <p className='capitalize'>{user.name}</p>
+                                    <p className='text-sm'><strong>Email: </strong>{user.email}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
                 <button
                     onClick={() => handleRemove(user)}

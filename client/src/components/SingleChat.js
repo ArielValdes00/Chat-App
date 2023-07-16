@@ -17,9 +17,10 @@ import { io } from "socket.io-client";
 import { FaRegSmile } from 'react-icons/fa';
 import EmojiPanel from './EmojiPanel.js';
 import { getChats, readMessages } from '@/utils/apiChats';
+import Loader from '../../public/icons/loader.gif';
 
 const SingleChat = ({ functionShowContact }) => {
-    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications } = ChatState();
+    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications, loader, setLoader } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
@@ -74,6 +75,7 @@ const SingleChat = ({ functionShowContact }) => {
         if (!selectedChat) return;
 
         try {
+            setLoader(true);
             const config = {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
@@ -83,6 +85,7 @@ const SingleChat = ({ functionShowContact }) => {
             const res = await axios.get(`${process.env.NEXT_PUBLIC_MESSAGE_URL}/${selectedChat._id}`,
                 config
             );
+            setLoader(false);
             const messagesData = res.data;
 
             const filteredMessages = messagesData.filter((message) => !message.isDeleted);
@@ -336,7 +339,13 @@ const SingleChat = ({ functionShowContact }) => {
                     </div>
                     <div>
                         <div className="h-[69vh] border-t overflow-y-auto">
-                            <ScrollableChat messages={messages} />
+                            {loader
+                                ?
+                                <div className='flex h-[68vh] items-center justify-center'>
+                                    <Image src={Loader} height={40} width={40} alt='Loader' className='' />
+                                </div>
+                                : <ScrollableChat messages={messages} />
+                            }
                         </div>
                         <div>
                             {istyping ? (
@@ -358,7 +367,7 @@ const SingleChat = ({ functionShowContact }) => {
                             onChange={typingHandler}
                             name='sendMessage'
                         />
-                        {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput={"sendMessage"} position={"bottom-16 left-6"}/>}
+                        {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput={"sendMessage"} position={"bottom-16 left-6"} />}
                         <button type="submit" className="px-3">
                             <Image src={sendMessageIcon} height={30} width={30} alt='Send Message' />
                         </button>

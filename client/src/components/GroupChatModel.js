@@ -4,13 +4,14 @@ import { ChatState } from '@/context/ChatProvider';
 import Image from 'next/image';
 import axios from 'axios';
 import Delete from '../../public/icons/delete-user.png';
+import Loader from '../../public/icons/loader.gif';
 import Edit from '../../public/icons/edit.png';
 import { FaRegSmile } from 'react-icons/fa';
 import EmojiPanel from './EmojiPanel.js';
 import 'animate.css';
 
 const GroupChatModel = ({ handleCloseModal }) => {
-    const { user, chats, setChats } = ChatState();
+    const { user, chats, setChats, loader, setLoader } = ChatState();
     const [groupChatName, setGroupChatName] = useState("");
     const [groupChatImage, setGroupChatImage] = useState("")
     const [selectedUsers, setSelectedUsers] = useState([]);
@@ -46,6 +47,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
         }
 
         try {
+            setLoader(true);
             const config = {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
@@ -53,6 +55,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
             };
             const { data } = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}?search=${search}`, config);
             setSearchResult(data);
+            setLoader(false);
         } catch (error) {
             console.log(error)
         }
@@ -146,7 +149,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                     <div className='w-2/3 flex flex-col gap-2'>
                         <label htmlFor='groupChatName' className='text-center font-semibold'>Chat Name</label>
                         <div className='flex relative'>
-                            {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput="groupChatName" position={"top-0"}/>}
+                            {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput="groupChatName" position={"top-0"} />}
                             <input
                                 onChange={(e) => setGroupChatName(e.target.value)}
                                 type='text'
@@ -171,20 +174,22 @@ const GroupChatModel = ({ handleCloseModal }) => {
                     </div>
                     <div className='w-2/3 flex flex-col gap-2'>
                         <div className={`${search && "h-[104px]"} overflow-y-auto`}>
-                            {searchResult?.slice(0, 3).map((user) => (
-                                <div
-                                    key={user._id}
-                                    user={user}
-                                    onClick={() => handleGroup(user)}
-                                    className='flex items-center gap-3 py-1 ps-3 hover:bg-gray-100 cursor-pointer'
-                                >
-                                    <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
-                                    <div>
-                                        <p className='capitalize'>{user.name}</p>
-                                        <p className='text-sm'><strong>Email: </strong>{user.email}</p>
+                            {loader
+                                ? <Image src={Loader} height={30} width={30} alt='Loader' className='mx-auto'/>
+                                : searchResult?.slice(0, 3).map((user) => (
+                                    <div
+                                        key={user._id}
+                                        user={user}
+                                        onClick={() => handleGroup(user)}
+                                        className='flex items-center gap-3 py-1 ps-3 hover:bg-gray-100 cursor-pointer'
+                                    >
+                                        <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
+                                        <div>
+                                            <p className='capitalize'>{user.name}</p>
+                                            <p className='text-sm'><strong>Email: </strong>{user.email}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
                         </div>
                     </div>
                     <button type='submit' className='bg-gray-100 border border-black px-5 mx-auto p-2 rounded-full hover:bg-gray-200'>Create Group</button>

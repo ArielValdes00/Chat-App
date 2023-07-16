@@ -25,6 +25,7 @@ const Contacts = ({ functionShowContact }) => {
                 const filteredChats = chatsData.filter((chat) => !chat.latestMessage || !chat.latestMessage.deletedBy.includes(user._id));
 
                 setChats(filteredChats)
+                console.log(filteredChats)
             };
             fetchChats();
         }
