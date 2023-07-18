@@ -14,7 +14,7 @@ connectDB()
 app.use(express.json());
 
 app.use(cors({
-    origin: 'http://localhost:3000' || process.env.VERCEL_URL,
+    origin: process.env.VERCEL_URL,
     credentials: true
 }));
 
@@ -30,7 +30,7 @@ const PORT = process.env.PORT || 5000
 const server = app.listen(PORT);
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: process.env.VERCEL_URL,
         methods: ['GET', 'POST'],
         credentials: true
     }
