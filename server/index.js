@@ -14,7 +14,7 @@ connectDB()
 app.use(express.json());
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:3000' || process.env.VERCEL_URL,
     credentials: true
 }));
 
@@ -23,7 +23,7 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
 app.get("/", (req, res) => {
-    res.json("The server is running")
+    res.json("The server is running");
 })
 
 const PORT = process.env.PORT || 5000
