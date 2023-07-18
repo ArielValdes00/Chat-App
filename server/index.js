@@ -22,6 +22,10 @@ app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
+app.get("/", (req, res) => {
+    res.json("The server is running")
+})
+
 const PORT = process.env.PORT || 5000
 const server = app.listen(PORT);
 const io = new Server(server, {
