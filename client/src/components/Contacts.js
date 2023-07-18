@@ -25,7 +25,6 @@ const Contacts = ({ functionShowContact }) => {
                 const filteredChats = chatsData.filter((chat) => !chat.latestMessage || !chat.latestMessage.deletedBy.includes(user._id));
 
                 setChats(filteredChats)
-                console.log(filteredChats)
             };
             fetchChats();
         }
@@ -70,26 +69,26 @@ const Contacts = ({ functionShowContact }) => {
     };
 
     return (
-        <div className='h-[90vh] overflow-y-auto'>
+        <div className='h-full overflow-y-auto'>
             {showModal && <GroupChatModel handleCloseModal={handleCloseModal} />}
-            <div onClick={handleOpenModal} className='border-b py-[15px] flex items-center justify-center gap-3 hover:bg-gray-100 cursor-pointer'>
+            <div onClick={handleOpenModal} className='border-b py-[15px] flex items-center ms-3 gap-3 hover:bg-gray-100 cursor-pointer'>
                 <Image src={AddGroup} height={30} width={30} alt='Add Group' />
                 <p className='font-bold'>New Group Chat</p>
             </div>
-            <div className='border-b'>
-                <div className="flex items-center justify-center gap-2 border mx-auto p-[5px] my-[10px] w-1/2 lg:w-[190px] bg-white rounded-full">
+            <div className='border-b py-2'>
+                <div className="flex items-center bg-gray-100 gap-2 border p-2 mx-3 bg-white rounded-full md:w-1/2 lg:w-5/6">
+                    <button
+                        onClick={handleSearch}
+                    >
+                        <Image src={Search} height={20} width={20} alt="Search" className='ms-3' />
+                    </button>
                     <input
-                        className="outline-none placeholder-gray-500 lg:w-2/3"
+                        className="outline-none placeholder-gray-500 mx-3"
                         type="text"
                         placeholder="Search Users"
                         onChange={handleChangeToggleSearchUsers}
                         value={search}
                     />
-                    <button
-                        onClick={handleSearch}
-                    >
-                        <Image src={Search} height={20} width={20} alt="Search" />
-                    </button>
                 </div>
             </div>
             {search.trim() !== "" ? <Sidebar searchResult={searchResult} setSearchResult={setSearchResult} setSearch={setSearch} /> : (

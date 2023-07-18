@@ -231,7 +231,8 @@ const SingleChat = ({ functionShowContact }) => {
     };
 
     return (
-        <div className='flex flex-col max-h-[100%]'>
+
+        <div className='flex flex-col h-full'>
             {showModalInfo && (
                 <Modal
                     handleCloseModal={handleCloseModalInfo}
@@ -245,10 +246,11 @@ const SingleChat = ({ functionShowContact }) => {
                 />
             )}
             {selectedChat ? (
-                <div className="uppercase font-bold text-lg ">
-                    <div className="flex justify-between items-center py-1 px-3">
+                <>
+                    <div className="flex justify-between items-center py-1 px-2 uppercase font-bold text-lg">
                         <div className="flex items-center gap-3">
-                            <Image src={LeftArrow}
+                            <Image
+                                src={LeftArrow}
                                 height={25}
                                 width={25}
                                 alt='Contact'
@@ -267,21 +269,21 @@ const SingleChat = ({ functionShowContact }) => {
                                     {getSender(user, selectedChat.users).name}
                                 </div>
                             ) : (
-                                <div className='flex items-center gap-3'>
+                                <div className='flex items-center gap-3 px-1'>
                                     <img
                                         src={selectedChat.picture}
                                         alt={selectedChat.name}
                                         className='rounded-full profile-img'
                                     />
                                     <div>
-                                        <p className='mb-[-9px] mt-[5px]'>{selectedChat.chatName}</p>
-                                        <div className='flex gap-1'>
+                                        <p className='md:mb-[-9px] md:mt-[5px] text-sm sm:text-md md:text-lg'>{selectedChat.chatName}</p>
+                                        <div className='flex gap-1 flex-wrap'>
                                             {[
                                                 ...selectedChat.users.filter(u => user.name !== u.name),
                                                 selectedChat.users.find(u => user.name === u.name)
                                             ]?.map((u, index, arr) => (
                                                 <div key={u._id} className='text-[11px] font-normal lowercase capitalize'>
-                                                    <p>
+                                                    <p className='leading-[1] sm:leading-7'>
                                                         {u.name === user.name ? "You" : u.name}
                                                         {index !== arr.length - 1 ? "," : ""}
                                                     </p>
@@ -292,7 +294,7 @@ const SingleChat = ({ functionShowContact }) => {
                                 </div>
                             )}
                         </div>
-                        <div className='flex'>
+                        <div className='flex items-center'>
                             {!selectedChat.isGroupChat ? (
                                 <Image
                                     src={Info}
@@ -303,7 +305,6 @@ const SingleChat = ({ functionShowContact }) => {
                                     className="cursor-pointer me-2"
                                 />
                             ) : (
-
                                 <Image
                                     src={Info}
                                     height={30}
@@ -313,7 +314,7 @@ const SingleChat = ({ functionShowContact }) => {
                                     className="cursor-pointer me-2"
                                 />
                             )}
-                            <div className='relative .img-container'>
+                            <div className='relative img-container'>
                                 <Image
                                     src={Menu}
                                     height={30}
@@ -337,26 +338,22 @@ const SingleChat = ({ functionShowContact }) => {
                             </div>
                         </div>
                     </div>
+                    <div className='flex-grow flex flex-col h-full border-t overflow-y-auto'>
+                        {loader ? (
+                            <div className='flex h-full items-center justify-center'>
+                                <Image src={Loader} height={40} width={40} alt='Loader' className='' />
+                            </div>
+                        ) : (
+                            <ScrollableChat messages={messages} />
+                        )}
+                    </div>
                     <div>
-                        <div className="h-[69vh] border-t overflow-y-auto">
-                            {loader
-                                ?
-                                <div className='flex h-[68vh] items-center justify-center'>
-                                    <Image src={Loader} height={40} width={40} alt='Loader' className='' />
-                                </div>
-                                : <ScrollableChat messages={messages} />
-                            }
-                        </div>
-                        <div>
-                            {istyping ? (
-                                <p className='text-sm font-base lowercase'>{`${getSender(user, selectedChat.users).name} is typing...`}</p>
-                            ) : (
-                                <></>
-                            )}
-                        </div>
+                        {istyping && (
+                            <p className='text-sm font-base lowercase'>{`${getSender(user, selectedChat.users).name} is typing...`}</p>
+                        )}
                     </div>
                     <form onSubmit={sendMessage} className="flex bg-gray-200 p-4 text-sm relative">
-                        <button type="button" onClick={toggleEmojiPanel} className="px-3">
+                        <button type="button" onClick={toggleEmojiPanel} className="pe-3">
                             <FaRegSmile size={30} className='bg-yellow-300 rounded-full border-none' />
                         </button>
                         <input
@@ -368,11 +365,11 @@ const SingleChat = ({ functionShowContact }) => {
                             name='sendMessage'
                         />
                         {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput={"sendMessage"} position={"bottom-16 left-6"} />}
-                        <button type="submit" className="px-3">
+                        <button type="submit" className="ps-3">
                             <Image src={sendMessageIcon} height={30} width={30} alt='Send Message' />
                         </button>
                     </form>
-                </div>
+                </>
             ) : (
                 <div className='h-[90vh] flex flex-col items-center justify-center gap-5 font-semibold'>
                     <Image src={NoChats} priority={true} height={250} width={350} alt='Chatify' />

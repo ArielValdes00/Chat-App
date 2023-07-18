@@ -33,11 +33,11 @@ const Chat = () => {
     const size = useWindowSize();
 
     return (
-        <div className='max-h-screen flex flex-col overflow-x-hidden'>
+        <div className='min-h-screen flex flex-col overflow-x-hidden'>
             <Navbar />
-            <div className='grid grid-cols-5'>
+            <div className='grid grid-cols-7 flex-grow'>
                 <motion.div
-                    className={`${!showContacts ? "block" : "hidden lg:block"} col-span-6 lg:col-span-1`}
+                    className={`${!showContacts ? "block" : "hidden lg:block"} col-span-7 lg:col-span-2`}
                     initial={size.width < 1024 ? { x: -100, opacity: 0 } : { opacity: 1 }}
                     animate={size.width < 1024 ? { x: !showContacts ? 0 : -100, opacity: !showContacts ? 1 : 0 } : {}}
                     transition={{ duration: 0.5 }}
@@ -45,7 +45,7 @@ const Chat = () => {
                     <Contacts functionShowContact={handleShowContacts} />
                 </motion.div>
                 <motion.div
-                    className={`${showContacts ? "block" : "hidden lg:block"} col-span-6 lg:col-span-4 border-l`}
+                    className={`${showContacts ? "block" : "hidden lg:block"} col-span-7 lg:col-span-5 border-l`}
                     initial={size.width < 1024 ? { x: 100, opacity: 0 } : { opacity: 1 }}
                     animate={size.width < 1024 ? { x: showContacts ? 0 : 100, opacity: showContacts ? 1 : 0 } : {}}
                     transition={{ duration: 0.5 }}

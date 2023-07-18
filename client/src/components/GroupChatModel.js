@@ -101,8 +101,8 @@ const GroupChatModel = ({ handleCloseModal }) => {
 
 
     return (
-        <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
-            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-[400px] md:w-[500px] lg:w-[550px] animate__animated animate__fadeIn'>
+        <div className='fixed inset-0 z-50 flex items-center justify-center'>
+            <div className='w-5/6 sm:w-1/2 xl:w-[40%] absolute bg-white p-4 rounded-xl shadow-lg z-10 relative animate__animated animate__fadeIn'>
                 <div className='mb-2'>
                     <Image onClick={handleCloseModal}
                         src={CloseModal} height={28}

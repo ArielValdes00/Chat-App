@@ -1,12 +1,10 @@
 import { ChatState } from '@/context/ChatProvider'
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import Notification from '../../public/icons/notification.png';
 import User from '../../public/icons/user.png';
 import Logout from '../../public/icons/logout.png';
 import Modal from './Modal.js';
 import { useRouter } from 'next/router';
-import { getSender } from '@/config/config';
 
 const Navbar = () => {
     const { user } = ChatState();
@@ -41,7 +39,7 @@ const Navbar = () => {
     }, []);
 
     return (
-        <div className='p-3 border-b'>
+        <div className='py-3 border-b'>
             {showModal && <Modal handleCloseModal={handleCloseModal} userInfo={user} />}
             {user && (
                 <div className='flex items-center justify-between px-4'>

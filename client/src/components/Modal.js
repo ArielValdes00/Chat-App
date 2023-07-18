@@ -26,7 +26,7 @@ const Modal = ({ userInfo, handleCloseModal }) => {
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
-            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative px-16 animate__animated animate__fadeIn'>
+            <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-5/6 sm:w-[60%] xl:w-[40%] animate__animated animate__fadeIn'>
                 <div className='mb-5'>
                     <Image onClick={handleCloseModal}
                         src={CloseModal} height={28}
@@ -35,7 +35,7 @@ const Modal = ({ userInfo, handleCloseModal }) => {
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
-                <div className='flex flex-col gap-3 items-center text-4xl'>
+                <div className='flex flex-col gap-3 items-center'>
                     {user === userInfo ? (
                         <div className='flex flex-col gap-3 items-center'>
                             <div className='flex items-center'>
@@ -57,8 +57,8 @@ const Modal = ({ userInfo, handleCloseModal }) => {
                                     <Image src={Edit} height={20} width={20} alt='Change Picture' className='cursor-pointer' />
                                 </label>
                             </div>
-                            <p className='capitalize'>{userInfo.name}</p>
-                            <p>{userInfo.email}</p>
+                            <p className='capitalize text-4xl'>{userInfo.name}</p>
+                            <p className='text-md md:text-2xl'>{userInfo.email}</p>
                         </div>
                     ) : (
                         <div className='flex flex-col gap-3 items-center'>
@@ -67,8 +67,8 @@ const Modal = ({ userInfo, handleCloseModal }) => {
                                 width={250}
                                 alt={userInfo.name} className='rounded-full profile-img-modal'
                             />
-                            <p className='capitalize'>{userInfo.name}</p>
-                            <p>{userInfo.email}</p>
+                            <p className='capitalize text-4xl md:text-5xl'>{userInfo.name}</p>
+                            <p className='text-md md:text-2xl'>{userInfo.email}</p>
                         </div>
                     )}
 
