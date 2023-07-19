@@ -1,16 +1,16 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { connectDB } from './config/database.js';
 import userRoutes from './routes/user.routes.js';
 import chatRoutes from './routes/chat.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import cors from 'cors';
 import { Server } from 'socket.io';
+import mongoose from 'mongoose';
 import { Message } from './models/messageModel.js';
+import http from "http";
 
 const app = express()
 dotenv.config()
-connectDB()
 app.use(express.json());
 
 app.use(cors({
@@ -27,8 +27,20 @@ app.get("/", (req, res) => {
     res.json("The server is running");
 })
 
-const PORT = process.env.PORT || 5000
-const server = app.listen(PORT);
+const port = process.env.PORT || 5000
+
+const server = http.createServer(app);
+
+mongoose.connect(process.env.MONGO_URL).then(() => {
+    console.log("Mongodb connected");
+    server.listen(port, () => {
+        console.log(`Server is listening on port ${port}`);
+    });
+}).catch((err) => {
+    console.log({ err });
+    process.exit(1);
+});
+
 const io = new Server(server, {
     cors: {
         origin: '*',
@@ -36,7 +48,6 @@ const io = new Server(server, {
         credentials: true
     }
 });
-console.log(`server running on port ${PORT}`);
 
 io.on("connection", (socket) => {
     console.log("Connected to socket.io");
