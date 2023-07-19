@@ -14,7 +14,7 @@ dotenv.config()
 app.use(express.json());
 
 app.use(cors({
-    origin: '*',
+    origin: 'https://chat-app-ten-topaz.vercel.app/',
     methods: '*',
     credentials: true
 }));
@@ -43,7 +43,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
 
 const io = new Server(server, {
     cors: {
-        origin: '*',
+        origin: 'https://chat-app-ten-topaz.vercel.app/',
         methods: '*',
         credentials: true
     }
