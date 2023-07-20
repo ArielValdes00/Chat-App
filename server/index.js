@@ -42,7 +42,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "*",
         methods: "*"
     }
 });
