@@ -191,7 +191,7 @@ const SingleChat = ({ functionShowContact }) => {
                     return message;
                 })
             );
-
+            handleShowContacts()
             setIsMenuOpen(false);
             fetchMessages();
         } catch (error) {
@@ -225,6 +225,7 @@ const SingleChat = ({ functionShowContact }) => {
 
             await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/${selectedChat._id}`, null, config);
             setSelectedChat(null);
+            handleShowContacts()
         } catch (error) {
             console.log(error);
         }
@@ -255,6 +256,7 @@ const SingleChat = ({ functionShowContact }) => {
                                 width={25}
                                 alt='Contact'
                                 className='me-1 lg:hidden cursor-pointer'
+                                loading="eager"
                                 onClick={functionShowContact}
                             />
                             {!selectedChat.isGroupChat ? (
@@ -301,6 +303,7 @@ const SingleChat = ({ functionShowContact }) => {
                                     height={30}
                                     width={30}
                                     alt="Info"
+                                    loading="eager"
                                     onClick={handleOpenModalInfo}
                                     className="cursor-pointer me-2"
                                 />
@@ -310,6 +313,7 @@ const SingleChat = ({ functionShowContact }) => {
                                     height={30}
                                     width={30}
                                     alt="Info"
+                                    loading="eager"
                                     onClick={handleOpenModalGroup}
                                     className="cursor-pointer me-2"
                                 />
@@ -320,6 +324,7 @@ const SingleChat = ({ functionShowContact }) => {
                                     height={30}
                                     width={30}
                                     alt="Menu"
+                                    loading="eager"
                                     onClick={() => setIsMenuOpen(true)}
                                     className="cursor-pointer"
                                 />
@@ -327,11 +332,11 @@ const SingleChat = ({ functionShowContact }) => {
                                     <div className='menu absolute right-0 top-9 w-[150px] shadow-md text-sm font-semibold lowercase capitalize bg-white rounded-md border'>
                                         <div onClick={deleteAllMessages} className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 cursor-pointer'>
                                             <p>Clear Chat</p>
-                                            <Image src={Clear} height={18} width={18} alt='Clear' />
+                                            <Image src={Clear} height={18} width={18} loading="eager" alt='Clear' />
                                         </div>
                                         <div onClick={deleteChat} className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 cursor-pointer'>
                                             <p>Delete Chat</p>
-                                            <Image src={Delete} height={18} width={18} alt='Delete' />
+                                            <Image src={Delete} height={18} width={18} loading="eager" alt='Delete' />
                                         </div>
                                     </div>
                                 )}
@@ -341,7 +346,7 @@ const SingleChat = ({ functionShowContact }) => {
                     <div className='flex-grow flex flex-col h-full border-t overflow-y-auto'>
                         {loader ? (
                             <div className='flex h-full items-center justify-center'>
-                                <Image src={Loader} height={40} width={40} alt='Loader' className='' />
+                                <Image src={Loader} loading="eager" height={40} width={40} alt='Loader' className='' />
                             </div>
                         ) : (
                             <ScrollableChat messages={messages} />
@@ -364,9 +369,9 @@ const SingleChat = ({ functionShowContact }) => {
                             onChange={typingHandler}
                             name='sendMessage'
                         />
-                        {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput={"sendMessage"} position={"bottom-16 left-6"} />}
+                        {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput={"sendMessage"} position={"bottom-16 left-0 mx-3"} />}
                         <button type="submit" className="ps-3">
-                            <Image src={sendMessageIcon} height={30} width={30} alt='Send Message' />
+                            <Image src={sendMessageIcon} loading="eager" height={30} width={30} alt='Send Message' />
                         </button>
                     </form>
                 </>

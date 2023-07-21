@@ -154,12 +154,12 @@ const GroupChatModel = ({ handleCloseModal }) => {
                                 onChange={(e) => setGroupChatName(e.target.value)}
                                 type='text'
                                 placeholder='Your Chat Name'
-                                className="border w-full rounded p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
+                                className="border w-full rounded-lg p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
                                 name='groupChatName'
                                 value={groupChatName}
                             />
                             <button type="button" onClick={toggleEmojiPanel} className="px-3 absolute top-[2px] right-[-50px]">
-                                <FaRegSmile size={30} className='bg-yellow-300 rounded-full mt-[4px]' />
+                                <FaRegSmile size={30} className={`bg-yellow-300 rounded-full mt-[4px] ${showEmojiPanel && "bg-yellow-400"}`} />
                             </button>
                         </div>
                     </div>
@@ -169,7 +169,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                             onChange={(e) => handleSearch(e.target.value)}
                             type='text'
                             placeholder='Add Users'
-                            className="border w-full rounded p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
+                            className="border w-full rounded-lg p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
                         />
                     </div>
                     <div className='w-2/3 flex flex-col gap-2'>
@@ -192,7 +192,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                                 ))}
                         </div>
                     </div>
-                    <button type='submit' className='bg-gray-100 border border-black px-5 mx-auto p-2 rounded-full hover:bg-gray-200'>Create Group</button>
+                    <button type='submit' className='bg-blue-600 border text-gray-100 font-semibold border-black px-5 mx-auto p-2 rounded-full hover:bg-blue-700'>Create Group</button>
                 </form >
             </div>
             <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={handleCloseModal}>

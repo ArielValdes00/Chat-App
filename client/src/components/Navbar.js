@@ -3,6 +3,8 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import User from '../../public/icons/user.png';
 import Logout from '../../public/icons/logout.png';
+import LogoText from '../../public/icons/chatify-text.png';
+import LogoIcon from '../../public/icons/chatify-logo.png';
 import Modal from './Modal.js';
 import { useRouter } from 'next/router';
 
@@ -39,12 +41,13 @@ const Navbar = () => {
     }, []);
 
     return (
-        <div className='py-3 border-b'>
+        <div className='py-[10px] border-b'>
             {showModal && <Modal handleCloseModal={handleCloseModal} userInfo={user} />}
             {user && (
-                <div className='flex items-center justify-between px-4'>
-                    <div>
-                        <p className='font-extrabold text-4xl text-blue-600'>CHATIFY</p>
+                <div className='flex items-center justify-between px-3'>
+                    <div className='mt-1 flex items-center gap-1'>
+                        <Image src={LogoIcon} height={40} width={40} alt='Chatify' className='hidden lg:block'/>
+                        <Image src={LogoText} height={126} width={126} alt='Chatify' />
                     </div>
                     <div className='flex items-center gap-3 profile-container'>
                         <div onClick={() => setIsMenuOpen(true)} className='flex gap-2 items-center relative cursor-pointer'>

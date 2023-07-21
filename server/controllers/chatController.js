@@ -27,8 +27,13 @@ export const accessChat = async (req, res) => {
     });
 
     if (isChat.length > 0) {
+        await Chat.updateOne(
+            { _id: isChat[0]._id },
+            { $set: { deletedBy: null } }
+        );
         res.send(isChat[0]);
-    } else {
+    }
+     else {
         var chatData = {
             chatName: "sender",
             isGroupChat: false,

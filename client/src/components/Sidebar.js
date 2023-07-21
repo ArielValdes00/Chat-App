@@ -15,8 +15,9 @@ const Sidebar = ({searchResult, setSearchResult, setSearch}) => {
                 },
             };
             const { data } = await axios.post(`${process.env.NEXT_PUBLIC_CHAT_URL}`, { userId }, config);
-
-            if (!chats.find((chat) => chat._id === data._id)) setChats([data, ...chats]);
+            console.log(data)
+            setChats([...chats, data]);
+            console.log(chats)
             setSelectedChat(data);
             setSearch('');
             setSearchResult([]);
@@ -27,16 +28,16 @@ const Sidebar = ({searchResult, setSearchResult, setSearch}) => {
 
     return (
         <div className="flex flex-col bg-white z-40">
-            <div className='absolute bg-white z-10 relative h-[467px]'>
+            <div className='absolute bg-white z-10 relative'>
                     {searchResult?.map((user) => (
                         <div
                             key={user._id}
                             className='flex items-center gap-3 p-1 py-2 ps-3 border-b hover:bg-gray-100 cursor-pointer'
                             onClick={() => accessChat(user._id)}
                         >
-                            <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
+                            <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full profile-img-contacts' />
                             <div>
-                                <p className='capitalize'>{user.name}</p>
+                                <p className='capitalize text-lg'>{user.name}</p>
                                 <p className='text-sm'><strong>Email: </strong>{user.email}</p>
                             </div>
                         </div>

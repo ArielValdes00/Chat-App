@@ -14,7 +14,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
     const [groupChatName, setGroupChatName] = useState();
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
-    const { selectedChat, setSelectedChat, user, setChats, loader, setLoader } = ChatState();
+    const { selectedChat, setSelectedChat, user, setChats, loader, setLoader, handleShowContacts } = ChatState();
 
     const handleUploadInput = async (e) => {
         const imageFile = e.target.files[0];
@@ -96,8 +96,14 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                 },
                 config
             );
-            handleCloseModal()
-            user1._id === user._id ? setSelectedChat() : setSelectedChat(data);
+
+            if (user1._id === user._id) {
+                handleCloseModal();
+                setSelectedChat();
+                handleShowContacts()
+            } else {
+                setSelectedChat(data);
+            }
             fetchMessages();
         } catch (error) {
             console.log(error)
@@ -145,6 +151,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                         src={CloseModal} height={28}
                         width={28}
                         alt='Close'
+                        loading="eager"
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
@@ -164,7 +171,13 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                     <label
                         htmlFor="upload-button"
                     >
-                        <Image src={Edit} height={20} width={20} alt='Change Picture' className='absolute ms-2' />
+                        <Image src={Edit}
+                            height={20}
+                            width={20}
+                            alt='Change Picture'
+                            loading="eager"
+                            className='absolute ms-2'
+                        />
                     </label>
                 </div>
                 <p className='text-center text-2xl font-bold capitalize'>{selectedChat.chatName}</p>
@@ -180,6 +193,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                                     height={10}
                                     width={10}
                                     alt='Delete'
+                                    loading="eager"
                                     onClick={() => handleRemove(user)}
                                 />
                             </div>
@@ -195,7 +209,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                             onChange={(e) => setGroupChatName(e.target.value)}
                             type="text"
                             placeholder="Your New Chat Name"
-                            className="border w-full rounded p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
+                            className="border w-full rounded-lg p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
                         />
                         <button
                             onClick={handleRename}
@@ -206,6 +220,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                                 height={25}
                                 width={25}
                                 alt='Confirm'
+                                loading="eager"
                                 className='absolute top-2 right-[-33px]'
                             />
                         </button>
@@ -217,13 +232,13 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                         onChange={(e) => handleSearch(e.target.value)}
                         type="text"
                         placeholder="Add New Users"
-                        className="border rounded p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
+                        className="border rounded-lg p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
                         value={search}
                     />
                 </div>
                 <div className={`${search && "h-[104px]"} overflow-y-auto w-2/3`}>
                     {loader
-                        ? <Image src={Loader} height={30} width={30} alt='Loader' className='mx-auto' />
+                        ? <Image src={Loader} height={30} width={30} alt='Loader' loading="eager" className='mx-auto' />
                         : searchResult.slice(0, 3).map((user) => (
                             <div
                                 key={user._id}
@@ -242,7 +257,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                 <button
                     onClick={() => handleRemove(user)}
                     type='button'
-                    className='bg-gray-100 border border-black px-5 mx-auto p-2 rounded-full font-semibold hover:bg-gray-200'>
+                    className='bg-blue-600 text-gray-100 border border-black px-6 mx-auto p-2 rounded-full font-semibold hover:bg-blue-700'>
                     Leave Chat
                 </button>
             </div>

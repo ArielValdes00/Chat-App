@@ -6,6 +6,9 @@ import EyeSlash from '../../public/icons/eye-slash.png';
 import Image from 'next/image';
 import Loader from '../../public/icons/loader.gif';
 import { useRouter } from 'next/router';
+import LogoText from '../../public/icons/chatify-text.png';
+import LogoIcon from '../../public/icons/chatify-logo.png';
+import LogoBar from '../../public/icons/chatify-bar.png';
 
 const Login = ({ handleChange }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -65,8 +68,12 @@ const Login = ({ handleChange }) => {
     return (
         <div className="px-5">
             <div className="text-center mx-auto max-w-lg xl:max-w-xl px-4">
-                <h1 className="text-6xl lg:text-7xl font-bold text-blue-600 mb-2">CHATIFY</h1>
-                <p className="text-3xl lg:text-4xl mb-8">Chatify helps you communicate with the people in your life.</p>
+                <div className='flex items-center justify-center gap-2 mb-3'>
+                    <Image src={LogoIcon} height={60} width={60} alt='Chatify' />
+                    <Image src={LogoBar} height={5} width={5} alt='Chatify' />
+                    <Image src={LogoText} height={226} width={226} alt='Chatify' className='mt-2'/>
+                </div>
+                <p className="text-3xl mb-5">Chatify helps you communicate with the people in your life.</p>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col items-center shadow-xl rounded-md max-w-lg bg-white mx-auto py-5 px-4">
                 <div className="mb-6 w-full">
@@ -110,7 +117,7 @@ const Login = ({ handleChange }) => {
                 </div>
                 <button
                     type="submit"
-                    className="w-full p-3 py-2 bg-blue-600 rounded-md shadow text-white text-xl font-bold mb-2"
+                    className="w-full p-3 py-2 bg-blue-600 rounded-md shadow text-white text-xl font-bold mb-2 hover:bg-blue-700"
                 >
                     {isLoading ? (
                         <div className='flex items-center justify-center'>
@@ -127,7 +134,8 @@ const Login = ({ handleChange }) => {
                 <button
                     type='button'
                     onClick={handleChange}
-                    className="w-full mt-2 p-2 bg-green-500 rounded-md shadow text-white font-bold text-lg text-center">Create a New Account
+                    className="w-full mt-2 p-2 bg-neutral-800 rounded-md shadow text-white font-bold text-lg text-center hover:bg-black">
+                        Create a New Account
                 </button>
             </form>
         </div>

@@ -45,7 +45,7 @@ const Chat = () => {
                     <Contacts functionShowContact={handleShowContacts} />
                 </motion.div>
                 <motion.div
-                    className={`${showContacts ? "block" : "hidden lg:block"} col-span-7 lg:col-span-5 border-l`}
+                    className={`${showContacts ? "block" : "hidden lg:block"} col-span-7 lg:col-span-5 lg:border-l`}
                     initial={size.width < 1024 ? { x: 100, opacity: 0 } : { opacity: 1 }}
                     animate={size.width < 1024 ? { x: showContacts ? 0 : 100, opacity: showContacts ? 1 : 0 } : {}}
                     transition={{ duration: 0.5 }}

@@ -55,10 +55,10 @@ const Register = ({ handleChange }) => {
     };
     return (
         <div className="px-5">
-            <div className="text-center mx-auto max-w-lg xl:max-w-xl px-4">
-                <h1 className="text-6xl lg:text-7xl font-bold text-blue-600 mb-5 mx-14">REGISTER</h1>
+            <div className="text-center mx-auto max-w-lg xl:max-w-xl px-6 sm:px-16">
+                <h1 className="text-6xl lg:text-7xl font-bold text-blue-600 mb-5">REGISTER</h1>
             </div>
-            <form onSubmit={handleSubmit} className="flex flex-col items-center shadow-xl rounded-md max-w-lg bg-white mx-auto py-5 px-4">
+            <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center shadow-xl rounded-md max-w-lg bg-white mx-auto py-5 px-4">
                 <Input
                     type={"text"}
                     placeholder={"Your Name"}
@@ -116,7 +116,7 @@ const Register = ({ handleChange }) => {
                 </div>
                 <button
                     type="submit"
-                    className="w-full my-2 py-2 bg-blue-600 rounded-md shadow text-white text-xl font-bold"
+                    className="w-full my-2 py-2 bg-blue-600 rounded-md shadow text-white text-xl font-bold hover:bg-blue-700"
                 >
                     {isLoading ? (
                         <div className='flex items-center justify-center'>
@@ -131,7 +131,7 @@ const Register = ({ handleChange }) => {
                 <button
                     type='button'
                     onClick={handleChange}
-                    className="w-full mt-2 py-2 bg-green-500 rounded-md shadow text-white font-bold text-lg text-center">
+                    className="w-full mt-2 py-2 bg-neutral-800 rounded-md shadow text-white font-bold text-lg text-center hover:bg-black">
                     Log In
                 </button>
             </form>

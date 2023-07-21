@@ -63,9 +63,9 @@ const ScrollableChat = ({ messages }) => {
                                         <div>
                                             {
                                                 message.readBy.includes(getSender(user, message.chat.users)) ? (
-                                                    <Image src={TickBlue} height={23} width={23} alt='Viewed' />
+                                                    <Image src={TickBlue} height={23} width={23} loading="eager" alt='Viewed' />
                                                 ) : (
-                                                    <Image src={TickDark} height={23} width={23} alt='Sended' />
+                                                    <Image src={TickDark} height={23} width={23} loading="eager" alt='Sended' />
                                                 )
                                             }
                                         </div>

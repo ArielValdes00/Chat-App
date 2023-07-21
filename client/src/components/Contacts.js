@@ -22,9 +22,8 @@ const Contacts = ({ functionShowContact }) => {
         if (user && user.token) {
             const fetchChats = async () => {
                 const chatsData = await getChats(user);
-                const filteredChats = chatsData.filter((chat) => !chat.latestMessage || !chat.latestMessage.deletedBy.includes(user._id));
-
-                setChats(filteredChats)
+                console.log(chatsData)
+                setChats(chatsData)
             };
             fetchChats();
         }
@@ -43,6 +42,7 @@ const Contacts = ({ functionShowContact }) => {
         setSelectedChat(chat);
         functionShowContact()
         await readMessages(chat, user)
+        await getChats(user)
     };
 
     const handleChangeToggleSearchUsers = (e) => {
@@ -71,16 +71,16 @@ const Contacts = ({ functionShowContact }) => {
     return (
         <div className='h-full overflow-y-auto'>
             {showModal && <GroupChatModel handleCloseModal={handleCloseModal} />}
-            <div onClick={handleOpenModal} className='border-b py-[15px] flex items-center ms-3 gap-3 hover:bg-gray-100 cursor-pointer'>
-                <Image src={AddGroup} height={30} width={30} alt='Add Group' />
+            <div onClick={handleOpenModal} className='border-b py-[15px] flex items-center justify-center lg:justify-start lg:ps-4 gap-3 hover:bg-gray-100 cursor-pointer'>
+                <Image src={AddGroup} height={30} width={30} loading="eager" alt='Add Group' />
                 <p className='font-bold'>New Group Chat</p>
             </div>
-            <div className='border-b py-2'>
-                <div className="flex items-center bg-gray-100 gap-2 border p-2 mx-3 bg-white rounded-full md:w-1/2 lg:w-5/6">
+            <div className='border-b py-3 flex items-center justify-center lg:justify-start'>
+                <div className="flex items-center bg-gray-100 gap-2 border p-2 mx-3 bg-white rounded-full w-full">
                     <button
                         onClick={handleSearch}
                     >
-                        <Image src={Search} height={20} width={20} alt="Search" className='ms-3' />
+                        <Image src={Search} height={20} width={20} alt="Search" loading="eager" className='ms-3' />
                     </button>
                     <input
                         className="outline-none placeholder-gray-500 mx-3"

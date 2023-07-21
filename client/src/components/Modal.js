@@ -32,6 +32,7 @@ const Modal = ({ userInfo, handleCloseModal }) => {
                         src={CloseModal} height={28}
                         width={28}
                         alt='Close'
+                        loading="eager"
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
@@ -54,7 +55,7 @@ const Modal = ({ userInfo, handleCloseModal }) => {
                                 <label
                                     htmlFor="upload-button"
                                 >
-                                    <Image src={Edit} height={20} width={20} alt='Change Picture' className='cursor-pointer' />
+                                    <Image src={Edit} loading="eager" height={20} width={20} alt='Change Picture' className='cursor-pointer' />
                                 </label>
                             </div>
                             <p className='capitalize text-4xl'>{userInfo.name}</p>
