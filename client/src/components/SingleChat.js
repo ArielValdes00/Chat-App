@@ -55,7 +55,7 @@ const SingleChat = ({ functionShowContact }) => {
         setShowGroupChatModal(true)
     }
     useEffect(() => {
-        const newSocket = io("chat-app-ashy-six.vercel.app");
+        const newSocket = io("https://chat-app-ashy-six.vercel.app");
 
         if (user) {
             newSocket.emit("setup", user);
