@@ -146,7 +146,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                             </div>
                         ))}
                     </div>
-                    <div className='w-2/3 flex flex-col gap-2'>
+                    <div className='lg:w-2/3 flex flex-col gap-2'>
                         <label htmlFor='groupChatName' className='text-center font-semibold'>Chat Name</label>
                         <div className='flex relative'>
                             {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput="groupChatName" position={"top-0"} />}
@@ -163,7 +163,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                             </button>
                         </div>
                     </div>
-                    <div className='w-2/3 flex flex-col items-center gap-2'>
+                    <div className='lg:w-2/3 flex flex-col items-center gap-2'>
                         <label htmlFor='Users' className='text-center font-semibold'>Add Users</label>
                         <input
                             onChange={(e) => handleSearch(e.target.value)}
@@ -172,7 +172,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                             className="border w-full rounded-lg p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
                         />
                     </div>
-                    <div className='w-2/3 flex flex-col gap-2'>
+                    <div className='lg:w-2/3 flex flex-col gap-2'>
                         <div className={`${search && "h-[104px]"} overflow-y-auto`}>
                             {loader
                                 ? <Image src={Loader} height={30} width={30} alt='Loader' className='mx-auto'/>
@@ -181,7 +181,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                                         key={user._id}
                                         user={user}
                                         onClick={() => handleGroup(user)}
-                                        className='flex items-center gap-3 py-1 ps-3 hover:bg-gray-100 cursor-pointer'
+                                        className='flex items-center gap-3 py-1 px-4 lg:ps-3 hover:bg-gray-100 cursor-pointer'
                                     >
                                         <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
                                         <div>

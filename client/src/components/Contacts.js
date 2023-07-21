@@ -22,8 +22,14 @@ const Contacts = ({ functionShowContact }) => {
         if (user && user.token) {
             const fetchChats = async () => {
                 const chatsData = await getChats(user);
-                console.log(chatsData)
-                setChats(chatsData)
+                const filteredChats = chatsData.filter((chat) => {
+                    if (chat.deletedBy === null) {
+                        return true;
+                    }
+            
+                    return !chat.deletedBy.includes(user._id);
+                });
+                setChats(filteredChats);
             };
             fetchChats();
         }

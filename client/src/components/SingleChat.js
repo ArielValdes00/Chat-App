@@ -20,7 +20,7 @@ import { getChats, readMessages } from '@/utils/apiChats';
 import Loader from '../../public/icons/loader.gif';
 
 const SingleChat = ({ functionShowContact }) => {
-    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications, loader, setLoader } = ChatState();
+    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications, loader, setLoader, handleShowContacts } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
