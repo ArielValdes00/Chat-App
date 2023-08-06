@@ -55,7 +55,7 @@ const SingleChat = ({ functionShowContact }) => {
         setShowGroupChatModal(true)
     }
     useEffect(() => {
-        const newSocket = io("https://server-chat-app.adaptable.app");
+        const newSocket = io(process.env.NEXT_PUBLIC_URL);
 
         if (user) {
             newSocket.emit("setup", user);
@@ -248,7 +248,7 @@ const SingleChat = ({ functionShowContact }) => {
             )}
             {selectedChat ? (
                 <>
-                    <div className="flex justify-between items-center py-1 px-2 uppercase font-bold text-lg">
+                    <div className="flex justify-between items-center py-[6px] px-2 uppercase font-bold text-lg">
                         <div className="flex items-center gap-3">
                             <Image
                                 src={LeftArrow}
@@ -343,10 +343,10 @@ const SingleChat = ({ functionShowContact }) => {
                             </div>
                         </div>
                     </div>
-                    <div className='flex-grow flex flex-col h-full border-t overflow-y-auto'>
+                    <div className='flex flex-grow bg-gray-100 flex-col h-[412px] border-t overflow-y-auto'>
                         {loader ? (
                             <div className='flex h-full items-center justify-center'>
-                                <Image src={Loader} loading="eager" height={40} width={40} alt='Loader' className='' />
+                                <Image src={Loader} loading="eager" height={40} width={40} alt='Loader' />
                             </div>
                         ) : (
                             <ScrollableChat messages={messages} />
@@ -357,14 +357,14 @@ const SingleChat = ({ functionShowContact }) => {
                             <p className='text-sm font-base lowercase'>{`${getSender(user, selectedChat.users).name} is typing...`}</p>
                         )}
                     </div>
-                    <form onSubmit={sendMessage} className="flex bg-gray-200 p-4 text-sm relative">
+                    <form onSubmit={sendMessage} className="flex px-4 py-[14px] text-sm relative">
                         <button type="button" onClick={toggleEmojiPanel} className="pe-3">
                             <FaRegSmile size={30} className='bg-yellow-300 rounded-full border-none' />
                         </button>
                         <input
                             type="text"
                             placeholder="Message..."
-                            className="w-full p-2 py-3 outline-none rounded-lg ps-4"
+                            className="w-full bg-gray-100 p-2 outline-none rounded-full ps-4"
                             value={newMessage}
                             onChange={typingHandler}
                             name='sendMessage'
@@ -376,7 +376,7 @@ const SingleChat = ({ functionShowContact }) => {
                     </form>
                 </>
             ) : (
-                <div className='h-[90vh] flex flex-col items-center justify-center gap-5 font-semibold'>
+                <div className='h-full bg-gray-100 flex flex-col items-center justify-center gap-5 font-semibold'>
                     <Image src={NoChats} priority={true} height={250} width={350} alt='Chatify' />
                     <p className=''>Click on a user to start chatting</p>
                 </div>
