@@ -1,11 +1,6 @@
 import { ChatState } from '@/context/ChatProvider';
-import Image from 'next/image';
 import React from 'react';
 import { useRef, useEffect } from 'react';
-import TickDark from '../../public/icons/tick-dark.png';
-import TickBlue from '../../public/icons/tick-blue.png';
-import { getSender } from '@/config/config';
-
 
 const ScrollableChat = ({ messages }) => {
     const { user } = ChatState();
@@ -29,7 +24,7 @@ const ScrollableChat = ({ messages }) => {
 
     const getUserColor = (userId) => {
         if (userId === user._id) {
-            return "text-black";
+            return "text-gray-100";
         }
         return userColors[userId] || "text-gray-200";
     };
@@ -57,19 +52,8 @@ const ScrollableChat = ({ messages }) => {
                                     )}
                                     <p className="text-[15px] leading-[20px]">{message.content}</p>
                                 </div>
-                                <div className='flex items-center justify-center gap-2'>
+                                <div className='flex items-end justify-center gap-2'>
                                     <p className="text-[10px]">{formatTime(message.createdAt)}</p>
-                                    {message.sender._id === user._id && (
-                                        <div>
-                                            {
-                                                message.readBy.includes(getSender(user, message.chat.users)) ? (
-                                                    <Image src={TickBlue} height={23} width={23} loading="eager" alt='Viewed' />
-                                                ) : (
-                                                    <Image src={TickDark} height={23} width={23} loading="eager" alt='Sended' />
-                                                )
-                                            }
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         </div>

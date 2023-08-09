@@ -6,8 +6,6 @@ import axios from 'axios';
 import Delete from '../../public/icons/delete-user.png';
 import Loader from '../../public/icons/loader.gif';
 import Edit from '../../public/icons/edit.png';
-import { FaRegSmile } from 'react-icons/fa';
-import EmojiPanel from './EmojiPanel.js';
 import 'animate.css';
 
 const GroupChatModel = ({ handleCloseModal }) => {
@@ -149,7 +147,6 @@ const GroupChatModel = ({ handleCloseModal }) => {
                     <div className='lg:w-2/3 flex flex-col gap-2'>
                         <label htmlFor='groupChatName' className='text-center font-semibold'>Chat Name</label>
                         <div className='flex relative'>
-                            {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput="groupChatName" position={"top-0"} />}
                             <input
                                 onChange={(e) => setGroupChatName(e.target.value)}
                                 type='text'
@@ -158,9 +155,6 @@ const GroupChatModel = ({ handleCloseModal }) => {
                                 name='groupChatName'
                                 value={groupChatName}
                             />
-                            <button type="button" onClick={toggleEmojiPanel} className="px-3 absolute top-[2px] right-[-50px]">
-                                <FaRegSmile size={30} className={`bg-yellow-300 rounded-full mt-[4px] ${showEmojiPanel && "bg-yellow-400"}`} />
-                            </button>
                         </div>
                     </div>
                     <div className='lg:w-2/3 flex flex-col items-center gap-2'>

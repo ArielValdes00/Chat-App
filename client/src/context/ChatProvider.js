@@ -21,19 +21,24 @@ const ChatProvider = ({ children }) => {
     }, [router]);
 
     const handleShowContacts = () => {
-        setShowContacts(!showContacts);
+        setShowContacts(true);
+    }
+
+    const handleShowChatBox = () => {
+        setShowContacts(false);
     }
 
     const handleShowSideBar = () => {
         setShowSideBar(!showSideBar);
     }
+    console.log(showContacts)
 
     return <ChatContext.Provider value={{
         user, setUser,
         chats, setChats,
         selectedChat, setSelectedChat,
         notifications, setNotifications,
-        handleShowContacts,
+        handleShowContacts, handleShowChatBox,
         showContacts, setShowContacts,
         loader, setLoader,
         handleShowSideBar,

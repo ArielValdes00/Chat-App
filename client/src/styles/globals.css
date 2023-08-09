@@ -2,18 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+  
+.text-color-1 {
+    color: #e74c3c; 
+}
+
 .text-color-2 {
-    color: #00FF00;
+    color: #3498db;
 }
 
 .text-color-3 {
-    color: #FFFF00; 
-}
-  
-.text-color-1 {
-    color: FFFFFF; 
+    color: #2ecc71; 
 }
 
+.text-color-4{
+    color: #f39c12;
+}
+
+.text-color-5{
+    color: #9b59b6;
+}
+
+.emoji-mart {
+    width: 500px !important;
+  }
+  
+ 
 .profile-img {
     width: 36px;
     height: 36px;

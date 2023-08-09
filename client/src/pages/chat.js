@@ -6,7 +6,7 @@ import { ChatState } from '@/context/ChatProvider';
 import SingleChat from '@/components/SingleChat';
 
 const Chat = () => {
-    const { showContacts, handleShowContacts } = ChatState();
+    const { showContacts, handleShowContacts, handleShowChatBox } = ChatState();
     const useWindowSize = () => {
         const [windowSize, setWindowSize] = useState({
             width: undefined,
@@ -34,7 +34,7 @@ const Chat = () => {
 
     return (
         <div className='min-h-screen flex flex-col overflow-x-hidden'>
-            <Navbar />
+            <Navbar functionShowContact={handleShowChatBox}/>
             <div className='grid grid-cols-7 flex-grow'>
                 <motion.div
                     className={`${!showContacts ? "block" : "hidden lg:block"} col-span-7 lg:col-span-2`}
@@ -50,7 +50,7 @@ const Chat = () => {
                     animate={size.width < 1024 ? { x: showContacts ? 0 : 100, opacity: showContacts ? 1 : 0 } : {}}
                     transition={{ duration: 0.5 }}
                 >
-                    <SingleChat functionShowContact={handleShowContacts} />
+                    <SingleChat functionShowContact={handleShowChatBox} />
                 </motion.div>
             </div>
         </div>

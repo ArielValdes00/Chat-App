@@ -5,6 +5,7 @@ import Info from '../../public/icons/info.png';
 import Menu from '../../public/icons/menu.png';
 import Clear from '../../public/icons/clean.png';
 import Delete from '../../public/icons/delete.png';
+import Emoji from '../../public/icons/emoji.png';
 import LeftArrow from '../../public/icons/left-arrow.png';
 import NoChats from '../../public/icons/no-chats.svg';
 import sendMessageIcon from '../../public/icons/send-message.png';
@@ -14,13 +15,13 @@ import UpdateGroupChatModal from './UpdateGroupChatModal.js';
 import axios from 'axios';
 import ScrollableChat from './ScrollableChat.js';
 import { io } from "socket.io-client";
-import { FaRegSmile } from 'react-icons/fa';
-import EmojiPanel from './EmojiPanel.js';
 import { getChats, readMessages } from '@/utils/apiChats';
 import Loader from '../../public/icons/loader.gif';
+import Picker from '@emoji-mart/react'
+import data from '@emoji-mart/data'
 
-const SingleChat = ({ functionShowContact }) => {
-    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications, loader, setLoader, handleShowContacts } = ChatState();
+const SingleChat = ({ functionShowContact,  }) => {
+    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications, loader, setLoader, handleShowContacts, handleShowChatBox } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
@@ -29,16 +30,18 @@ const SingleChat = ({ functionShowContact }) => {
     const [showModalInfo, setShowModalInfo] = useState(false);
     const [showGroupChatModal, setShowGroupChatModal] = useState(false);
     const [socket, setSocket] = useState(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showEmojiPanel, setShowEmojiPanel] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [chosenEmoji, setChosenEmoji] = useState(null);
 
-    const toggleEmojiPanel = () => {
-        setShowEmojiPanel(prevState => !prevState);
-    }
-    const selectEmoji = (emoji) => {
-        setShowEmojiPanel(false);
-        setNewMessage(prevMessage => prevMessage + emoji);
-    }
+    const toggleShowEmojis = () => {
+        setShowEmojiPanel(!showEmojiPanel);
+    };
+
+    const onEmojiClick = (emojiObject) => {
+        setChosenEmoji(emojiObject);
+        setNewMessage(prevMessage => prevMessage + emojiObject.native);
+    };
 
     const handleCloseModalInfo = () => {
         setShowModalInfo(false)
@@ -225,7 +228,7 @@ const SingleChat = ({ functionShowContact }) => {
 
             await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/${selectedChat._id}`, null, config);
             setSelectedChat(null);
-            handleShowContacts()
+            handleShowChatBox();
         } catch (error) {
             console.log(error);
         }
@@ -271,14 +274,14 @@ const SingleChat = ({ functionShowContact }) => {
                                     {getSender(user, selectedChat.users).name}
                                 </div>
                             ) : (
-                                <div className='flex items-center gap-3 px-1'>
+                                <div className='flex items-center gap-3 px-1 py-2'>
                                     <img
                                         src={selectedChat.picture}
                                         alt={selectedChat.name}
                                         className='rounded-full profile-img'
                                     />
                                     <div>
-                                        <p className='md:mb-[-9px] md:mt-[5px] text-sm sm:text-md md:text-lg'>{selectedChat.chatName}</p>
+                                        <p className='md:mb-[-9px] md:mt-[5px] md:text-lg'>{selectedChat.chatName}</p>
                                         <div className='flex gap-1 flex-wrap'>
                                             {[
                                                 ...selectedChat.users.filter(u => user.name !== u.name),
@@ -357,9 +360,9 @@ const SingleChat = ({ functionShowContact }) => {
                             <p className='text-sm font-base lowercase'>{`${getSender(user, selectedChat.users).name} is typing...`}</p>
                         )}
                     </div>
-                    <form onSubmit={sendMessage} className="flex px-4 py-[14px] text-sm relative">
-                        <button type="button" onClick={toggleEmojiPanel} className="pe-3">
-                            <FaRegSmile size={30} className='bg-yellow-300 rounded-full border-none' />
+                    <form onSubmit={sendMessage} className="flex items-center bg-white gap-3 px-4 py-[14px] text-sm relative z-50">
+                        <button onClick={toggleShowEmojis}>
+                            <Image src={Emoji} height={30} width={30} alt='Emojis' className='rounded-full bg-yellow-300' />
                         </button>
                         <input
                             type="text"
@@ -369,11 +372,23 @@ const SingleChat = ({ functionShowContact }) => {
                             onChange={typingHandler}
                             name='sendMessage'
                         />
-                        {showEmojiPanel && <EmojiPanel onSelect={selectEmoji} targetInput={"sendMessage"} position={"bottom-16 left-0 mx-3"} />}
-                        <button type="submit" className="ps-3">
+                        <button type="submit">
                             <Image src={sendMessageIcon} loading="eager" height={30} width={30} alt='Send Message' />
                         </button>
                     </form>
+                    {showEmojiPanel &&
+                        <div className='absolute bottom-0'>
+                            <Picker data={data}
+                                onEmojiSelect={onEmojiClick}
+                                previewPosition="none"
+                                perLine={10}
+                                emojiSize={20}
+                                emojiButtonSize={30}
+                                skinTonePosition="none"
+                                theme="light"
+                            />
+                        </div>
+                    }
                 </>
             ) : (
                 <div className='h-full bg-gray-100 flex flex-col items-center justify-center gap-5 font-semibold'>
@@ -386,4 +401,4 @@ const SingleChat = ({ functionShowContact }) => {
 
 }
 
-export default SingleChat
+export default SingleChat;

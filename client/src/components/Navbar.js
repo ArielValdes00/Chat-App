@@ -4,17 +4,22 @@ import React, { useEffect, useState } from 'react';
 import User from '../../public/icons/user.png';
 import Search from '../../public/icons/search.png';
 import Logout from '../../public/icons/logout.png';
+import ContactsIcon from '../../public/icons/contacts.png';
 import LogoText from '../../public/icons/chatify-text.png';
 import LogoIcon from '../../public/icons/chatify-logo.png';
 import Modal from './Modal.js';
 import { useRouter } from 'next/router';
 
-const Navbar = () => {
-    const { user, handleShowSideBar } = ChatState();
+const Navbar = ({ functionShowContact }) => {
+    const { user, handleShowSideBar, showSideBar} = ChatState();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const router = useRouter();
 
+    const showContact = () => {
+        functionShowContact();
+        handleShowSideBar();
+    }
     const handleOpenModal = () => {
         setShowModal(true);
     };
@@ -46,9 +51,9 @@ const Navbar = () => {
             {showModal && <Modal handleCloseModal={handleCloseModal} userInfo={user} />}
             {user && (
                 <div className='flex items-center justify-between px-3'>
-                    <div className='flex items-center gap-2 cursor-pointer bg-blue-600 rounded-full p-2 lg:px-3 lg:pe-4 lg:py-[7px]' onClick={handleShowSideBar}>
-                        <Image src={Search} height={20} width={20} alt='Search Users'/>
-                        <p className='hidden lg:block text-white font-semibold'>Search Users</p>
+                    <div className='flex items-center gap-2 cursor-pointer bg-blue-600 rounded-full p-2 lg:px-3 lg:pe-4 lg:py-[7px]' onClick={showContact}>
+                        <Image src={showSideBar ? ContactsIcon : Search} height={20} width={20} alt='Search Users'/>
+                        <p className='hidden lg:block text-white font-semibold'>{`${showSideBar ? 'Contacts' : 'Search Users'}`}</p>
                     </div>
                     <div className='mt-1 flex items-center gap-1'>
                         <Image src={LogoIcon} height={40} width={40} alt='Chatify' className='hidden lg:block'/>
