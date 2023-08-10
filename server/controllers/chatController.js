@@ -7,7 +7,7 @@ export const accessChat = async (req, res) => {
     const { userId } = req.body;
     const userIdObjectId = new mongoose.Types.ObjectId(userId);
     const reqUserIdObjectId = new mongoose.Types.ObjectId(req.user._id);
-    
+
     if (!userId) {
         console.log("UserId param not sent with request");
         return res.sendStatus(400);
@@ -17,7 +17,6 @@ export const accessChat = async (req, res) => {
         isGroupChat: false,
         users: { $all: [reqUserIdObjectId, userIdObjectId] },
     })
-
         .populate("users", "-password")
         .populate("latestMessage");
 
@@ -29,11 +28,10 @@ export const accessChat = async (req, res) => {
     if (isChat.length > 0) {
         await Chat.updateOne(
             { _id: isChat[0]._id },
-            { $set: { deletedBy: null } }
+            { $set: { deletedBy: [] } } 
         );
         res.send(isChat[0]);
-    }
-     else {
+    } else {
         var chatData = {
             chatName: "sender",
             isGroupChat: false,
@@ -53,6 +51,7 @@ export const accessChat = async (req, res) => {
         }
     }
 };
+
 
 export const fetchChats = async (req, res) => {
     try {
