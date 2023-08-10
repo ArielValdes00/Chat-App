@@ -27,7 +27,23 @@
     width: 500px !important;
   }
   
- 
+.arrow-left {
+    position: relative;
+    background: #FFFFFF;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.arrow-left:before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 0;
+    border-width: 0 10px 10px 0;
+    border-color: transparent #FFFFFF transparent transparent;
+}
+
 .profile-img {
     width: 36px;
     height: 36px;

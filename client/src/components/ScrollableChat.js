@@ -45,15 +45,15 @@ const ScrollableChat = ({ messages }) => {
                                     className='profile-img rounded-full me-2'
                                 />
                             )}
-                            <div className={`p-2 pb-[6px] px-3 rounded-md lowercase max-w-sm lg:max-w-xl font-[500] flex items-end gap-3 ${message.sender._id === user._id ? "bg-blue-600 text-gray-100" : "bg-white"}`}>
+                            <div className={`p-2 pb-[6px] px-3 lowercase max-w-sm lg:max-w-xl font-[500] flex items-end gap-3 ${message.sender._id === user._id ? "bg-blue-600 text-gray-100 rounded-md arrow-right" : "bg-white arrow-left"}`}>
                                 <div className='flex flex-col leading-6'>
                                     {isGroupChat && (
                                         <p className={`text-[15px] capitalize ${getUserColor(message.sender._id)}`}>{message.sender.name}</p>
                                     )}
                                     <p className="text-[15px] leading-[20px]">{message.content}</p>
                                 </div>
-                                <div className='flex items-end justify-center gap-2'>
-                                    <p className="text-[10px]">{formatTime(message.createdAt)}</p>
+                                <div className='flex items-end justify-center gap-2 text-[10px]'>
+                                    {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </div>
                             </div>
                         </div>
@@ -63,13 +63,6 @@ const ScrollableChat = ({ messages }) => {
             <div ref={messagesEndRef} />
         </div>
     );
-};
-
-const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
 };
 
 export default ScrollableChat;

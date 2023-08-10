@@ -50,6 +50,7 @@ const SingleChat = ({ functionShowContact,  }) => {
     const handleOpenModalInfo = () => {
         setShowModalInfo(true)
     }
+
     const handleCloseModalGroup = () => {
         setShowGroupChatModal(false)
     }
@@ -251,7 +252,7 @@ const SingleChat = ({ functionShowContact,  }) => {
             )}
             {selectedChat ? (
                 <>
-                    <div className="flex justify-between items-center py-[6px] px-2 uppercase font-bold text-lg">
+                    <div className="flex justify-between items-center py-[6px] px-2 capitalize font-bold text-lg">
                         <div className="flex items-center gap-3">
                             <Image
                                 src={LeftArrow}
@@ -274,7 +275,7 @@ const SingleChat = ({ functionShowContact,  }) => {
                                     {getSender(user, selectedChat.users).name}
                                 </div>
                             ) : (
-                                <div className='flex items-center gap-3 px-1 py-2'>
+                                <div className='flex items-center gap-3 px-1 py-2 lg:py-0'>
                                     <img
                                         src={selectedChat.picture}
                                         alt={selectedChat.name}
@@ -360,7 +361,7 @@ const SingleChat = ({ functionShowContact,  }) => {
                             <p className='text-sm font-base lowercase'>{`${getSender(user, selectedChat.users).name} is typing...`}</p>
                         )}
                     </div>
-                    <form onSubmit={sendMessage} className="flex items-center bg-white gap-3 px-4 py-[14px] text-sm relative z-50">
+                    <form onSubmit={sendMessage} className="flex items-center bg-white gap-3 px-4 py-[14px] text-sm relative z-40">
                         <button onClick={toggleShowEmojis}>
                             <Image src={Emoji} height={30} width={30} alt='Emojis' className='rounded-full bg-yellow-300' />
                         </button>
@@ -393,7 +394,7 @@ const SingleChat = ({ functionShowContact,  }) => {
             ) : (
                 <div className='h-full bg-gray-100 flex flex-col items-center justify-center gap-5 font-semibold'>
                     <Image src={NoChats} priority={true} height={250} width={350} alt='Chatify' />
-                    <p className=''>Click on a user to start chatting</p>
+                    <p>Click on a user to start chatting</p>
                 </div>
             )}
         </div>

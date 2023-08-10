@@ -127,7 +127,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                         <label
                             htmlFor="upload-button"
                         >
-                            <Image src={Edit} height={20} width={20} alt='Change Picture' className='absolute ms-2' />
+                            <Image src={Edit} height={20} width={20} alt='Change Picture' className='absolute ms-2 cursor-pointer' />
                         </label>
                     </div>
                     <div className='flex items-center gap-2 justify-center w-full flex-wrap'>

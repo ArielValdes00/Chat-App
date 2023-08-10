@@ -31,7 +31,6 @@ const ChatProvider = ({ children }) => {
     const handleShowSideBar = () => {
         setShowSideBar(!showSideBar);
     }
-    console.log(showContacts)
 
     return <ChatContext.Provider value={{
         user, setUser,

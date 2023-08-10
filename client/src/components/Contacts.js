@@ -51,9 +51,10 @@ const Contacts = ({ functionShowContact }) => {
         await readMessages(chat, user)
         await getChats(user)
     };
+    console.log(chats)
 
     return (
-        <div className='h-full overflow-y-auto'>
+        <div className='overflow-y-auto'>
             {showModal && <GroupChatModel handleCloseModal={handleCloseModal} />}
             {showSideBar ? <Sidebar /> : (
                 <div>
@@ -67,9 +68,10 @@ const Contacts = ({ functionShowContact }) => {
                         </div>
                         :
                         chats.map((chat) => (
-                            <div key={chat._id}
+                            <div
+                                key={chat._id}
                                 onClick={() => showChats(chat)}
-                                className='flex items-center gap-3 p-3 border-b cursor-pointer hover:bg-gray-100'
+                                className={`flex items-center gap-3 p-3 border-b cursor-pointer ${selectedChat?._id === chat._id && 'lg:bg-gray-100'} hover:bg-gray-100`}
                             >
                                 <img
                                     src={!chat.isGroupChat ? getSender(loggedUser, chat.users)?.picture : chat.picture}
@@ -87,17 +89,30 @@ const Contacts = ({ functionShowContact }) => {
                                         {chat.hasUnreadMessages && (
                                             <span className='flex justify-center items-center text-sm w-5 h-5 rounded-full bg-blue-600 text-white'>{notifications.length}</span>
                                         )}
-                                        {chat.latestMessage && (
+                                        {chat.latestMessage && !chat.latestMessage.deletedBy.includes(user._id) && (
                                             <p className='text-sm'>
                                                 {chat.isGroupChat &&
                                                     <b className='capitalize'>{chat.latestMessage.sender.name}: </b>
                                                 }
-                                                {chat.latestMessage.content.length > 40
-                                                    ? chat.latestMessage.content.substring(0, 41) + "..."
+                                                {chat.latestMessage.content.length > (chat.isGroupChat ? 20 - chat.latestMessage.sender.name.length : 20)
+                                                    ? <>
+                                                        {chat.latestMessage.content.substring(0, chat.isGroupChat ? 21 - chat.latestMessage.sender.name.length : 21)}
+                                                        <span className='hidden xl:inline'>
+                                                            {chat.latestMessage.content.substring(chat.isGroupChat ? 21 - chat.latestMessage.sender.name.length : 21, chat.isGroupChat ? 35 - chat.latestMessage.sender.name.length : 35)}
+                                                        </span>
+                                                        ...
+                                                    </>
                                                     : chat.latestMessage.content}
                                             </p>
                                         )}
                                     </div>
+                                </div>
+                                <div className='ml-auto'>
+                                    {chat.latestMessage?.createdAt && (
+                                        <span className='text-gray-500 text-xs'>
+                                            {new Date(chat.latestMessage.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         ))}
