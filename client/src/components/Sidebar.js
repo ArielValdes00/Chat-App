@@ -1,47 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { ChatState } from '@/context/ChatProvider';
 import Loader from '../../public/icons/loader.gif';
 import Image from 'next/image';
+import { getAllUsers, selectChat } from '@/utils/apiChats';
 
-const Sidebar = () => {
+const Sidebar = ({ toast }) => {
     const [usersResult, setUsersResult] = useState([]);
-    const { user, setSelectedChat, chats, setChats, handleShowSideBar, setLoader, loader } = ChatState();
+    const [loader, setLoader] = useState(false);
+    const { user, setSelectedChat, chats, setChats, handleShowSideBar } = ChatState();
 
     useEffect(() => {
-        const getAllUsers = async () => {
+        const getUsers = async () => {
             try {
                 setLoader(true);
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                };
-                const { data } = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}`, config);
+                const data = await getAllUsers(user);
                 setLoader(false);
                 setUsersResult(data);
             } catch (error) {
                 console.log(error);
             }
         };
-        getAllUsers();
+        getUsers();
     }, [])
 
-
     const accessChat = async (userId) => {
-        try {
-            const config = {
-                headers: {
-                    "Content-type": "application/json",
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_CHAT_URL}`, { userId }, config);
-            setChats([...chats, data]);
-            setSelectedChat(data);
-            handleShowSideBar();
-        } catch (error) {
-            console.log(error)
+        if (userId === chats._id) {
+            toast.error('The user has already been added')
+        } else {
+            try {
+                const data = await selectChat(userId, user);
+                setChats([...chats, data]);
+                setSelectedChat(data);
+                handleShowSideBar();
+            } catch (error) {
+                console.log(error)
+            }
         }
     };
 

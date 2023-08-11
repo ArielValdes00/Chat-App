@@ -4,6 +4,8 @@ import Navbar from '@/components/Navbar';
 import Contacts from '@/components/Contacts';
 import { ChatState } from '@/context/ChatProvider';
 import SingleChat from '@/components/SingleChat';
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 const Chat = () => {
     const { showContacts, handleShowContacts, handleShowChatBox } = ChatState();
@@ -42,7 +44,7 @@ const Chat = () => {
                     animate={size.width < 1024 ? { x: !showContacts ? 0 : -100, opacity: !showContacts ? 1 : 0 } : {}}
                     transition={{ duration: 0.5 }}
                 >
-                    <Contacts functionShowContact={handleShowContacts} />
+                    <Contacts functionShowContact={handleShowContacts} toast={toast}/>
                 </motion.div>
                 <motion.div
                     className={`${showContacts ? "block" : "hidden lg:block"} col-span-7 lg:col-span-5 lg:border-l`}
@@ -50,9 +52,19 @@ const Chat = () => {
                     animate={size.width < 1024 ? { x: showContacts ? 0 : 100, opacity: showContacts ? 1 : 0 } : {}}
                     transition={{ duration: 0.5 }}
                 >
-                    <SingleChat functionShowContact={handleShowChatBox} />
+                    <SingleChat functionShowContact={handleShowChatBox} toast={toast}/>
                 </motion.div>
             </div>
+            <ToastContainer
+                position="bottom-right"
+                autoClose={2500}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                draggable
+                theme="light"
+            />
         </div>
     );
 };

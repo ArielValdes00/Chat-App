@@ -29,8 +29,36 @@ const ScrollableChat = ({ messages }) => {
         return userColors[userId] || "text-gray-200";
     };
 
+    const groupMessagesByDate = messages.reduce((result, message) => {
+        if (!message.deletedBy.includes(user._id)) {
+            const date = new Date(message.createdAt).toLocaleDateString();
+            if (!result[date]) {
+                result[date] = [];
+            }
+            result[date].push(message);
+        }
+        return result;
+    }, {});
+
     return (
         <div className="flex flex-col gap-4 pt-3 px-3">
+            {Object.keys(groupMessagesByDate).map((date) => {
+                const messageDate = new Date(date);
+                const today = new Date();
+                const oneWeekAgo = new Date(today - 7 * 86400000);
+                return (
+                    <div key={date} className="text-center text-gray-500 text-sm">
+                        {date === today.toLocaleDateString()
+                            ? 'Today'
+                            : date === new Date(today - 86400000).toLocaleDateString()
+                                ? 'Yesterday'
+                                : messageDate > oneWeekAgo
+                                    ? messageDate.toLocaleDateString('en-US', { weekday: 'long' })
+                                    : date
+                                }
+                    </div>
+                );
+            })}
             {messages.map((message) => {
                 if (!message.deletedBy.includes(user._id)) {
                     return (

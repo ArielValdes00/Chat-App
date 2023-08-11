@@ -10,7 +10,6 @@ const ChatProvider = ({ children }) => {
     const [chats, setChats] = useState([]);
     const [notifications, setNotifications] = useState([]);
     const [showContacts, setShowContacts] = useState(false);
-    const [loader, setLoader] = useState(false);
     const [showSideBar, setShowSideBar] = useState(false);
 
     useEffect(() => {
@@ -39,7 +38,6 @@ const ChatProvider = ({ children }) => {
         notifications, setNotifications,
         handleShowContacts, handleShowChatBox,
         showContacts, setShowContacts,
-        loader, setLoader,
         handleShowSideBar,
         showSideBar
     }}>{children}</ChatContext.Provider>

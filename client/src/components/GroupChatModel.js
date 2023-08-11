@@ -2,36 +2,25 @@ import React, { useState } from 'react'
 import CloseModal from '../../public/icons/close-modal.png';
 import { ChatState } from '@/context/ChatProvider';
 import Image from 'next/image';
-import axios from 'axios';
 import Delete from '../../public/icons/delete-user.png';
 import Loader from '../../public/icons/loader.gif';
 import Edit from '../../public/icons/edit.png';
 import 'animate.css';
+import { createGroupChat, searchUsers } from '@/utils/apiChats';
 
-const GroupChatModel = ({ handleCloseModal }) => {
-    const { user, chats, setChats, loader, setLoader } = ChatState();
+const GroupChatModel = ({ handleCloseModal, toast }) => {
+    const { user, chats, setChats } = ChatState();
     const [groupChatName, setGroupChatName] = useState("");
     const [groupChatImage, setGroupChatImage] = useState("")
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
-    const [showEmojiPanel, setShowEmojiPanel] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
-
-    const toggleEmojiPanel = () => {
-        setShowEmojiPanel(prevState => !prevState);
-    };
-
-    const selectEmoji = (emoji, targetInput) => {
-        setShowEmojiPanel(false);
-        if (targetInput === 'groupChatName') {
-            setGroupChatName(prevName => prevName + emoji);
-        }
-    };
+    const [loader, setLoader] = useState(false);
 
     const handleGroup = (userToAdd) => {
         if (selectedUsers.includes(userToAdd)) {
-            console.log("User Already Exits")
+            toast.error("User already exist");
             return;
         }
 
@@ -46,12 +35,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
 
         try {
             setLoader(true);
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}?search=${search}`, config);
+            const data = await searchUsers(search, user);
             setSearchResult(data);
             setLoader(false);
         } catch (error) {
@@ -66,29 +50,23 @@ const GroupChatModel = ({ handleCloseModal }) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         if (!groupChatName || !selectedUsers) {
-            console.log("complete all fields")
+            toast.error("Complete all fields");
             return;
         }
 
         try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-
             const formData = new FormData();
             formData.append('userId', user._id)
             formData.append('name', groupChatName);
             formData.append('users', JSON.stringify(selectedUsers.map((user) => user._id)));
             formData.append('image', groupChatImage);
 
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_CHAT_URL}/group`, formData, config);
+            const data = await createGroupChat(formData, user);
             setChats([...chats, data]);
             handleCloseModal();
 
         } catch (error) {
-            console.log(error)
+            toast.error(error.response.data)
         }
     };
     const groupImage = (e) => {
@@ -116,6 +94,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                             src={!groupChatImage ? "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" : previewImage}
                             alt={'user'}
                             className='rounded-full profile-img-modal'
+                            loading='eager'
                         />
                         <input
                             type="file"
@@ -169,7 +148,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                     <div className='lg:w-2/3 flex flex-col gap-2'>
                         <div className={`${search && "h-[104px]"} overflow-y-auto`}>
                             {loader
-                                ? <Image src={Loader} height={30} width={30} alt='Loader' className='mx-auto'/>
+                                ? <Image src={Loader} height={30} width={30} alt='Loader' className='mx-auto' />
                                 : searchResult?.slice(0, 3).map((user) => (
                                     <div
                                         key={user._id}
@@ -180,7 +159,7 @@ const GroupChatModel = ({ handleCloseModal }) => {
                                         <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
                                         <div>
                                             <p className='capitalize'>{user.name}</p>
-                                            <p className='text-sm'><strong>Email: </strong>{user.email}</p>
+                                            <p className='text-sm'>{user.email}</p>
                                         </div>
                                     </div>
                                 ))}

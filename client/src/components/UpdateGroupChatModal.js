@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import CloseModal from '../../public/icons/close-modal.png';
 import { ChatState } from '@/context/ChatProvider';
 import Image from 'next/image';
-import axios from 'axios';
 import Delete from '../../public/icons/delete-user.png';
 import Edit from '../../public/icons/edit.png';
 import Confirm from '../../public/icons/confirm.png';
 import Loader from '../../public/icons/loader.gif';
-import { getChatsFromServer, updateGroupPicture } from '@/utils/apiChats';
+import { addUserToGroup, getChatsFromServer, removeUserFromChat, renameGroupChat, searchUsers, updateGroupPicture } from '@/utils/apiChats';
 import 'animate.css';
 
-const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
-    const [groupChatName, setGroupChatName] = useState();
+const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
+    const [groupChatName, setGroupChatName] = useState("");
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
-    const { selectedChat, setSelectedChat, user, setChats, loader, setLoader, handleShowContacts } = ChatState();
+    const [loader, setLoader] = useState(false);
+    const { selectedChat, setSelectedChat, user, setChats, handleShowContacts } = ChatState();
 
     const handleUploadInput = async (e) => {
         const imageFile = e.target.files[0];
@@ -27,7 +27,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
             setChats(chatInfo);
 
         } else {
-            console.error('An error occurred while updating the profile picture');
+            toast.error('An error occurred while updating the profile picture');
         }
     };
 
@@ -36,24 +36,12 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
         if (!groupChatName) return;
 
         try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/rename`,
-                {
-                    chatId: selectedChat._id,
-                    chatName: groupChatName,
-                },
-                config
-            );
-
+            const data = await renameGroupChat(selectedChat._id, groupChatName, user);
             setSelectedChat(data);
+            setGroupChatName("");
         } catch (error) {
             console.log(error)
         }
-        setGroupChatName("");
     };
 
     const handleSearch = async (query) => {
@@ -64,12 +52,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
 
         try {
             setLoader(true);
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}?search=${search}`, config);
+            const data = await searchUsers(search, user);
             setSearchResult(data);
             setLoader(false);
         } catch (error) {
@@ -79,23 +62,12 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
 
     const handleRemove = async (user1) => {
         if (selectedChat.groupAdmin._id !== user._id && user1._id !== user._id) {
-            console.log("only admins can remove users")
+            toast.error("only admins can remove users")
             return;
         }
 
         try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/groupremove`,
-                {
-                    chatId: selectedChat._id,
-                    userId: user1._id,
-                },
-                config
-            );
+            const data = await removeUserFromChat(selectedChat._id, user1._id, user);
 
             if (user1._id === user._id) {
                 handleCloseModal();
@@ -113,29 +85,17 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
 
     const handleAddUser = async (user1) => {
         if (selectedChat.users.find((u) => u._id === user1._id)) {
-            console.log("user Already in Group")
+            toast.error("User already in group")
             return;
         }
 
         if (selectedChat.groupAdmin._id !== user._id) {
-            console.log("only admins can add someone")
+            toast.error("Only admins can add someone")
             return;
         }
 
         try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/groupadd`,
-                {
-                    chatId: selectedChat._id,
-                    userId: user1._id,
-                },
-                config
-            );
-
+            const data = await addUserToGroup(selectedChat._id, user1._id, user);
             setSelectedChat(data);
         } catch (error) {
             console.log(error)
@@ -185,7 +145,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                     {selectedChat.users.map((user) => (
                         <div
                             key={user._id}
-                            className='flex flex-wrap items-center justify-center bg-gray-200 rounded-full border px-3 cursor-pointer'>
+                            className={`${selectedChat.groupAdmin._id === user._id && 'bg-indigo-600 text-white'} flex flex-wrap items-center justify-center bg-gray-200 rounded-full border py-1 px-3 cursor-pointer`}>
                             <div className='flex flex-nowrap items-center gap-2'>
                                 <p className='capitalize truncate' >{user.name}</p>
                                 <Image
@@ -236,7 +196,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                         value={search}
                     />
                 </div>
-                <div className={`${search && "h-[104px]"} overflow-y-auto w-2/3`}>
+                <div className={`${search && "h-[104px]"} overflow-y-auto`}>
                     {loader
                         ? <Image src={Loader} height={30} width={30} alt='Loader' loading="eager" className='mx-auto' />
                         : searchResult.slice(0, 3).map((user) => (
@@ -244,12 +204,12 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                                 key={user._id}
                                 user={user}
                                 onClick={() => handleAddUser(user)}
-                                className='flex items-center gap-3 py-1 ps-3 hover:bg-gray-100 cursor-pointer'
+                                className='flex items-center gap-3 py-1 hover:bg-gray-100 cursor-pointer'
                             >
                                 <img src={user.picture} height={40} width={40} alt={user.name} className='rounded-full' />
                                 <div>
                                     <p className='capitalize'>{user.name}</p>
-                                    <p className='text-sm'><strong>Email: </strong>{user.email}</p>
+                                    <p className='text-sm'>{user.email}</p>
                                 </div>
                             </div>
                         ))}
@@ -257,7 +217,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal }) => {
                 <button
                     onClick={() => handleRemove(user)}
                     type='button'
-                    className='bg-blue-600 text-gray-100 border border-black px-6 mx-auto p-2 rounded-full font-semibold hover:bg-blue-700'>
+                    className='bg-red-600 text-gray-100 border border-black px-6 mx-auto p-2 rounded-full font-semibold hover:bg-red-700'>
                     Leave Chat
                 </button>
             </div>

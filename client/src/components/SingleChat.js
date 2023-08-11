@@ -12,16 +12,15 @@ import sendMessageIcon from '../../public/icons/send-message.png';
 import Image from 'next/image.js';
 import Modal from './Modal.js';
 import UpdateGroupChatModal from './UpdateGroupChatModal.js';
-import axios from 'axios';
 import ScrollableChat from './ScrollableChat.js';
 import { io } from "socket.io-client";
-import { getChats, readMessages } from '@/utils/apiChats';
+import { deleteAllMessages, deleteCurrentChat, getChats, getMessages, readMessages, sendMessage } from '@/utils/apiChats';
 import Loader from '../../public/icons/loader.gif';
 import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data'
 
-const SingleChat = ({ functionShowContact,  }) => {
-    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications, loader, setLoader, handleShowContacts, handleShowChatBox } = ChatState();
+const SingleChat = ({ functionShowContact, toast }) => {
+    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications, handleShowContacts, handleShowChatBox } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
@@ -33,6 +32,7 @@ const SingleChat = ({ functionShowContact,  }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showEmojiPanel, setShowEmojiPanel] = useState(false);
     const [chosenEmoji, setChosenEmoji] = useState(null);
+    const [loader, setLoader] = useState(false);
 
     const toggleShowEmojis = () => {
         setShowEmojiPanel(!showEmojiPanel);
@@ -42,6 +42,10 @@ const SingleChat = ({ functionShowContact,  }) => {
         setChosenEmoji(emojiObject);
         setNewMessage(prevMessage => prevMessage + emojiObject.native);
     };
+
+    const openMenuOptions = () => {
+        setIsMenuOpen(!isMenuOpen);
+    }
 
     const handleCloseModalInfo = () => {
         setShowModalInfo(false)
@@ -80,23 +84,12 @@ const SingleChat = ({ functionShowContact,  }) => {
 
         try {
             setLoader(true);
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_MESSAGE_URL}/${selectedChat._id}`,
-                config
-            );
+            const messagesData = await getMessages(selectedChat._id, user);
             setLoader(false);
-            const messagesData = res.data;
-
             const filteredMessages = messagesData.filter((message) => !message.isDeleted);
-
             setMessages(filteredMessages);
-            socket.emit("join chat", selectedChat._id)
-            socket.emit('message read', { chatId: selectedChat._id, userId: user._id });
+            socket?.emit("join chat", selectedChat._id)
+            socket?.emit('message read', { chatId: selectedChat._id, userId: user._id });
             await readMessages(selectedChat, user)
         } catch (error) {
             console.log(error)
@@ -127,24 +120,12 @@ const SingleChat = ({ functionShowContact,  }) => {
         fetchMessages();
     }, [socket, selectedChat, notifications]);
 
-    const sendMessage = async (e) => {
+    const sendMessages = async (e) => {
         e.preventDefault()
         socket.emit("stop typing", selectedChat._id);
         try {
-            const config = {
-                headers: {
-                    "Content-type": "application/json",
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
             setNewMessage("");
-            const { data } = await axios.post(process.env.NEXT_PUBLIC_MESSAGE_URL,
-                {
-                    content: newMessage,
-                    chatId: selectedChat._id,
-                },
-                config
-            );
+            const data = await sendMessage(newMessage, selectedChat._id, user);
             socket.emit("new message", data);
             setMessages([...messages, data]);
             fetchMessages();
@@ -173,19 +154,10 @@ const SingleChat = ({ functionShowContact,  }) => {
         }, timerLength);
     };
 
-    const deleteAllMessages = async () => {
+    const deleteMessages = async () => {
         try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-
-            await axios.put(`${process.env.NEXT_PUBLIC_MESSAGE_URL}/${selectedChat._id}`, null, config);
-
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_MESSAGE_URL}/${selectedChat._id}`, config);
-            const updatedMessages = res.data;
-
+            await deleteAllMessages(selectedChat._id, user);
+            const updatedMessages = await getMessages(selectedChat._id, user);
             setMessages((prevMessages) =>
                 prevMessages.map((message) => {
                     const updatedMessage = updatedMessages.find((m) => m._id === message._id);
@@ -203,10 +175,22 @@ const SingleChat = ({ functionShowContact,  }) => {
         }
     };
 
+    const deleteChat = async () => {
+        try {
+            await deleteMessages();
+            await deleteCurrentChat(selectedChat._id, user);
+            setSelectedChat(null);
+            handleShowChatBox();
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const handleOutsideClick = (e) => {
-        if (e.target.closest(".img-container") === null && e.target.closest(".menu") === null) {
+        if (e.target.closest(".img-container") === null && e.target.closest(".menu") === null && 
+        e.target.closest(".emoji-container") === null) {
             setIsMenuOpen(false);
+            setShowEmojiPanel(false);
         }
     };
 
@@ -217,23 +201,6 @@ const SingleChat = ({ functionShowContact,  }) => {
             document.removeEventListener("mousedown", handleOutsideClick);
         };
     }, []);
-
-    const deleteChat = async () => {
-        try {
-            await deleteAllMessages();
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-
-            await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/${selectedChat._id}`, null, config);
-            setSelectedChat(null);
-            handleShowChatBox();
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     return (
 
@@ -248,23 +215,24 @@ const SingleChat = ({ functionShowContact,  }) => {
                 <UpdateGroupChatModal
                     handleCloseModal={handleCloseModalGroup}
                     fetchMessages={fetchMessages}
+                    toast={toast}
                 />
             )}
             {selectedChat ? (
                 <>
                     <div className="flex justify-between items-center py-[6px] px-2 capitalize font-bold text-lg">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center lg:gap-3">
                             <Image
                                 src={LeftArrow}
                                 height={25}
                                 width={25}
                                 alt='Contact'
-                                className='me-1 lg:hidden cursor-pointer'
+                                className='me-3 lg:hidden cursor-pointer'
                                 loading="eager"
                                 onClick={functionShowContact}
                             />
                             {!selectedChat.isGroupChat ? (
-                                <div className='flex items-center gap-3 py-2'>
+                                <div className='flex items-center gap-3 py-2' onClick={handleOpenModalInfo}>
                                     <img
                                         src={getSender(user, selectedChat.users).picture}
                                         height={36}
@@ -275,7 +243,7 @@ const SingleChat = ({ functionShowContact,  }) => {
                                     {getSender(user, selectedChat.users).name}
                                 </div>
                             ) : (
-                                <div className='flex items-center gap-3 px-1 py-2 lg:py-0'>
+                                <div className='flex items-center gap-3 px-1 py-2 lg:py-0' onClick={handleOpenModalGroup}>
                                     <img
                                         src={selectedChat.picture}
                                         alt={selectedChat.name}
@@ -290,7 +258,7 @@ const SingleChat = ({ functionShowContact,  }) => {
                                             ]?.map((u, index, arr) => (
                                                 <div key={u._id} className='text-[11px] font-normal lowercase capitalize'>
                                                     <p className='leading-[1] sm:leading-7'>
-                                                        {u.name === user.name ? "You" : u.name}
+                                                        {u?.name === user.name ? "You" : u?.name}
                                                         {index !== arr.length - 1 ? "," : ""}
                                                     </p>
                                                 </div>
@@ -300,7 +268,7 @@ const SingleChat = ({ functionShowContact,  }) => {
                                 </div>
                             )}
                         </div>
-                        <div className='flex items-center'>
+                        <div className='flex items-center gap-1 lg:gap-2'>
                             {!selectedChat.isGroupChat ? (
                                 <Image
                                     src={Info}
@@ -309,7 +277,7 @@ const SingleChat = ({ functionShowContact,  }) => {
                                     alt="Info"
                                     loading="eager"
                                     onClick={handleOpenModalInfo}
-                                    className="cursor-pointer me-2"
+                                    className="cursor-pointer"
                                 />
                             ) : (
                                 <Image
@@ -319,7 +287,7 @@ const SingleChat = ({ functionShowContact,  }) => {
                                     alt="Info"
                                     loading="eager"
                                     onClick={handleOpenModalGroup}
-                                    className="cursor-pointer me-2"
+                                    className="cursor-pointer"
                                 />
                             )}
                             <div className='relative img-container'>
@@ -329,12 +297,12 @@ const SingleChat = ({ functionShowContact,  }) => {
                                     width={30}
                                     alt="Menu"
                                     loading="eager"
-                                    onClick={() => setIsMenuOpen(true)}
+                                    onClick={openMenuOptions}
                                     className="cursor-pointer"
                                 />
                                 {isMenuOpen && (
-                                    <div className='menu absolute right-0 top-9 w-[150px] shadow-md text-sm font-semibold lowercase capitalize bg-white rounded-md border'>
-                                        <div onClick={deleteAllMessages} className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 cursor-pointer'>
+                                    <div className='menu absolute right-0 top-9 w-[150px] shadow-md text-sm font-semibold lowercase capitalize bg-white rounded-md border z-40'>
+                                        <div onClick={deleteMessages} className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 cursor-pointer'>
                                             <p>Clear Chat</p>
                                             <Image src={Clear} height={18} width={18} loading="eager" alt='Clear' />
                                         </div>
@@ -361,8 +329,8 @@ const SingleChat = ({ functionShowContact,  }) => {
                             <p className='text-sm font-base lowercase'>{`${getSender(user, selectedChat.users).name} is typing...`}</p>
                         )}
                     </div>
-                    <form onSubmit={sendMessage} className="flex items-center bg-white gap-3 px-4 py-[14px] text-sm relative z-40">
-                        <button onClick={toggleShowEmojis}>
+                    <form onSubmit={sendMessages} className="flex items-center bg-white gap-3 px-4 py-[14px] text-sm relative z-40">
+                        <button onClick={toggleShowEmojis} className='emoji-container'>
                             <Image src={Emoji} height={30} width={30} alt='Emojis' className='rounded-full bg-yellow-300' />
                         </button>
                         <input
@@ -378,7 +346,7 @@ const SingleChat = ({ functionShowContact,  }) => {
                         </button>
                     </form>
                     {showEmojiPanel &&
-                        <div className='absolute bottom-0'>
+                        <div className='absolute bottom-0 emoji-container'>
                             <Picker data={data}
                                 onEmojiSelect={onEmojiClick}
                                 previewPosition="none"

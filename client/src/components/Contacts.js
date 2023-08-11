@@ -8,11 +8,12 @@ import { getChats, readMessages } from '@/utils/apiChats';
 import AllUsers from '../../public/icons/all-users.png';
 import Loader from '../../public/icons/loader.gif';
 
-const Contacts = ({ functionShowContact }) => {
+const Contacts = ({ functionShowContact, toast }) => {
 
-    const [loggedUser, setLoggedUser] = useState();
-    const { setSelectedChat, user, chats, setChats, selectedChat, notifications, showSideBar, setLoader, loader } = ChatState();
+    const { setSelectedChat, user, chats, setChats, selectedChat, notifications, showSideBar } = ChatState();
+    const [loggedUser, setLoggedUser] = useState(user);
     const [showModal, setShowModal] = useState(false);
+    const [loader, setLoader] = useState(false);
 
     useEffect(() => {
         setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
@@ -51,12 +52,11 @@ const Contacts = ({ functionShowContact }) => {
         await readMessages(chat, user)
         await getChats(user)
     };
-    console.log(chats)
 
     return (
         <div className='overflow-y-auto'>
-            {showModal && <GroupChatModel handleCloseModal={handleCloseModal} />}
-            {showSideBar ? <Sidebar /> : (
+            {showModal && <GroupChatModel handleCloseModal={handleCloseModal} toast={toast}/>}
+            {showSideBar ? <Sidebar toast={toast}/> : (
                 <div>
                     <div onClick={handleOpenModal} className='border-b py-[16px] flex items-center justify-center lg:justify-start lg:ps-4 gap-3 hover:bg-gray-100 cursor-pointer'>
                         <Image src={AllUsers} height={30} width={30} loading="eager" alt='Add Group' />

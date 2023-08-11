@@ -107,3 +107,179 @@ export const readMessages = async (chat, user) => {
     }
 }
 
+export const searchUsers = async (search, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}?search=${search}`, config);
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const createGroupChat = async (formData, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_CHAT_URL}/group`, formData, config);
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const getAllUsers = async (user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}`, config);
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const selectChat = async (userId, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_CHAT_URL}`, { userId }, config);
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const getMessages = async (selectedChatId, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_MESSAGE_URL}/${selectedChatId}`, config);
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const sendMessage = async (newMessage, selectedChatId, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.post(process.env.NEXT_PUBLIC_MESSAGE_URL,
+            {
+                content: newMessage,
+                chatId: selectedChatId,
+            },
+            config);
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const deleteAllMessages = async (selectedChatId, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.put(`${process.env.NEXT_PUBLIC_MESSAGE_URL}/${selectedChatId}`, null, config);
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const deleteCurrentChat = async (selectedChatId, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/${selectedChatId}`, null, config);
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const renameGroupChat = async (selectedChatId, groupChatName, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/rename`,
+            {
+                chatId: selectedChatId,
+                chatName: groupChatName,
+            },
+            config
+        );
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+export const removeUserFromChat = async (selectedChatId, user1Id, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/groupremove`,
+            {
+                chatId: selectedChatId,
+                userId: user1Id,
+            },
+            config
+        );
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const addUserToGroup = async (selectedChatId, user1Id, user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.put(`${process.env.NEXT_PUBLIC_CHAT_URL}/groupadd`,
+            {
+                chatId: selectedChatId,
+                userId: user1Id,
+            },
+            config
+        );
+        return response.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
