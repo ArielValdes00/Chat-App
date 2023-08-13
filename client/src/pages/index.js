@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Login from "@/components/Login";
 import Register from "@/components/Register";
 import { useRouter } from "next/router";
-import Head from "next/head";
 
 export default function Home() {
     const [changeForm, setChangeForm] = useState(false);

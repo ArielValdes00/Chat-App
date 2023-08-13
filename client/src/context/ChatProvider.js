@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
+import useBooleanState from "@/hooks/useBooleanState";
 
 const ChatContext = createContext()
 
@@ -9,8 +10,8 @@ const ChatProvider = ({ children }) => {
     const [selectedChat, setSelectedChat] = useState();
     const [chats, setChats] = useState([]);
     const [notifications, setNotifications] = useState([]);
-    const [showContacts, setShowContacts] = useState(false);
-    const [showSideBar, setShowSideBar] = useState(false);
+    const [showContacts, toggleShowContacts] = useBooleanState(false);
+    const [showSideBar, toggleShowSideBar] = useBooleanState(false);
 
     useEffect(() => {
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -19,27 +20,13 @@ const ChatProvider = ({ children }) => {
         }
     }, [router]);
 
-    const handleShowContacts = () => {
-        setShowContacts(true);
-    }
-
-    const handleShowChatBox = () => {
-        setShowContacts(false);
-    }
-
-    const handleShowSideBar = () => {
-        setShowSideBar(!showSideBar);
-    }
-
     return <ChatContext.Provider value={{
         user, setUser,
         chats, setChats,
         selectedChat, setSelectedChat,
         notifications, setNotifications,
-        handleShowContacts, handleShowChatBox,
-        showContacts, setShowContacts,
-        handleShowSideBar,
-        showSideBar
+        showContacts, toggleShowContacts,
+        toggleShowSideBar, showSideBar
     }}>{children}</ChatContext.Provider>
 }
 

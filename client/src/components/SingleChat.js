@@ -18,6 +18,7 @@ import { deleteAllMessages, deleteCurrentChat, getChats, getMessages, readMessag
 import Loader from '../../public/icons/loader.gif';
 import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data'
+import useBooleanState from '@/hooks/useBooleanState.js';
 
 const SingleChat = ({ functionShowContact, toast }) => {
     const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications, handleShowContacts, handleShowChatBox } = ChatState();
@@ -26,8 +27,8 @@ const SingleChat = ({ functionShowContact, toast }) => {
     const [socketConnected, setSocketConnected] = useState(false);
     const [typing, setTyping] = useState(false);
     const [istyping, setIsTyping] = useState(false);
-    const [showModalInfo, setShowModalInfo] = useState(false);
-    const [showGroupChatModal, setShowGroupChatModal] = useState(false);
+    const [showModalInfo, toggleShowModalInfo] = useBooleanState(false);
+    const [showGroupChatModal, toggleShowGroupChatModal] = useBooleanState(false);
     const [socket, setSocket] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showEmojiPanel, setShowEmojiPanel] = useState(false);
@@ -47,21 +48,6 @@ const SingleChat = ({ functionShowContact, toast }) => {
         setIsMenuOpen(!isMenuOpen);
     }
 
-    const handleCloseModalInfo = () => {
-        setShowModalInfo(false)
-    }
-
-    const handleOpenModalInfo = () => {
-        setShowModalInfo(true)
-    }
-
-    const handleCloseModalGroup = () => {
-        setShowGroupChatModal(false)
-    }
-
-    const handleOpenModalGroup = () => {
-        setShowGroupChatModal(true)
-    }
     useEffect(() => {
         const newSocket = io(process.env.NEXT_PUBLIC_URL);
 
@@ -123,14 +109,18 @@ const SingleChat = ({ functionShowContact, toast }) => {
     const sendMessages = async (e) => {
         e.preventDefault()
         socket.emit("stop typing", selectedChat._id);
-        try {
-            setNewMessage("");
-            const data = await sendMessage(newMessage, selectedChat._id, user);
-            socket.emit("new message", data);
-            setMessages([...messages, data]);
-            fetchMessages();
-        } catch (error) {
-            console.log(error)
+        if (newMessage === "") {
+            console.log("empty message")
+        } else {
+            try {
+                setNewMessage("");
+                const data = await sendMessage(newMessage, selectedChat._id, user);
+                socket.emit("new message", data);
+                setMessages([...messages, data]);
+                fetchMessages();
+            } catch (error) {
+                console.log(error)
+            }
         }
     };
     const typingHandler = (e) => {
@@ -207,20 +197,20 @@ const SingleChat = ({ functionShowContact, toast }) => {
         <div className='flex flex-col h-full'>
             {showModalInfo && (
                 <Modal
-                    handleCloseModal={handleCloseModalInfo}
+                    handleCloseModal={() => toggleShowModalInfo()}
                     userInfo={getSender(user, selectedChat.users)}
                 />
             )}
             {showGroupChatModal && (
                 <UpdateGroupChatModal
-                    handleCloseModal={handleCloseModalGroup}
+                    handleCloseModal={() => toggleShowGroupChatModal()}
                     fetchMessages={fetchMessages}
                     toast={toast}
                 />
             )}
             {selectedChat ? (
                 <>
-                    <div className="flex justify-between items-center py-[6px] px-2 capitalize font-bold text-lg">
+                    <div className="flex justify-between items-center py-[6px] px-3 capitalize font-bold text-lg">
                         <div className="flex items-center lg:gap-3">
                             <Image
                                 src={LeftArrow}
@@ -232,7 +222,7 @@ const SingleChat = ({ functionShowContact, toast }) => {
                                 onClick={functionShowContact}
                             />
                             {!selectedChat.isGroupChat ? (
-                                <div className='flex items-center gap-3 py-2' onClick={handleOpenModalInfo}>
+                                <div className='flex items-center gap-3 py-2' onClick={() => toggleShowModalInfo()}>
                                     <img
                                         src={getSender(user, selectedChat.users).picture}
                                         height={36}
@@ -243,7 +233,7 @@ const SingleChat = ({ functionShowContact, toast }) => {
                                     {getSender(user, selectedChat.users).name}
                                 </div>
                             ) : (
-                                <div className='flex items-center gap-3 px-1 py-2 lg:py-0' onClick={handleOpenModalGroup}>
+                                <div className='flex items-center gap-3 px-1 py-2 lg:py-0' onClick={() => toggleShowGroupChatModal()}>
                                     <img
                                         src={selectedChat.picture}
                                         alt={selectedChat.name}
@@ -276,7 +266,7 @@ const SingleChat = ({ functionShowContact, toast }) => {
                                     width={30}
                                     alt="Info"
                                     loading="eager"
-                                    onClick={handleOpenModalInfo}
+                                    onClick={() => toggleShowModalInfo()}
                                     className="cursor-pointer"
                                 />
                             ) : (
@@ -286,7 +276,7 @@ const SingleChat = ({ functionShowContact, toast }) => {
                                     width={30}
                                     alt="Info"
                                     loading="eager"
-                                    onClick={handleOpenModalGroup}
+                                    onClick={() => toggleShowGroupChatModal()}
                                     className="cursor-pointer"
                                 />
                             )}
@@ -330,9 +320,9 @@ const SingleChat = ({ functionShowContact, toast }) => {
                         )}
                     </div>
                     <form onSubmit={sendMessages} className="flex items-center bg-white gap-3 px-4 py-[14px] text-sm relative z-40">
-                        <button onClick={toggleShowEmojis} className='emoji-container'>
+                        <span onClick={toggleShowEmojis} className='emoji-container cursor-pointer'>
                             <Image src={Emoji} height={30} width={30} alt='Emojis' className='rounded-full bg-yellow-300' />
-                        </button>
+                        </span>
                         <input
                             type="text"
                             placeholder="Message..."
@@ -367,7 +357,6 @@ const SingleChat = ({ functionShowContact, toast }) => {
             )}
         </div>
     );
-
 }
 
 export default SingleChat;

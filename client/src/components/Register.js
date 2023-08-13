@@ -7,12 +7,13 @@ import Eye from '../../public/icons/eye.png';
 import EyeSlash from '../../public/icons/eye-slash.png';
 import { isValidName, isValidEmail, isValidPassword } from '@/utils/validation';
 import { useRouter } from 'next/router';
+import useBooleanState from '@/hooks/useBooleanState';
 
 const Register = ({ handleChange }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [emailError, setEmailError] = useState("");
-    const [showPassword1, setShowPassword1] = useState(false);
-    const [showPassword2, setShowPassword2] = useState(false);
+    const [showPassword1, toogleShowPassword1] = useBooleanState(false);
+    const [showPassword2, toogleShowPassword2] = useBooleanState(false);
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -92,7 +93,7 @@ const Register = ({ handleChange }) => {
                         height={20}
                         width={20}
                         alt='Show Password'
-                        onClick={() => setShowPassword1(!showPassword1)}
+                        onClick={() => toogleShowPassword1()}
                         className='absolute right-3 top-[37px]'
                     />
                 </div>
@@ -110,7 +111,7 @@ const Register = ({ handleChange }) => {
                         height={20}
                         width={20}
                         alt='Hide Password'
-                        onClick={() => setShowPassword2(!showPassword2)}
+                        onClick={() => toogleShowPassword2()}
                         className='absolute right-3 top-[37px]'
                     />
                 </div>

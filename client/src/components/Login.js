@@ -9,11 +9,12 @@ import { useRouter } from 'next/router';
 import LogoText from '../../public/icons/chatify-text.png';
 import LogoIcon from '../../public/icons/chatify-logo.png';
 import LogoBar from '../../public/icons/chatify-bar.png';
+import useBooleanState from '@/hooks/useBooleanState';
 
 const Login = ({ handleChange }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [emailError, setEmailError] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, toggleShowPassword] = useBooleanState(false);
     const [passwordError, setPasswordError] = useState("");
     const router = useRouter()
 
@@ -105,7 +106,7 @@ const Login = ({ handleChange }) => {
                         height={20}
                         width={20}
                         alt='Show Password'
-                        onClick={() => setShowPassword(!showPassword)}
+                        onClick={() => toggleShowPassword()}
                         className='absolute right-3 top-[37px]'
                     />
                     {passwordError && <p className="text-red-500 text-sm absolute">{passwordError}</p>}

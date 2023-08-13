@@ -9,23 +9,18 @@ import LogoText from '../../public/icons/chatify-text.png';
 import LogoIcon from '../../public/icons/chatify-logo.png';
 import Modal from './Modal.js';
 import { useRouter } from 'next/router';
+import useBooleanState from '@/hooks/useBooleanState';
 
 const Navbar = ({ functionShowContact }) => {
-    const { user, handleShowSideBar, showSideBar, setChats} = ChatState();
+    const { user, showSideBar, toggleShowSideBar } = ChatState();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [showModal, setShowModal] = useState(false);
+    const [showModal, toggleShowModal] = useBooleanState(false);
     const router = useRouter();
 
     const showContact = () => {
         functionShowContact();
-        handleShowSideBar();
+        toggleShowSideBar();
     }
-    const handleOpenModal = () => {
-        setShowModal(true);
-    };
-    const handleCloseModal = () => {
-        setShowModal(false)
-    };
 
     const openMenuProfile = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -51,8 +46,8 @@ const Navbar = ({ functionShowContact }) => {
     }, []);
 
     return (
-        <div className='py-[15px] border-b'>
-            {showModal && <Modal handleCloseModal={handleCloseModal} userInfo={user} />}
+        <div className='py-[14px] border-b'>
+            {showModal && <Modal handleCloseModal={() => toggleShowModal()} userInfo={user} />}
             {user && (
                 <div className='grid grid-cols-3 items-center px-3'>
                     <div className='mr-auto flex items-center gap-2 cursor-pointer bg-blue-600 rounded-full p-2 lg:px-3 lg:pe-4 lg:py-[7px]' onClick={showContact}>
@@ -72,7 +67,7 @@ const Navbar = ({ functionShowContact }) => {
                         </div>
                         {isMenuOpen && (
                             <ul className='absolute right-2 top-12 mt-2 bg-white text-black rounded-md border z-40 shadow-lg'>
-                                <div className='flex items-center gap-3 px-5 lg:px-7 py-2 cursor-pointer hover:bg-gray-100' onClick={handleOpenModal}>
+                                <div className='flex items-center gap-3 px-5 lg:px-7 py-2 cursor-pointer hover:bg-gray-100' onClick={() => toggleShowModal()}>
                                     <Image src={User} height={16} loading='eager' width={16} alt='User'></Image>
                                     <span>My Profile</span>
                                 </div>
