@@ -12,7 +12,7 @@ const ChatProvider = ({ children }) => {
     const [notifications, setNotifications] = useState([]);
     const [showContacts, toggleShowContacts] = useBooleanState(false);
     const [showSideBar, toggleShowSideBar] = useBooleanState(false);
-
+    
     useEffect(() => {
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
         if (userInfo) {

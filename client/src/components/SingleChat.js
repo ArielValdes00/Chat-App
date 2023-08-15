@@ -16,12 +16,12 @@ import ScrollableChat from './ScrollableChat.js';
 import { io } from "socket.io-client";
 import { deleteAllMessages, deleteCurrentChat, getChats, getMessages, readMessages, sendMessage } from '@/utils/apiChats';
 import Loader from '../../public/icons/loader.gif';
-import Picker from '@emoji-mart/react'
-import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react';
+import data from '@emoji-mart/data';
 import useBooleanState from '@/hooks/useBooleanState.js';
 
 const SingleChat = ({ functionShowContact, toast }) => {
-    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications, handleShowContacts, handleShowChatBox } = ChatState();
+    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications} = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
@@ -157,7 +157,6 @@ const SingleChat = ({ functionShowContact, toast }) => {
                     return message;
                 })
             );
-            handleShowContacts()
             setIsMenuOpen(false);
             fetchMessages();
         } catch (error) {
@@ -170,7 +169,7 @@ const SingleChat = ({ functionShowContact, toast }) => {
             await deleteMessages();
             await deleteCurrentChat(selectedChat._id, user);
             setSelectedChat(null);
-            handleShowChatBox();
+            functionShowContact();
         } catch (error) {
             console.log(error);
         }

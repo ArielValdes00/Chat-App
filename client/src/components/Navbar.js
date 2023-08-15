@@ -1,4 +1,4 @@
-import { ChatState } from '@/context/ChatProvider'
+import { ChatState } from '@/context/ChatProvider';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import User from '../../public/icons/user.png';
@@ -12,14 +12,16 @@ import { useRouter } from 'next/router';
 import useBooleanState from '@/hooks/useBooleanState';
 
 const Navbar = ({ functionShowContact }) => {
-    const { user, showSideBar, toggleShowSideBar } = ChatState();
+    const { user, showSideBar, toggleShowSideBar, showContacts } = ChatState();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showModal, toggleShowModal] = useBooleanState(false);
     const router = useRouter();
 
     const showContact = () => {
-        functionShowContact();
         toggleShowSideBar();
+        if (showContacts) {
+            functionShowContact();
+        };
     }
 
     const openMenuProfile = () => {
@@ -34,7 +36,7 @@ const Navbar = ({ functionShowContact }) => {
     const handleOutsideClick = (e) => {
         if (e.target.closest(".profile-container") === null) {
             setIsMenuOpen(false)
-        }  
+        }
     };
 
     useEffect(() => {
@@ -51,11 +53,11 @@ const Navbar = ({ functionShowContact }) => {
             {user && (
                 <div className='grid grid-cols-3 items-center px-3'>
                     <div className='mr-auto flex items-center gap-2 cursor-pointer bg-blue-600 rounded-full p-2 lg:px-3 lg:pe-4 lg:py-[7px]' onClick={showContact}>
-                        <Image src={showSideBar ? ContactsIcon : Search} height={20} width={20} alt='Search Users'/>
+                        <Image src={showSideBar ? ContactsIcon : Search} height={20} width={20} alt='Search Users' />
                         <p className='hidden md:block text-white font-semibold'>{`${showSideBar ? 'Contacts' : 'Search Users'}`}</p>
                     </div>
                     <div className='mt-1 flex items-center justify-center gap-1'>
-                        <Image src={LogoIcon} height={40} width={40} alt='Chatify' className='hidden lg:block'/>
+                        <Image src={LogoIcon} height={40} width={40} alt='Chatify' className='hidden lg:block' />
                         <Image src={LogoText} height={126} width={126} alt='Chatify' />
                     </div>
                     <div className='flex items-center gap-3 profile-container ml-auto'>

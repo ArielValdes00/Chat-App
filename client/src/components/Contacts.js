@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { ChatState } from '@/context/ChatProvider';
 import { getSender } from '@/config/config.js';
 import Image from 'next/image';
@@ -27,9 +27,9 @@ const Contacts = ({ functionShowContact, toast }) => {
                         if (chat.deletedBy === null) {
                             return true;
                         }
-                        setLoader(false);
                         return !chat.deletedBy.includes(user._id);
                     });
+                    setLoader(false);
                     setChats(filteredChats);
                 } catch (error) {
                     console.log(error)
@@ -62,7 +62,7 @@ const Contacts = ({ functionShowContact, toast }) => {
                                 <Image src={Loader} height={30} width={30} alt='Loading' className='mx-auto flex items-center' />
                             </div>
                             :
-                            chats.map((chat) => (
+                            chats?.map((chat) => (
                                 <div
                                     key={chat._id}
                                     onClick={() => showChats(chat)}

@@ -4,11 +4,13 @@ import Navbar from '@/components/Navbar';
 import Contacts from '@/components/Contacts';
 import { ChatState } from '@/context/ChatProvider';
 import SingleChat from '@/components/SingleChat';
-import { toast, ToastContainer } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify';
+import { useRouter } from 'next/router';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Chat = () => {
-    const { showContacts, toggleShowContacts } = ChatState();
+    const { showContacts, toggleShowContacts, user } = ChatState();
+    const router = useRouter();
     const useWindowSize = () => {
         const [windowSize, setWindowSize] = useState({
             width: undefined,
@@ -33,6 +35,12 @@ const Chat = () => {
         return windowSize;
     }
     const size = useWindowSize();
+
+    useEffect(() => {
+        if(!user) {
+            router.push("/");
+        }
+    }, []);
 
     return (
         <div className='min-h-screen flex flex-col overflow-x-hidden'>
