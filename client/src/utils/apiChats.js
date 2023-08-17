@@ -283,3 +283,16 @@ export const addUserToGroup = async (selectedChatId, user1Id, user) => {
     }
 }
 
+export const resetPasswordRequest = async (email) => {
+    try {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_USER_URL}/reset-password-request`, {
+            email: email
+        });
+        console.log(response)
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+

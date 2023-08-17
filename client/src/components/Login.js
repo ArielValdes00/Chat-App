@@ -11,7 +11,7 @@ import LogoIcon from '../../public/icons/chatify-logo.png';
 import LogoBar from '../../public/icons/chatify-bar.png';
 import useBooleanState from '@/hooks/useBooleanState';
 
-const Login = ({ handleChange }) => {
+const Login = ({ handleChange, toggleShowForgotPassword }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [emailError, setEmailError] = useState("");
     const [showPassword, toggleShowPassword] = useBooleanState(false);
@@ -111,9 +111,9 @@ const Login = ({ handleChange }) => {
                     />
                     {passwordError && <p className="text-red-500 text-sm absolute">{passwordError}</p>}
                     <div className='text-end mt-2 me-2'>
-                        <a className="font-bold text-sm text-black hover:text-gray-800 underline" href="#">
+                        <p className="font-bold text-sm text-black hover:text-gray-800 underline cursor-pointer" onClick={() => toggleShowForgotPassword()}>
                             Forgot Password?
-                        </a>
+                        </p>
                     </div>
                 </div>
                 <button

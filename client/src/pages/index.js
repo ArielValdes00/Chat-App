@@ -3,10 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import Login from "@/components/Login";
 import Register from "@/components/Register";
 import { useRouter } from "next/router";
+import ForgotPassword from "@/components/ForgotPassword";
+import useBooleanState from "@/hooks/useBooleanState";
 
 export default function Home() {
     const [changeForm, setChangeForm] = useState(false);
-    const router = useRouter()
+    const [showForgotPassword, toggleShowForgotPassword] = useBooleanState(false); 
+    const router = useRouter();
+
     const handleChangeForm = () => {
         setChangeForm(!changeForm);
     };
@@ -17,30 +21,34 @@ export default function Home() {
         if (userInfo) {
             router.push("/chat")
         }
-    }, [])
+    }, []);
 
     return (
         <div className="h-screen bg-gray-100 grid place-items-center overflow-hidden">
             <AnimatePresence mode='wait'>
-                {!changeForm ? (
+                {showForgotPassword ? (
                     <motion.div
-                        key="login"
+                        key="forgotPassword"
                         initial={{ x: 100, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: 100, opacity: 0 }}
-                        transition={{ duration: .4 }}
+                        transition={{ duration: 0.4 }}
                     >
-                        <Login handleChange={handleChangeForm} />
+                        <ForgotPassword toggleShowForgotPassword={toggleShowForgotPassword}/>
                     </motion.div>
                 ) : (
                     <motion.div
-                        key="register"
+                        key={changeForm ? "register" : "login"}
                         initial={{ x: 100, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: 100, opacity: 0 }}
-                        transition={{ duration: .4 }}
+                        transition={{ duration: 0.4 }}
                     >
-                        <Register handleChange={handleChangeForm} />
+                        {changeForm ? (
+                            <Register handleChange={handleChangeForm} />
+                        ) : (
+                            <Login handleChange={handleChangeForm} toggleShowForgotPassword={toggleShowForgotPassword} />
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>
