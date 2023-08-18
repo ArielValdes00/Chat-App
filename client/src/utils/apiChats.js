@@ -48,23 +48,32 @@ export const register = async (name, email, password) => {
 }
 
 export const getUserInfoFromServer = async (user) => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}/userInfo`, {
-        headers: {
-            'Authorization': `Bearer ${user.token}`
-        }
-    });
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_USER_URL}/userInfo`, config);
+        return response.data;
 
-    return response.data;
+    } catch (error) {
+        console.log(error)
+    } 
 }
 
 export const getChatsFromServer = async (user) => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_CHAT_URL}`, {
-        headers: {
-            'Authorization': `Bearer ${user.token}`
-        }
-    });
-
-    return response.data;
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_CHAT_URL}`, config);
+        return response;
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 export const uploadImage = async (imageFile, user) => {
@@ -285,14 +294,24 @@ export const addUserToGroup = async (selectedChatId, user1Id, user) => {
 
 export const resetPasswordRequest = async (email) => {
     try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_USER_URL}/reset-password-request`, {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_USER_URL}/request-password-reset`, {
             email: email
         });
-        console.log(response)
 
         return response.data;
     } catch (error) {
-        throw error;
+        console.log(error)
     }
 };
+
+export const resetPassword = async (token, password) => {
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_USER_URL}/reset-password`, { token, newPassword: password });
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
+
 

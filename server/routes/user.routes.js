@@ -12,7 +12,7 @@ router.get("/userInfo", protect, getUserInfo);
 router.post("/", registerUser);
 router.post("/login", authUser);
 router.post("/updateimage", protect, upload.single('image'), updateProfilePicture);
-router.post('/request-password-reset', requestPasswordReset);
-router.post('/reset-password', resetPassword);
+router.post("/request-password-reset", requestPasswordReset);
+router.post("/reset-password", resetPassword);
 
 export default router;

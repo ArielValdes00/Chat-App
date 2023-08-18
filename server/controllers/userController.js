@@ -3,8 +3,8 @@ import { User } from '../models/userModel.js';
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import { uploadImageToCloudinary } from '../config/uploadImagenToCloudinary.js';
-import nodemailer from "nodemailer";
-dotenv.config()
+import { transporter } from '../config/emailConfig.js';
+dotenv.config();
 
 export const registerUser = async (req, res) => {
     try {
@@ -37,7 +37,6 @@ export const authUser = async (req, res) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-
         if (!user) {
             res.status(401).json({ message: "Invalid Email" });
         } else if (await user.matchPassword(password.toString())) {
@@ -104,34 +103,33 @@ export const requestPasswordReset = async (req, res) => {
         const { email } = req.body;
 
         const user = await User.findOne({ email });
-
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
         const resetToken = generateToken(user._id);
+        const resetLink = `${process.env.APP_URL}/reset-password/${resetToken}`;
 
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = Date.now() + 3600000;
         await user.save();
+        console.log("User saved with reset token and expiration");
 
         const mailOptions = {
-            from: process.env.EMAIL_USER, 
-            to: user.email, 
+            from: process.env.EMAIL_USER,
+            to: user.email,
             subject: 'Password Reset',
             html: `
-              <p>Hello,</p>
-              <p>You have requested to reset your password.</p>
-              <p>Click <a href="http://your-app-url/reset-password/${resetToken}">here</a> to reset your password.</p>
-              <p>If you did not request this, please ignore this email.</p>
-              <p>Best regards,</p>
-              <p>Your App Team</p>
+                <p>Hello,</p>
+                <p>You have requested to reset your password.</p>
+                <p>Click <a href="${resetLink}">here</a> to reset your password.</p>
+                <p>If you did not request this, please ignore this email.</p>
+                <p>Best regards,</p>
+                <p>Chatify</p>
             `,
-          };
-      
-          await transporter.sendMail(mailOptions);
-      
-          res.status(200).json({ message: "Password reset email sent successfully" });
+        };
+
+        await transporter.sendMail(mailOptions);
 
         res.status(200).json({ message: "Password reset email sent successfully" });
     } catch (error) {
@@ -140,10 +138,10 @@ export const requestPasswordReset = async (req, res) => {
     }
 };
 
+
 export const resetPassword = async (req, res) => {
     try {
         const { token, newPassword } = req.body;
-
         const user = await User.findOne({
             resetPasswordToken: token,
             resetPasswordExpires: { $gt: Date.now() }

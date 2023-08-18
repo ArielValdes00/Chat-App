@@ -13,10 +13,10 @@ const ForgotPassword = ({ toggleShowForgotPassword }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-
+    
         try {
             const response = await resetPasswordRequest(email);
-            console.log(response)
+            console.log("resetPasswordRequest response:", response);
             setMessage(response.message);
         } catch (error) {
             setMessage("An error occurred. Please try again later.");
@@ -24,7 +24,7 @@ const ForgotPassword = ({ toggleShowForgotPassword }) => {
             setIsSubmitting(false);
         }
     };
-
+    
     return (
         <div className="px-5">
             <div className="text-center mx-auto max-w-lg xl:max-w-xl px-4">
