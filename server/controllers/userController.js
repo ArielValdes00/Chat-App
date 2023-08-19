@@ -60,7 +60,6 @@ export const getUsers = async (req, res) => {
         const users = await User.find({ _id: { $ne: req.user._id } });
         res.send(users);
     } catch (error) {
-        console.error("Error fetching users:", error);
         res.status(500).send("Error fetching users");
     }
 }
@@ -113,7 +112,6 @@ export const requestPasswordReset = async (req, res) => {
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = Date.now() + 3600000;
         await user.save();
-        console.log("User saved with reset token and expiration");
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -156,7 +154,7 @@ export const resetPassword = async (req, res) => {
         user.resetPasswordExpires = undefined;
         await user.save();
 
-        res.status(200).json({ message: "Password reset successful" });
+        res.status(200).json({ success: true, message: "Password reset successful. Redirecting..." });
     } catch (error) {
         console.error("Error resetting password:", error);
         res.status(500).json({ message: "An error occurred while processing your request" });

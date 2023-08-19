@@ -4,27 +4,35 @@ import LogoText from '../../public/icons/chatify-text.png';
 import LogoIcon from '../../public/icons/chatify-logo.png';
 import LogoBar from '../../public/icons/chatify-bar.png';
 import { resetPasswordRequest } from '@/utils/apiChats';
+import { isValidEmail } from '@/utils/validation';
+import useBooleanState from '@/hooks/useBooleanState';
+import Loader from '../../public/icons/loader.gif';
 
 const ForgotPassword = ({ toggleShowForgotPassword }) => {
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, toggleIsLoading] = useBooleanState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
-    
-        try {
-            const response = await resetPasswordRequest(email);
-            console.log("resetPasswordRequest response:", response);
-            setMessage(response.message);
-        } catch (error) {
-            setMessage("An error occurred. Please try again later.");
-        } finally {
-            setIsSubmitting(false);
+        toggleIsLoading();
+        if (!isValidEmail(email)) {
+            setMessage("Invalid Format")
+            setTimeout(() => setMessage(""), 4000);
+            return;
+        } else {
+            try {
+                const response = await resetPasswordRequest(email);
+                console.log("resetPasswordRequest response:", response);
+                setMessage(response.message);
+            } catch (error) {
+                setMessage("An error occurred. Please try again later.");
+            } finally {
+                toggleIsLoading();
+            }
         }
     };
-    
+
     return (
         <div className="px-5">
             <div className="text-center mx-auto max-w-lg xl:max-w-xl px-4">
@@ -37,12 +45,13 @@ const ForgotPassword = ({ toggleShowForgotPassword }) => {
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-center shadow-xl rounded-md max-w-lg bg-white mx-auto py-5 px-4">
                 <div className="w-full">
-                    <label className="ms-1 block text-gray-700 text-sm font-bold mb-2" htmlFor={'Email Address'}>
+                    <label className="ms-1 block text-gray-700 text-sm font-bold mb-2" htmlFor='email'>
                         Enter your Email Address
                     </label>
                     <input
                         type="email"
                         placeholder="Your Email"
+                        id='email'
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className='w-full p-3 py-2 rounded-md focus:outline-blue-400 border'
@@ -52,9 +61,16 @@ const ForgotPassword = ({ toggleShowForgotPassword }) => {
                 <button
                     type="submit"
                     className="w-full p-3 py-2 bg-blue-600 rounded-md shadow text-white text-xl font-bold hover:bg-blue-700"
-                    disabled={isSubmitting}
+                    disabled={isLoading}
                 >
-                    {isSubmitting ? "Sending..." : "Send Reset Link"}
+                    {isLoading ? (
+                        <div className='flex items-center gap-2 justify-center'>
+                            <Image src={Loader} height={26} width={26} alt='Loading' loading='eager'/>
+                            <span>Sending...</span>
+                        </div>
+                    ) : (
+                        <span>Send reset link</span>
+                    )}
                 </button>
                 <button
                     type="button"

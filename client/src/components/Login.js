@@ -121,7 +121,7 @@ const Login = ({ handleChange, toggleShowForgotPassword }) => {
                     className="w-full p-3 py-2 bg-blue-600 rounded-md shadow text-white text-xl font-bold mb-2 hover:bg-blue-700"
                 >
                     {isLoading ? (
-                        <div className='flex items-center justify-center'>
+                        <div className='flex items-center gap-2 justify-center'>
                             <Image src={Loader} height={26} width={26} alt='Loading' />
                             <span>Loading...</span>
                         </div>
