@@ -6,7 +6,7 @@ import messageRoutes from './routes/message.routes.js';
 import cors from 'cors';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
-import { Message } from './models/messageModel.js';
+import { Message } from './src/models/messageModel.js';
 import http from "http";
 
 const app = express()

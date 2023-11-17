@@ -1,9 +1,8 @@
 import React from 'react'
-import CloseModal from '../../public/icons/close-modal.png';
-import Edit from '../../public/icons/edit.png';
-import Image from 'next/image';
 import { ChatState } from '@/context/ChatProvider';
 import { getUserInfoFromServer, uploadImage } from '@/utils/apiChats';
+import { IoClose } from "react-icons/io5";
+import { FiEdit } from "react-icons/fi";
 import 'animate.css';
 
 const Modal = ({ userInfo, handleCloseModal }) => {
@@ -28,11 +27,9 @@ const Modal = ({ userInfo, handleCloseModal }) => {
         <div className='fixed inset-0 z-50 flex items-center justify-center w-full'>
             <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-5/6 sm:w-[60%] xl:w-[40%] animate__animated animate__fadeIn'>
                 <div className='mb-5'>
-                    <Image onClick={handleCloseModal}
-                        src={CloseModal} height={28}
-                        width={28}
-                        alt='Close'
-                        loading="eager"
+                    <IoClose
+                        size={30}
+                        onClick={handleCloseModal}
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
@@ -55,7 +52,7 @@ const Modal = ({ userInfo, handleCloseModal }) => {
                                 <label
                                     htmlFor="upload-button"
                                 >
-                                    <Image src={Edit} loading="eager" height={20} width={20} alt='Change Picture' className='cursor-pointer' />
+                                    <FiEdit className='cursor-pointer' />
                                 </label>
                             </div>
                             <p className='capitalize text-4xl'>{userInfo.name}</p>

@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { isValidEmail, isValidPassword } from '@/utils/validation';
 import { login } from '@/utils/apiChats';
-import Eye from '../../public/icons/eye.png';
-import EyeSlash from '../../public/icons/eye-slash.png';
 import Image from 'next/image';
-import Loader from '../../public/icons/loader.gif';
 import { useRouter } from 'next/router';
 import LogoText from '../../public/icons/chatify-text.png';
 import LogoIcon from '../../public/icons/chatify-logo.png';
 import LogoBar from '../../public/icons/chatify-bar.png';
 import useBooleanState from '@/hooks/useBooleanState';
+import ButtonLoader from './ButtonLoader';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = ({ handleChange, toggleShowForgotPassword }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -72,7 +71,7 @@ const Login = ({ handleChange, toggleShowForgotPassword }) => {
                 <div className='flex items-center justify-center gap-2 mb-3'>
                     <Image src={LogoIcon} height={60} width={60} alt='Chatify' />
                     <Image src={LogoBar} height={5} width={5} alt='Chatify' />
-                    <Image src={LogoText} height={226} width={226} alt='Chatify' className='mt-2'/>
+                    <Image src={LogoText} height={226} width={226} alt='Chatify' className='mt-2' />
                 </div>
                 <p className="text-3xl mb-5">Chatify helps you communicate with the people in your life.</p>
             </div>
@@ -101,14 +100,12 @@ const Login = ({ handleChange, toggleShowForgotPassword }) => {
                         name={"password"}
                         className='w-full p-3 py-2 rounded-md focus:outline-blue-400 border mb-1'
                     />
-                    <Image
-                        src={!showPassword ? EyeSlash : Eye}
-                        height={20}
-                        width={20}
-                        alt='Show Password'
+                    <span
                         onClick={() => toggleShowPassword()}
-                        className='absolute right-3 top-[37px]'
-                    />
+                        className='absolute right-3 top-[35px]'
+                    >
+                        {!showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                    </span>
                     {passwordError && <p className="text-red-500 text-sm absolute">{passwordError}</p>}
                     <div className='text-end mt-2 me-2'>
                         <p className="font-bold text-sm text-black hover:text-gray-800 underline cursor-pointer" onClick={() => toggleShowForgotPassword()}>
@@ -116,19 +113,11 @@ const Login = ({ handleChange, toggleShowForgotPassword }) => {
                         </p>
                     </div>
                 </div>
-                <button
-                    type="submit"
-                    className="w-full p-3 py-2 bg-blue-600 rounded-md shadow text-white text-xl font-bold mb-2 hover:bg-blue-700"
-                >
-                    {isLoading ? (
-                        <div className='flex items-center gap-2 justify-center'>
-                            <Image src={Loader} height={26} width={26} alt='Loading' />
-                            <span>Loading...</span>
-                        </div>
-                    ) : (
-                        <span>Log in</span>
-                    )}
-                </button>
+                <ButtonLoader
+                    textButton={'Log In'}
+                    textSubmit={'Loading...'}
+                    isLoading={isLoading}
+                />
                 <p className="my-1">
                     Don't have an account?
                 </p>
@@ -136,7 +125,7 @@ const Login = ({ handleChange, toggleShowForgotPassword }) => {
                     type='button'
                     onClick={handleChange}
                     className="w-full mt-2 p-2 bg-neutral-800 rounded-md shadow text-white font-bold text-lg text-center hover:bg-black">
-                        Create a New Account
+                    Create a New Account
                 </button>
             </form>
         </div>

@@ -6,7 +6,7 @@ import LogoBar from '../../public/icons/chatify-bar.png';
 import { resetPasswordRequest } from '@/utils/apiChats';
 import { isValidEmail } from '@/utils/validation';
 import useBooleanState from '@/hooks/useBooleanState';
-import Loader from '../../public/icons/loader.gif';
+import ButtonLoader from './ButtonLoader';
 
 const ForgotPassword = ({ toggleShowForgotPassword }) => {
     const [email, setEmail] = useState("");
@@ -23,7 +23,6 @@ const ForgotPassword = ({ toggleShowForgotPassword }) => {
         } else {
             try {
                 const response = await resetPasswordRequest(email);
-                console.log("resetPasswordRequest response:", response);
                 setMessage(response.message);
             } catch (error) {
                 setMessage("An error occurred. Please try again later.");
@@ -58,20 +57,11 @@ const ForgotPassword = ({ toggleShowForgotPassword }) => {
                     />
                     {message && <p className={`ms-1 text-sm ${message.includes("success") ? "text-green-500" : "text-red-500"}`}>{message}</p>}
                 </div>
-                <button
-                    type="submit"
-                    className="w-full p-3 py-2 bg-blue-600 rounded-md shadow text-white text-xl font-bold hover:bg-blue-700"
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <div className='flex items-center gap-2 justify-center'>
-                            <Image src={Loader} height={26} width={26} alt='Loading' loading='eager'/>
-                            <span>Sending...</span>
-                        </div>
-                    ) : (
-                        <span>Send reset link</span>
-                    )}
-                </button>
+                <ButtonLoader
+                    textButton={'Send Reset Link'}
+                    textSubmit={'Sending...'}
+                    isLoading={isLoading}
+                />
                 <button
                     type="button"
                     className="w-full p-3 py-2 bg-neutral-800 rounded-md shadow text-white text-xl font-bold hover:bg-neutral-900"

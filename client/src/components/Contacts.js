@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ChatState } from '@/context/ChatProvider';
 import { getSender } from '@/config/config.js';
-import Image from 'next/image';
 import GroupChatModel from './GroupChatModel';
+import { MdGroupAdd } from "react-icons/md";
 import Sidebar from './Sidebar.js';
 import { getChats, readMessages } from '@/utils/apiChats';
-import AllUsers from '../../public/icons/all-users.png';
-import Loader from '../../public/icons/loader.gif';
+import { LuLoader2 } from "react-icons/lu";
 import useBooleanState from '@/hooks/useBooleanState';
 
 const Contacts = ({ functionShowContact, toast }) => {
@@ -52,21 +51,21 @@ const Contacts = ({ functionShowContact, toast }) => {
             {showModal && <GroupChatModel handleCloseModal={() => toggleShowModal()} toast={toast} />}
             {showSideBar ? <Sidebar toast={toast} /> : (
                 <>
-                    <div onClick={() => toggleShowModal()} className='border-b py-[16px] flex items-center justify-center lg:justify-start lg:ps-4 gap-3 hover:bg-gray-100 cursor-pointer'>
-                        <Image src={AllUsers} height={30} width={30} loading="eager" alt='Add Group' />
-                        <p className='mt-1 font-semibold text-lg'>New Group Chat</p>
+                    <div onClick={() => toggleShowModal()} className='border-b py-[16px] 2xl:py-7 flex items-center justify-center lg:justify-start lg:ps-4 gap-3 hover:bg-gray-100 cursor-pointer'>
+                        <MdGroupAdd size={26} className='text-blue-600' />
+                        <p className='mt-1 font-semibold text-lg 2xl:text-xl'>New Group Chat</p>
                     </div>
                     <div className='flex flex-grow flex-col h-[481px] overflow-y-auto'>
                         {loader ?
                             <div className='h-full flex justify-center items-center'>
-                                <Image src={Loader} height={30} width={30} alt='Loading' className='mx-auto flex items-center' />
+                                <LuLoader2 size={30} className='animate-spin text-blue-600' />
                             </div>
                             :
                             chats?.map((chat) => (
                                 <div
                                     key={chat._id}
                                     onClick={() => showChats(chat)}
-                                    className={`flex items-center gap-3 p-3 border-b cursor-pointer ${selectedChat?._id === chat._id && 'lg:bg-gray-100'} hover:bg-gray-100`}
+                                    className={`flex items-center gap-3 p-3 2xl:py-6 border-b cursor-pointer ${selectedChat?._id === chat._id && 'lg:bg-gray-100'} hover:bg-gray-100`}
                                 >
                                     <img
                                         src={!chat.isGroupChat ? getSender(loggedUser, chat.users)?.picture : chat.picture}
@@ -74,7 +73,7 @@ const Contacts = ({ functionShowContact, toast }) => {
                                         className='rounded-full profile-img-contacts'
                                     />
                                     <div>
-                                        <p className='text-lg capitalize'>
+                                        <p className='text-lg 2xl:text-xl capitalize'>
                                             {!chat.isGroupChat
                                                 ? getSender(loggedUser, chat.users)?.name
                                                 : chat.chatName

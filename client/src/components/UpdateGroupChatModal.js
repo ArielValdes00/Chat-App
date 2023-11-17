@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import CloseModal from '../../public/icons/close-modal.png';
 import { ChatState } from '@/context/ChatProvider';
-import Image from 'next/image';
-import Delete from '../../public/icons/delete-user.png';
-import Edit from '../../public/icons/edit.png';
-import Confirm from '../../public/icons/confirm.png';
-import Loader from '../../public/icons/loader.gif';
+import { IoClose } from "react-icons/io5";
+import { FiEdit } from "react-icons/fi";
+import { LuLoader2 } from "react-icons/lu";
+import { FaCheckCircle } from "react-icons/fa";
 import { addUserToGroup, getChatsFromServer, removeUserFromChat, renameGroupChat, searchUsers, updateGroupPicture } from '@/utils/apiChats';
 import 'animate.css';
 
@@ -107,11 +105,9 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
         <div className='fixed inset-0 z-50 flex items-center justify-center'>
             <div className='absolute flex flex-col items-center gap-3 bg-white p-4 rounded-xl shadow-lg z-10 relative w-5/6 sm:w-1/2 xl:w-[40%] animate__animated animate__fadeIn'>
                 <div className='mb-2'>
-                    <Image onClick={handleCloseModal}
-                        src={CloseModal} height={28}
-                        width={28}
-                        alt='Close'
-                        loading="eager"
+                    <IoClose
+                        size={30}
+                        onClick={handleCloseModal}
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
@@ -131,12 +127,9 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
                     <label
                         htmlFor="upload-button"
                     >
-                        <Image src={Edit}
-                            height={20}
-                            width={20}
-                            alt='Change Picture'
-                            loading="eager"
-                            className='absolute ms-2'
+                        <FiEdit
+                            size={20}
+                            className='absolute ms-2 cursor-pointer'
                         />
                     </label>
                 </div>
@@ -146,14 +139,10 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
                         <div
                             key={user._id}
                             className={`${selectedChat.groupAdmin._id === user._id && 'bg-indigo-600 text-white'} flex flex-wrap items-center justify-center bg-gray-200 rounded-full border py-1 px-3 cursor-pointer`}>
-                            <div className='flex flex-nowrap items-center gap-2'>
-                                <p className='capitalize truncate' >{user.name}</p>
-                                <Image
-                                    src={Delete}
-                                    height={10}
-                                    width={10}
-                                    alt='Delete'
-                                    loading="eager"
+                            <div className='flex flex-nowrap items-center gap-1'>
+                                <p className='capitalize truncate'>{user.name}</p>
+                                <IoClose
+                                    size={16}
                                     onClick={() => handleRemove(user)}
                                 />
                             </div>
@@ -175,13 +164,9 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
                             onClick={handleRename}
                             type="button"
                         >
-                            <Image
-                                src={Confirm}
-                                height={25}
-                                width={25}
-                                alt='Confirm'
-                                loading="eager"
-                                className='absolute top-2 right-[-33px]'
+                            <FaCheckCircle
+                                size={25}
+                                className='absolute top-2 right-[-33px] text-blue-600'
                             />
                         </button>
                     </div>
@@ -198,7 +183,7 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
                 </div>
                 <div className={`${search && "h-[104px]"} overflow-y-auto`}>
                     {loader
-                        ? <Image src={Loader} height={30} width={30} alt='Loader' loading="eager" className='mx-auto' />
+                        ? <LuLoader2 className='mx-auto animation-spin' />
                         : searchResult.slice(0, 3).map((user) => (
                             <div
                                 key={user._id}

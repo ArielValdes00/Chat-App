@@ -47,7 +47,7 @@ const ScrollableChat = ({ messages }) => {
                 const today = new Date();
                 const oneWeekAgo = new Date(today - 7 * 86400000);
                 return (
-                    <div key={date} className="text-center text-gray-500 text-sm">
+                    <div key={date} className="text-center text-gray-500 text-sm 2xl:text-lg">
                         {date === today.toLocaleDateString()
                             ? 'Today'
                             : date === new Date(today - 86400000).toLocaleDateString()
@@ -78,9 +78,9 @@ const ScrollableChat = ({ messages }) => {
                                     {isGroupChat && (
                                         <p className={`text-[15px] capitalize ${getUserColor(message.sender._id)}`}>{message.sender.name}</p>
                                     )}
-                                    <p className="text-[15px] leading-[20px]">{message.content}</p>
+                                    <p className="text-[15px] 2xl:text-xl leading-[20px]">{message.content}</p>
                                 </div>
-                                <div className='flex items-end justify-center gap-2 text-[10px]'>
+                                <div className='flex items-end justify-center gap-2 text-[13px]'>
                                     {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </div>
                             </div>

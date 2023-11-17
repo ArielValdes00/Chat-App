@@ -1,5 +1,5 @@
 import { generateToken } from '../config/generateToken.js';
-import { User } from '../models/userModel.js';
+import { User } from '../src/models/userModel.js';
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import { uploadImageToCloudinary } from '../config/uploadImagenToCloudinary.js';

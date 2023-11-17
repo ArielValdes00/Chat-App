@@ -6,10 +6,9 @@ import Image from 'next/image';
 import LogoIcon from '../../../public/icons/chatify-logo.png';
 import LogoBar from '../../../public/icons/chatify-bar.png';
 import LogoText from '../../../public/icons/chatify-text.png';
-import Eye from '../../../public/icons/eye.png';
-import EyeSlash from '../../../public/icons/eye-slash.png';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import useBooleanState from '@/hooks/useBooleanState';
-import Loader from '../../../public/icons/loader.gif';
+import ButtonLoader from '@/components/ButtonLoader';
 
 const ResetPassword = () => {
     const router = useRouter();
@@ -17,8 +16,8 @@ const ResetPassword = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
-    const [showPassword1, toogleShowPassword1] = useBooleanState(false);
-    const [showPassword2, toogleShowPassword2] = useBooleanState(false);
+    const [showPassword1, toggleShowPassword1] = useBooleanState(false);
+    const [showPassword2, toggleShowPassword2] = useBooleanState(false);
     const [isLoading, toggleIsLoading] = useBooleanState(false);
 
     const handleSubmit = async (e) => {
@@ -69,14 +68,12 @@ const ResetPassword = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         className='w-full p-3 py-2 rounded-md focus:outline-blue-400 border'
                     />
-                    <Image
-                        src={!showPassword1 ? EyeSlash : Eye}
-                        height={20}
-                        width={20}
-                        alt='Hide Password'
-                        onClick={() => toogleShowPassword1()}
-                        className='absolute right-3 top-[40px]'
-                    />
+                    <span
+                        onClick={() => toggleShowPassword1()}
+                        className='absolute right-3 top-[35px]'
+                    >
+                        {!showPassword1 ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                    </span>
                 </div>
                 <div className="w-full relative">
                     <label className="ms-1 block text-gray-700 text-sm font-bold mb-2" htmlFor='confirmPassword'>
@@ -90,30 +87,19 @@ const ResetPassword = () => {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         className="w-full p-3 py-2 rounded-md focus:outline-blue-400 border mb-1"
                     />
-                    <Image
-                        src={!showPassword2 ? EyeSlash : Eye}
-                        height={20}
-                        width={20}
-                        alt='Hide Password'
-                        onClick={() => toogleShowPassword2()}
-                        className='absolute right-3 top-[40px]'
-                    />
+                    <span
+                        onClick={() => toggleShowPassword2()}
+                        className='absolute right-3 top-[35px]'
+                    >
+                        {!showPassword2 ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                    </span>
                     {message && <p className={`ms-1 text-sm ${message.includes("success") ? "text-green-500" : "text-red-500"}`}>{message}</p>}
                 </div>
-                <button
-                    type="submit"
-                    className="w-full p-3 py-2 bg-blue-600 rounded-md shadow text-white text-xl font-bold hover:bg-blue-700"
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <div className='flex items-center gap-2 justify-center'>
-                            <Image src={Loader} height={26} width={26} alt='Loading' loading='eager'/>
-                            <span>Updating...</span>
-                        </div>
-                    ) : (
-                        <span>Update Password</span>
-                    )}
-                </button>
+                <ButtonLoader
+                    textButton={'Update Password'}
+                    textSubmit={'Updating...'}
+                    isLoading={isLoading}
+                />
             </form>
         </div>
     );

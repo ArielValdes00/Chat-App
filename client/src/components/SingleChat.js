@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { getSender } from "../config/config.js";
 import { ChatState } from '@/context/ChatProvider';
-import Info from '../../public/icons/info.png';
-import Menu from '../../public/icons/menu.png';
-import Clear from '../../public/icons/clean.png';
-import Delete from '../../public/icons/delete.png';
-import Emoji from '../../public/icons/emoji.png';
-import LeftArrow from '../../public/icons/left-arrow.png';
+import { BsInfoCircleFill, BsThreeDotsVertical } from "react-icons/bs";
+import { BsEmojiSmileFill } from "react-icons/bs";
+import { FaArrowLeft } from "react-icons/fa6";
 import NoChats from '../../public/icons/no-chats.svg';
-import sendMessageIcon from '../../public/icons/send-message.png';
+import { IoSend } from "react-icons/io5";
 import Image from 'next/image.js';
 import Modal from './Modal.js';
 import UpdateGroupChatModal from './UpdateGroupChatModal.js';
 import ScrollableChat from './ScrollableChat.js';
+import { AnimatePresence, motion } from 'framer-motion';
+import { LuLoader2 } from "react-icons/lu";
 import { io } from "socket.io-client";
 import { deleteAllMessages, deleteCurrentChat, getChats, getMessages, readMessages, sendMessage } from '@/utils/apiChats';
-import Loader from '../../public/icons/loader.gif';
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import useBooleanState from '@/hooks/useBooleanState.js';
+import { variants } from '@/utils/animations.js';
 
 const SingleChat = ({ functionShowContact, toast }) => {
-    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications} = ChatState();
+    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
@@ -32,7 +31,6 @@ const SingleChat = ({ functionShowContact, toast }) => {
     const [socket, setSocket] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showEmojiPanel, setShowEmojiPanel] = useState(false);
-    const [chosenEmoji, setChosenEmoji] = useState(null);
     const [loader, setLoader] = useState(false);
 
     const toggleShowEmojis = () => {
@@ -40,7 +38,6 @@ const SingleChat = ({ functionShowContact, toast }) => {
     };
 
     const onEmojiClick = (emojiObject) => {
-        setChosenEmoji(emojiObject);
         setNewMessage(prevMessage => prevMessage + emojiObject.native);
     };
 
@@ -176,8 +173,8 @@ const SingleChat = ({ functionShowContact, toast }) => {
     };
 
     const handleOutsideClick = (e) => {
-        if (e.target.closest(".img-container") === null && e.target.closest(".menu") === null && 
-        e.target.closest(".emoji-container") === null) {
+        if (e.target.closest(".img-container") === null && e.target.closest(".menu") === null &&
+            e.target.closest(".emoji-container") === null) {
             setIsMenuOpen(false);
             setShowEmojiPanel(false);
         }
@@ -210,18 +207,14 @@ const SingleChat = ({ functionShowContact, toast }) => {
             {selectedChat ? (
                 <>
                     <div className="flex justify-between items-center py-[6px] px-3 capitalize font-bold text-lg">
-                        <div className="flex items-center lg:gap-3">
-                            <Image
-                                src={LeftArrow}
-                                height={25}
-                                width={25}
-                                alt='Contact'
+                        <div className="flex items-center lg:gap-3 2xl:py-3">
+                            <FaArrowLeft
+                                size={25}
                                 className='me-3 lg:hidden cursor-pointer'
-                                loading="eager"
                                 onClick={functionShowContact}
                             />
                             {!selectedChat.isGroupChat ? (
-                                <div className='flex items-center gap-3 py-2' onClick={() => toggleShowModalInfo()}>
+                                <div className='flex items-center 2xl:text-2xl gap-3 py-2' onClick={() => toggleShowModalInfo()}>
                                     <img
                                         src={getSender(user, selectedChat.users).picture}
                                         height={36}
@@ -259,55 +252,51 @@ const SingleChat = ({ functionShowContact, toast }) => {
                         </div>
                         <div className='flex items-center gap-1 lg:gap-2'>
                             {!selectedChat.isGroupChat ? (
-                                <Image
-                                    src={Info}
-                                    height={30}
-                                    width={30}
-                                    alt="Info"
-                                    loading="eager"
+                                <BsInfoCircleFill
+                                    size={28}
+                                    className='text-blue-600 cursor-pointer'
                                     onClick={() => toggleShowModalInfo()}
-                                    className="cursor-pointer"
                                 />
                             ) : (
-                                <Image
-                                    src={Info}
-                                    height={30}
-                                    width={30}
-                                    alt="Info"
-                                    loading="eager"
+                                <BsInfoCircleFill
+                                    size={28}
+                                    className='text-blue-600 cursor-pointer'
                                     onClick={() => toggleShowGroupChatModal()}
-                                    className="cursor-pointer"
                                 />
                             )}
                             <div className='relative img-container'>
-                                <Image
-                                    src={Menu}
-                                    height={30}
-                                    width={30}
-                                    alt="Menu"
-                                    loading="eager"
+                                <BsThreeDotsVertical
+                                    size={28}
+                                    className='text-blue-600 cursor-pointer'
                                     onClick={openMenuOptions}
-                                    className="cursor-pointer"
                                 />
-                                {isMenuOpen && (
-                                    <div className='menu absolute right-0 top-9 w-[150px] shadow-md text-sm font-semibold lowercase capitalize bg-white rounded-md border z-40'>
-                                        <div onClick={deleteMessages} className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 cursor-pointer'>
-                                            <p>Clear Chat</p>
-                                            <Image src={Clear} height={18} width={18} loading="eager" alt='Clear' />
-                                        </div>
-                                        <div onClick={deleteChat} className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 cursor-pointer'>
-                                            <p>Delete Chat</p>
-                                            <Image src={Delete} height={18} width={18} loading="eager" alt='Delete' />
-                                        </div>
-                                    </div>
-                                )}
+                                <AnimatePresence>
+                                    {isMenuOpen && (
+                                        <motion.div
+                                            initial="closed"
+                                            animate="open"
+                                            exit="closed"
+                                            variants={variants}
+                                            transition={{ duration: 0.15 }}
+                                            className='absolute right-2 top-0'>
+                                            <div className='menu absolute right-0 top-9 w-[150px] shadow-md text-sm 2xl:text-lg font-semibold lowercase capitalize bg-white rounded-md border z-40'>
+                                                <div onClick={deleteMessages} className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 2xl:py-3 2xl:px-6 cursor-pointer'>
+                                                    <p>Clear Chat</p>
+                                                </div>
+                                                <div onClick={deleteChat} className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 2xl:py-3 2xl:px-6 cursor-pointer'>
+                                                    <p>Delete Chat</p>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
                         </div>
                     </div>
                     <div className='flex flex-grow bg-gray-100 flex-col h-[412px] border-t overflow-y-auto'>
                         {loader ? (
                             <div className='flex h-full items-center justify-center'>
-                                <Image src={Loader} loading="eager" height={40} width={40} alt='Loader' />
+                                <LuLoader2 size={30} className='text-blue-600 animate-spin' />
                             </div>
                         ) : (
                             <ScrollableChat messages={messages} />
@@ -315,23 +304,23 @@ const SingleChat = ({ functionShowContact, toast }) => {
                     </div>
                     <div>
                         {istyping && (
-                            <p className='text-sm font-base lowercase'>{`${getSender(user, selectedChat.users).name} is typing...`}</p>
+                            <p className='text-sm font-base lowercase'>typing...</p>
                         )}
                     </div>
-                    <form onSubmit={sendMessages} className="flex items-center bg-white gap-3 px-4 py-[14px] text-sm relative z-40">
+                    <form onSubmit={sendMessages} className="flex items-center bg-white gap-3 px-4 py-[14px] 2xl:py-7 text-sm relative z-40">
                         <span onClick={toggleShowEmojis} className='emoji-container cursor-pointer'>
-                            <Image src={Emoji} height={30} width={30} alt='Emojis' className='rounded-full bg-yellow-300' />
+                            <BsEmojiSmileFill size={27} className='text-blue-600' />
                         </span>
                         <input
                             type="text"
                             placeholder="Message..."
-                            className="w-full bg-gray-100 p-2 outline-none rounded-full ps-4"
+                            className="w-full bg-gray-100 p-2 outline-none rounded-full ps-4 2xl:py-4"
                             value={newMessage}
                             onChange={typingHandler}
                             name='sendMessage'
                         />
                         <button type="submit">
-                            <Image src={sendMessageIcon} loading="eager" height={30} width={30} alt='Send Message' />
+                            <IoSend size={30} className='text-blue-600' />
                         </button>
                     </form>
                     {showEmojiPanel &&
@@ -353,8 +342,9 @@ const SingleChat = ({ functionShowContact, toast }) => {
                     <Image src={NoChats} priority={true} height={250} width={350} alt='Chatify' />
                     <p>Click on a user to start chatting</p>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }
 

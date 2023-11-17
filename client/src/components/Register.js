@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import Input from '@/components/Input';
 import { register } from '@/utils/apiChats';
 import Image from 'next/image';
-import Loader from '../../public/icons/loader.gif';
-import Eye from '../../public/icons/eye.png';
-import EyeSlash from '../../public/icons/eye-slash.png';
 import { isValidName, isValidEmail, isValidPassword } from '@/utils/validation';
 import { useRouter } from 'next/router';
 import useBooleanState from '@/hooks/useBooleanState';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import ButtonLoader from './ButtonLoader';
 
 const Register = ({ handleChange }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [emailError, setEmailError] = useState("");
-    const [showPassword1, toogleShowPassword1] = useBooleanState(false);
-    const [showPassword2, toogleShowPassword2] = useBooleanState(false);
+    const [showPassword1, toggleShowPassword1] = useBooleanState(false);
+    const [showPassword2, toggleShowPassword2] = useBooleanState(false);
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -88,14 +87,12 @@ const Register = ({ handleChange }) => {
                         onChange={handleInputChange}
                         formValue={form.password}
                     />
-                    <Image
-                        src={!showPassword1 ? EyeSlash : Eye}
-                        height={20}
-                        width={20}
-                        alt='Show Password'
-                        onClick={() => toogleShowPassword1()}
-                        className='absolute right-3 top-[37px]'
-                    />
+                    <span
+                        onClick={() => toggleShowPassword1()}
+                        className='absolute right-3 top-[35px]'
+                    >
+                        {!showPassword1 ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                    </span>
                 </div>
                 <div className="relative w-full">
                     <Input
@@ -106,28 +103,18 @@ const Register = ({ handleChange }) => {
                         onChange={handleInputChange}
                         passwordValue={form.password}
                     />
-                    <Image
-                        src={!showPassword2 ? EyeSlash : Eye}
-                        height={20}
-                        width={20}
-                        alt='Hide Password'
-                        onClick={() => toogleShowPassword2()}
-                        className='absolute right-3 top-[37px]'
-                    />
+                    <span
+                        onClick={() => toggleShowPassword2()}
+                        className='absolute right-3 top-[35px]'
+                    >
+                        {!showPassword2 ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                    </span>
                 </div>
-                <button
-                    type="submit"
-                    className="w-full my-2 py-2 bg-blue-600 rounded-md shadow text-white text-xl font-bold hover:bg-blue-700"
-                >
-                    {isLoading ? (
-                        <div className='flex items-center gap-2 justify-center'>
-                            <Image src={Loader} height={26} width={26} alt='Loading' />
-                            <span>Loading...</span>
-                        </div>
-                    ) : (
-                        <span>Register</span>
-                    )}
-                </button>
+                <ButtonLoader
+                    textButton={'Register'}
+                    textSubmit={'Loading...'}
+                    isLoading={isLoading}
+                />
                 <p className="my-1">Already have an account?</p>
                 <button
                     type='button'

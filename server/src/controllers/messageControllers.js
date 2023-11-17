@@ -1,6 +1,6 @@
-import { Message } from '../models/messageModel.js';
-import { User } from '../models/userModel.js';
-import { Chat } from '../models/chatModel.js';
+import { Message } from '../src/models/messageModel.js';
+import { User } from '../src/models/userModel.js';
+import { Chat } from '../src/models/chatModel.js';
 
 export const allMessages = async (req, res) => {
     try {

@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
-import CloseModal from '../../public/icons/close-modal.png';
 import { ChatState } from '@/context/ChatProvider';
-import Image from 'next/image';
-import Delete from '../../public/icons/delete-user.png';
-import Loader from '../../public/icons/loader.gif';
-import Edit from '../../public/icons/edit.png';
+import { IoClose } from "react-icons/io5";
+import { LuLoader2 } from "react-icons/lu";
+import { FiEdit } from "react-icons/fi";
 import 'animate.css';
 import { createGroupChat, searchUsers } from '@/utils/apiChats';
 
@@ -80,10 +78,9 @@ const GroupChatModel = ({ handleCloseModal, toast }) => {
         <div className='fixed inset-0 z-50 flex items-center justify-center'>
             <div className='w-5/6 sm:w-1/2 xl:w-[40%] absolute bg-white p-4 rounded-xl shadow-lg z-10 relative animate__animated animate__fadeIn'>
                 <div className='mb-2'>
-                    <Image onClick={handleCloseModal}
-                        src={CloseModal} height={28}
-                        width={28}
-                        alt='Close'
+                    <IoClose
+                        size={30}
+                        onClick={handleCloseModal}
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
@@ -106,18 +103,18 @@ const GroupChatModel = ({ handleCloseModal, toast }) => {
                         <label
                             htmlFor="upload-button"
                         >
-                            <Image src={Edit} height={20} width={20} alt='Change Picture' className='absolute ms-2 cursor-pointer' />
+                            <FiEdit
+                                size={20}
+                                className='absolute ms-2 cursor-pointer'
+                            />
                         </label>
                     </div>
                     <div className='flex items-center gap-2 justify-center w-full flex-wrap'>
                         {selectedUsers.map((user) => (
-                            <div key={user._id} className='border flex items-center justify-center bg-gray-200 gap-2 rounded-full px-3 cursor-pointer'>
+                            <div key={user._id} className='border flex items-center justify-center bg-gray-200 gap-1 rounded-full px-3 cursor-pointer'>
                                 <p className='capitalize'>{user.name}</p>
-                                <Image
-                                    src={Delete}
-                                    height={10}
-                                    width={10}
-                                    alt='Delete'
+                                <IoClose
+                                    size={17}
                                     onClick={() => handleDelete(user)}
                                 />
                             </div>
@@ -148,7 +145,7 @@ const GroupChatModel = ({ handleCloseModal, toast }) => {
                     <div className='lg:w-2/3 flex flex-col gap-2'>
                         <div className={`${search && "h-[104px]"} overflow-y-auto`}>
                             {loader
-                                ? <Image src={Loader} height={30} width={30} alt='Loader' className='mx-auto' />
+                                ? <LuLoader2 size={20} className='text-blue-600 mx-auto h-full animate-spin' />
                                 : searchResult?.slice(0, 3).map((user) => (
                                     <div
                                         key={user._id}
