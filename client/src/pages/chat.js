@@ -5,12 +5,10 @@ import Contacts from '@/components/Contacts';
 import { ChatState } from '@/context/ChatProvider';
 import SingleChat from '@/components/SingleChat';
 import { toast, ToastContainer } from 'react-toastify';
-import { useRouter } from 'next/router';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Chat = () => {
-    const { showContacts, toggleShowContacts, user } = ChatState();
-    const router = useRouter();
+const Chat = ({ user }) => {
+    const { showContacts, toggleShowContacts } = ChatState();
     const useWindowSize = () => {
         const [windowSize, setWindowSize] = useState({
             width: undefined,
@@ -36,12 +34,6 @@ const Chat = () => {
     }
     const size = useWindowSize();
 
-    useEffect(() => {
-        if(!user) {
-            router.push("/");
-        }
-    }, []);
-
     return (
         <div className='min-h-screen flex flex-col overflow-x-hidden'>
             <Navbar functionShowContact={() => toggleShowContacts()} />
@@ -52,7 +44,7 @@ const Chat = () => {
                     animate={size.width < 1024 ? { x: !showContacts ? 0 : -100, opacity: !showContacts ? 1 : 0 } : {}}
                     transition={{ duration: 0.5 }}
                 >
-                    <Contacts functionShowContact={() => toggleShowContacts()} toast={toast} />
+                    <Contacts functionShowContact={() => toggleShowContacts()} toast={toast} user={user} />
                 </motion.div>
                 <motion.div
                     className={`${showContacts ? "block" : "hidden lg:block"} col-span-7 lg:col-span-5 lg:border-l`}
@@ -60,7 +52,7 @@ const Chat = () => {
                     animate={size.width < 1024 ? { x: showContacts ? 0 : 100, opacity: showContacts ? 1 : 0 } : {}}
                     transition={{ duration: 0.5 }}
                 >
-                    <SingleChat functionShowContact={() => toggleShowContacts()} toast={toast} />
+                    <SingleChat functionShowContact={() => toggleShowContacts()} toast={toast} user={user} />
                 </motion.div>
             </div>
             <ToastContainer
@@ -76,5 +68,26 @@ const Chat = () => {
         </div>
     );
 };
+
+export async function getServerSideProps(context) {
+    const { req } = context;
+    const { cookies } = req;
+    const user = JSON.parse(cookies.userInfo);
+
+    if (!cookies.userInfo) {
+        return {
+            redirect: {
+                destination: "/",
+                permanent: false,
+            },
+        };
+    }
+
+    return {
+        props: {
+            user
+        },
+    };
+}
 
 export default Chat;

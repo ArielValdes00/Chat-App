@@ -7,12 +7,12 @@ import { FaCheckCircle } from "react-icons/fa";
 import { addUserToGroup, getChatsFromServer, removeUserFromChat, renameGroupChat, searchUsers, updateGroupPicture } from '@/utils/apiChats';
 import 'animate.css';
 
-const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
+const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast, user }) => {
     const [groupChatName, setGroupChatName] = useState("");
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
     const [loader, setLoader] = useState(false);
-    const { selectedChat, setSelectedChat, user, setChats, handleShowContacts } = ChatState();
+    const { selectedChat, setSelectedChat, setChats, handleShowContacts } = ChatState();
 
     const handleUploadInput = async (e) => {
         const imageFile = e.target.files[0];
@@ -101,22 +101,33 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
         setGroupChatName("");
     };
 
+    const handleImageKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const inputElement = document.getElementById('upload-button');
+            inputElement && inputElement.click();
+        }
+    };
+
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center'>
             <div className='absolute flex flex-col items-center gap-3 bg-white p-4 rounded-xl shadow-lg z-10 relative w-5/6 sm:w-1/2 xl:w-[40%] animate__animated animate__fadeIn'>
                 <div className='mb-2'>
                     <IoClose
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleCloseModal(user);
+                            }
+                        }}
                         size={30}
                         onClick={handleCloseModal}
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
                 <div className='flex items-center relative'>
-                    <img
-                        src={selectedChat.picture}
-                        alt={selectedChat.chatName}
-                        className='rounded-full profile-img-modal'
-                    />
+
                     <input
                         type="file"
                         onChange={handleUploadInput}
@@ -125,11 +136,18 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
                         className="hidden"
                     />
                     <label
+                        tabIndex={0}
+                        onKeyDown={(e) => handleImageKeyDown(e)}
                         htmlFor="upload-button"
                     >
+                        <img
+                            src={selectedChat.picture}
+                            alt={selectedChat.chatName}
+                            className='rounded-full profile-img-modal cursor-pointer'
+                        />
                         <FiEdit
                             size={20}
-                            className='absolute ms-2 cursor-pointer'
+                            className='absolute top-[59px] right-[-30px] ms-2 cursor-pointer'
                         />
                     </label>
                 </div>
@@ -142,6 +160,13 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
                             <div className='flex flex-nowrap items-center gap-1'>
                                 <p className='capitalize truncate'>{user.name}</p>
                                 <IoClose
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            handleRemove(user);
+                                        }
+                                    }}
                                     size={16}
                                     onClick={() => handleRemove(user)}
                                 />
@@ -161,6 +186,13 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
                             className="border w-full rounded-lg p-2 ps-3 focus:outline-none focus:ring focus:border-blue-600"
                         />
                         <button
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleRename(e);
+                                }
+                            }}
                             onClick={handleRename}
                             type="button"
                         >
@@ -186,6 +218,13 @@ const UpdateGroupChatModal = ({ fetchMessages, handleCloseModal, toast }) => {
                         ? <LuLoader2 className='mx-auto animation-spin' />
                         : searchResult.slice(0, 3).map((user) => (
                             <div
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        handleAddUser(user);
+                                    }
+                                }}
                                 key={user._id}
                                 user={user}
                                 onClick={() => handleAddUser(user)}

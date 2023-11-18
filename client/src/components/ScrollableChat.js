@@ -1,9 +1,7 @@
-import { ChatState } from '@/context/ChatProvider';
 import React from 'react';
 import { useRef, useEffect } from 'react';
 
-const ScrollableChat = ({ messages }) => {
-    const { user } = ChatState();
+const ScrollableChat = ({ messages, user }) => {
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {

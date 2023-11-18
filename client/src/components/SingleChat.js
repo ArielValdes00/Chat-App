@@ -19,8 +19,8 @@ import data from '@emoji-mart/data';
 import useBooleanState from '@/hooks/useBooleanState.js';
 import { variants } from '@/utils/animations.js';
 
-const SingleChat = ({ functionShowContact, toast }) => {
-    const { user, selectedChat, setNotifications, setSelectedChat, setChats, notifications } = ChatState();
+const SingleChat = ({ functionShowContact, toast, user }) => {
+    const { selectedChat, setNotifications, setSelectedChat, setChats, notifications } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
@@ -193,6 +193,7 @@ const SingleChat = ({ functionShowContact, toast }) => {
         <div className='flex flex-col h-full'>
             {showModalInfo && (
                 <Modal
+                    user={user}
                     handleCloseModal={() => toggleShowModalInfo()}
                     userInfo={getSender(user, selectedChat.users)}
                 />
@@ -202,6 +203,7 @@ const SingleChat = ({ functionShowContact, toast }) => {
                     handleCloseModal={() => toggleShowGroupChatModal()}
                     fetchMessages={fetchMessages}
                     toast={toast}
+                    user={user}
                 />
             )}
             {selectedChat ? (
@@ -209,6 +211,13 @@ const SingleChat = ({ functionShowContact, toast }) => {
                     <div className="flex justify-between items-center py-[6px] px-3 capitalize font-bold text-lg">
                         <div className="flex items-center lg:gap-3 2xl:py-3">
                             <FaArrowLeft
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        functionShowContact();
+                                    }
+                                }}
                                 size={25}
                                 className='me-3 lg:hidden cursor-pointer'
                                 onClick={functionShowContact}
@@ -254,18 +263,39 @@ const SingleChat = ({ functionShowContact, toast }) => {
                             {!selectedChat.isGroupChat ? (
                                 <BsInfoCircleFill
                                     size={28}
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            toggleShowModalInfo();
+                                        }
+                                    }}
                                     className='text-blue-600 cursor-pointer'
                                     onClick={() => toggleShowModalInfo()}
                                 />
                             ) : (
                                 <BsInfoCircleFill
                                     size={28}
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            toggleShowGroupChatModal();
+                                        }
+                                    }}
                                     className='text-blue-600 cursor-pointer'
                                     onClick={() => toggleShowGroupChatModal()}
                                 />
                             )}
                             <div className='relative img-container'>
                                 <BsThreeDotsVertical
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            openMenuOptions();
+                                        }
+                                    }}
                                     size={28}
                                     className='text-blue-600 cursor-pointer'
                                     onClick={openMenuOptions}
@@ -280,10 +310,30 @@ const SingleChat = ({ functionShowContact, toast }) => {
                                             transition={{ duration: 0.15 }}
                                             className='absolute right-2 top-0'>
                                             <div className='menu absolute right-0 top-9 w-[150px] shadow-md text-sm 2xl:text-lg font-semibold lowercase capitalize bg-white rounded-md border z-40'>
-                                                <div onClick={deleteMessages} className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 2xl:py-3 2xl:px-6 cursor-pointer'>
+                                                <div
+                                                    tabIndex={0}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            deleteMessages();
+                                                        }
+                                                    }}
+                                                    onClick={deleteMessages}
+                                                    className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 2xl:py-3 2xl:px-6 cursor-pointer'
+                                                >
                                                     <p>Clear Chat</p>
                                                 </div>
-                                                <div onClick={deleteChat} className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 2xl:py-3 2xl:px-6 cursor-pointer'>
+                                                <div
+                                                    tabIndex={0}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            deleteChat();
+                                                        }
+                                                    }}
+                                                    onClick={deleteChat}
+                                                    className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 2xl:py-3 2xl:px-6 cursor-pointer'
+                                                >
                                                     <p>Delete Chat</p>
                                                 </div>
                                             </div>
@@ -299,7 +349,7 @@ const SingleChat = ({ functionShowContact, toast }) => {
                                 <LuLoader2 size={30} className='text-blue-600 animate-spin' />
                             </div>
                         ) : (
-                            <ScrollableChat messages={messages} />
+                            <ScrollableChat messages={messages} user={user} />
                         )}
                     </div>
                     <div>
@@ -308,7 +358,17 @@ const SingleChat = ({ functionShowContact, toast }) => {
                         )}
                     </div>
                     <form onSubmit={sendMessages} className="flex items-center bg-white gap-3 px-4 py-[14px] 2xl:py-7 text-sm relative z-40">
-                        <span onClick={toggleShowEmojis} className='emoji-container cursor-pointer'>
+                        <span
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    toggleShowEmojis();
+                                }
+                            }}
+                            onClick={toggleShowEmojis}
+                            className='emoji-container cursor-pointer'
+                        >
                             <BsEmojiSmileFill size={27} className='text-blue-600' />
                         </span>
                         <input

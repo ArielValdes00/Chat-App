@@ -1,27 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Login from "@/components/Login";
 import Register from "@/components/Register";
-import { useRouter } from "next/router";
 import ForgotPassword from "@/components/ForgotPassword";
 import useBooleanState from "@/hooks/useBooleanState";
+import { Cookies } from "js-cookie";
 
 export default function Home() {
     const [changeForm, setChangeForm] = useState(false);
-    const [showForgotPassword, toggleShowForgotPassword] = useBooleanState(false); 
-    const router = useRouter();
+    const [showForgotPassword, toggleShowForgotPassword] = useBooleanState(false);
 
     const handleChangeForm = () => {
         setChangeForm(!changeForm);
     };
-
-    useEffect(() => {
-        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-
-        if (userInfo) {
-            router.push("/chat")
-        }
-    }, []);
 
     return (
         <div className="h-screen bg-gray-100 grid place-items-center overflow-hidden">
@@ -34,7 +25,7 @@ export default function Home() {
                         exit={{ x: 100, opacity: 0 }}
                         transition={{ duration: 0.4 }}
                     >
-                        <ForgotPassword toggleShowForgotPassword={toggleShowForgotPassword}/>
+                        <ForgotPassword toggleShowForgotPassword={toggleShowForgotPassword} />
                     </motion.div>
                 ) : (
                     <motion.div
@@ -55,3 +46,22 @@ export default function Home() {
         </div>
     );
 }
+
+export async function getServerSideProps(context) {
+    const { req } = context;
+    const { cookies } = req;
+
+    if (cookies.userInfo) {
+        return {
+            redirect: {
+                destination: "/chat",
+                permanent: false,
+            },
+        };
+    }
+
+    return {
+        props: {},
+    };
+}
+

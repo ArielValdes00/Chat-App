@@ -3,10 +3,10 @@ import { ChatState } from '@/context/ChatProvider';
 import { LuLoader2 } from "react-icons/lu";
 import { getAllUsers, selectChat } from '@/utils/apiChats';
 
-const Sidebar = ({ toast }) => {
+const Sidebar = ({ toast, user }) => {
     const [usersResult, setUsersResult] = useState([]);
     const [loader, setLoader] = useState(false);
-    const { user, setSelectedChat, chats, setChats, toggleShowContacts, toggleShowSideBar } = ChatState();
+    const { setSelectedChat, chats, setChats, toggleShowContacts, toggleShowSideBar } = ChatState();
 
     useEffect(() => {
         const getUsers = async () => {
@@ -43,11 +43,18 @@ const Sidebar = ({ toast }) => {
             <div className='absolute h-[545px] flex flex-col overflow-y-auto flex-grow bg-white z-10 relative'>
                 {loader ? (
                     <div className='flex h-full justify-center items-center'>
-                        <LuLoader2 size={30} className='animate-spin text-blue-600'/>
+                        <LuLoader2 size={30} className='animate-spin text-blue-600' />
                     </div>
                 ) : (
                     usersResult.map((user) => (
                         <div
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    accessChat(user._id);
+                                }
+                            }}
                             key={user._id}
                             className='flex items-center gap-3 p-1 2xl:py-5 py-2 ps-3 border-b hover:bg-gray-100 cursor-pointer'
                             onClick={() => accessChat(user._id)}

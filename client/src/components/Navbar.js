@@ -12,12 +12,20 @@ import { useRouter } from 'next/router';
 import { AnimatePresence, motion } from 'framer-motion';
 import useBooleanState from '@/hooks/useBooleanState';
 import { variants } from '@/utils/animations';
+import Cookies from 'js-cookie';
 
 const Navbar = ({ functionShowContact }) => {
-    const { user, showSideBar, toggleShowSideBar, showContacts } = ChatState();
+    const { showSideBar, toggleShowSideBar, showContacts } = ChatState();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [user, setUser] = useState([]);
     const [showModal, toggleShowModal] = useBooleanState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        const getUser = Cookies.get('userInfo');
+        const parsedUser = JSON.parse(getUser);
+        setUser(parsedUser);
+    }, [router]);
 
     const showContact = () => {
         toggleShowSideBar();
@@ -31,7 +39,7 @@ const Navbar = ({ functionShowContact }) => {
     }
 
     const handleLogout = () => {
-        localStorage.removeItem("userInfo");
+        Cookies.remove("userInfo");
         router.push("/");
     };
 
@@ -50,11 +58,21 @@ const Navbar = ({ functionShowContact }) => {
     }, []);
 
     return (
-        <div className='py-[14px] 2xl:py-6 border-b'>
+        <div className='py-[14px] 2xl:py-6 border-b' aria-hidden="true">
             {showModal && <Modal handleCloseModal={() => toggleShowModal()} userInfo={user} />}
             {user && (
                 <div className='grid grid-cols-3 items-center px-3'>
-                    <div className='mr-auto flex items-center gap-2 2xl:text-xl cursor-pointer bg-blue-600 text-white rounded-full p-2 lg:px-3 lg:pe-4 lg:py-[7px] 2xl:p-4' onClick={showContact}>
+                    <div
+                        tabIndex={0}
+                        className='mr-auto flex items-center gap-2 2xl:text-xl cursor-pointer bg-blue-600 text-white rounded-full p-2 lg:px-3 lg:pe-4 lg:py-[7px] 2xl:p-4'
+                        onClick={showContact}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                showContact();
+                            }
+                        }}
+                    >
                         {showSideBar ? <BiSolidContact size={20} /> : <IoSearch size={20} />}
                         <p className='hidden md:block text-white font-semibold'>{`${showSideBar ? 'Contacts' : 'Search Users'}`}</p>
                     </div>
@@ -63,7 +81,16 @@ const Navbar = ({ functionShowContact }) => {
                         <Image src={LogoText} height={126} width={126} alt='Chatify' />
                     </div>
                     <div className='flex items-center gap-3 profile-container ml-auto'>
-                        <div onClick={openMenuProfile} className='flex gap-2 items-center cursor-pointer'>
+                        <div
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    openMenuProfile();
+                                }
+                            }}
+                            onClick={openMenuProfile}
+                            className='flex gap-2 items-center cursor-pointer'>
                             <img src={user.picture} alt={user.name} className='rounded-full profile-img-user' />
                             <p className='font-semibold text-xl 2xl:text-2xl capitalize hidden md:block'>
                                 {user.name}
@@ -79,13 +106,31 @@ const Navbar = ({ functionShowContact }) => {
                                     variants={variants}
                                     transition={{ duration: 0.15 }}
                                     className='absolute right-2 top-10 2xl:top-16'
-                                    >
+                                >
                                     <div className='absolute right-2 top-3 mt-2 bg-white text-black rounded-md text-[15px] border z-40 shadow-lg'>
-                                        <div className='flex items-center gap-3 2xl:text-xl px-5 lg:px-7 py-2 cursor-pointer hover:bg-gray-100' onClick={() => toggleShowModal()}>
+                                        <div
+                                            tabIndex={0}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    toggleShowModal();
+                                                }
+                                            }}
+                                            className='flex items-center gap-3 2xl:text-xl px-5 lg:px-7 py-2 cursor-pointer hover:bg-gray-100'
+                                            onClick={() => toggleShowModal()}>
                                             <FaUser size={15} />
                                             <span>Profile</span>
                                         </div>
-                                        <div className='flex items-center gap-3 2xl:text-xl px-5 lg:px-7 py-2 cursor-pointer hover:bg-gray-100' onClick={handleLogout}>
+                                        <div
+                                            tabIndex={0}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    handleLogout();
+                                                }
+                                            }}
+                                            className='flex items-center gap-3 2xl:text-xl px-5 lg:px-7 py-2 cursor-pointer hover:bg-gray-100'
+                                            onClick={handleLogout}>
                                             <FiLogOut size={15} />
                                             <span>Logout</span>
                                         </div>

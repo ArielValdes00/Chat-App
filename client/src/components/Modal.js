@@ -5,8 +5,7 @@ import { IoClose } from "react-icons/io5";
 import { FiEdit } from "react-icons/fi";
 import 'animate.css';
 
-const Modal = ({ userInfo, handleCloseModal }) => {
-    const { user, setUser } = ChatState();
+const Modal = ({ userInfo, handleCloseModal, user }) => {
 
     const handleUploadInput = async (e) => {
         const imageFile = e.target.files[0];
@@ -28,6 +27,13 @@ const Modal = ({ userInfo, handleCloseModal }) => {
             <div className='absolute bg-white p-4 rounded-xl shadow-lg z-10 relative w-5/6 sm:w-[60%] xl:w-[40%] animate__animated animate__fadeIn'>
                 <div className='mb-5'>
                     <IoClose
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleCloseModal();
+                            }
+                        }}
                         size={30}
                         onClick={handleCloseModal}
                         className='cursor-pointer absolute right-3 top-3'

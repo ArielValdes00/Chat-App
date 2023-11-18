@@ -70,7 +70,7 @@ const ResetPassword = () => {
                     />
                     <span
                         onClick={() => toggleShowPassword1()}
-                        className='absolute right-3 top-[35px]'
+                        className='absolute cursor-pointer right-3 top-[35px]'
                     >
                         {!showPassword1 ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
                     </span>
@@ -89,7 +89,7 @@ const ResetPassword = () => {
                     />
                     <span
                         onClick={() => toggleShowPassword2()}
-                        className='absolute right-3 top-[35px]'
+                        className='absolute cursor-pointer right-3 top-[35px]'
                     >
                         {!showPassword2 ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
                     </span>

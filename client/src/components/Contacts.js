@@ -8,15 +8,14 @@ import { getChats, readMessages } from '@/utils/apiChats';
 import { LuLoader2 } from "react-icons/lu";
 import useBooleanState from '@/hooks/useBooleanState';
 
-const Contacts = ({ functionShowContact, toast }) => {
+const Contacts = ({ functionShowContact, toast, user }) => {
 
-    const { setSelectedChat, user, chats, setChats, selectedChat, notifications, showSideBar, setNotifications } = ChatState();
+    const { setSelectedChat, chats, setChats, selectedChat, notifications, showSideBar, setNotifications } = ChatState();
     const [loggedUser, setLoggedUser] = useState(user);
     const [showModal, toggleShowModal] = useBooleanState(false);
     const [loader, setLoader] = useState(false);
 
     useEffect(() => {
-        setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
         if (user && user.token) {
             const fetchChats = async () => {
                 try {
@@ -48,10 +47,20 @@ const Contacts = ({ functionShowContact, toast }) => {
 
     return (
         <div className='flex flex-col h-full'>
-            {showModal && <GroupChatModel handleCloseModal={() => toggleShowModal()} toast={toast} />}
-            {showSideBar ? <Sidebar toast={toast} /> : (
+            {showModal && <GroupChatModel handleCloseModal={() => toggleShowModal()} toast={toast} user={user} />}
+            {showSideBar ? <Sidebar toast={toast} user={user} /> : (
                 <>
-                    <div onClick={() => toggleShowModal()} className='border-b py-[16px] 2xl:py-7 flex items-center justify-center lg:justify-start lg:ps-4 gap-3 hover:bg-gray-100 cursor-pointer'>
+                    <div
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                toggleShowModal();
+                            }
+                        }}
+                        onClick={() => toggleShowModal()}
+                        className='border-b py-[16px] 2xl:py-7 flex items-center justify-center lg:justify-start lg:ps-4 gap-3 hover:bg-gray-100 cursor-pointer'
+                    >
                         <MdGroupAdd size={26} className='text-blue-600' />
                         <p className='mt-1 font-semibold text-lg 2xl:text-xl'>New Group Chat</p>
                     </div>
@@ -63,6 +72,13 @@ const Contacts = ({ functionShowContact, toast }) => {
                             :
                             chats?.map((chat) => (
                                 <div
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            showChats(chat);
+                                        }
+                                    }}
                                     key={chat._id}
                                     onClick={() => showChats(chat)}
                                     className={`flex items-center gap-3 p-3 2xl:py-6 border-b cursor-pointer ${selectedChat?._id === chat._id && 'lg:bg-gray-100'} hover:bg-gray-100`}

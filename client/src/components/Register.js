@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Input from '@/components/Input';
 import { register } from '@/utils/apiChats';
-import Image from 'next/image';
 import { isValidName, isValidEmail, isValidPassword } from '@/utils/validation';
 import { useRouter } from 'next/router';
 import useBooleanState from '@/hooks/useBooleanState';
@@ -30,20 +29,18 @@ const Register = ({ handleChange }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         if (
             isValidName(form.name) &&
             isValidEmail(form.email) &&
             isValidPassword(form.password) &&
             form.password === form.confirmPassword
         ) {
-            setIsLoading(true);
             try {
-                const res = await register(form.name, form.email, form.password);
-                localStorage.setItem('userInfo', JSON.stringify(res));
-                setTimeout(() => {
-                    setIsLoading(false);
-                    router.push("/chat");
-                }, 2000);
+                await register(form.name, form.email, form.password);
+                location.reload();
+                setIsLoading(false);
+
             } catch (error) {
                 setEmailError(error.message)
                 setTimeout(() => {
@@ -89,7 +86,7 @@ const Register = ({ handleChange }) => {
                     />
                     <span
                         onClick={() => toggleShowPassword1()}
-                        className='absolute right-3 top-[35px]'
+                        className='absolute cursor-pointer right-3 top-[35px]'
                     >
                         {!showPassword1 ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
                     </span>
@@ -105,7 +102,7 @@ const Register = ({ handleChange }) => {
                     />
                     <span
                         onClick={() => toggleShowPassword2()}
-                        className='absolute right-3 top-[35px]'
+                        className='absolute cursor-pointer right-3 top-[35px]'
                     >
                         {!showPassword2 ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
                     </span>

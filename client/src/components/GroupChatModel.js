@@ -6,8 +6,8 @@ import { FiEdit } from "react-icons/fi";
 import 'animate.css';
 import { createGroupChat, searchUsers } from '@/utils/apiChats';
 
-const GroupChatModel = ({ handleCloseModal, toast }) => {
-    const { user, chats, setChats } = ChatState();
+const GroupChatModel = ({ handleCloseModal, toast, user }) => {
+    const { chats, setChats } = ChatState();
     const [groupChatName, setGroupChatName] = useState("");
     const [groupChatImage, setGroupChatImage] = useState("")
     const [selectedUsers, setSelectedUsers] = useState([]);
@@ -73,26 +73,51 @@ const GroupChatModel = ({ handleCloseModal, toast }) => {
         setPreviewImage(URL.createObjectURL(file));
     };
 
+    const handleImageKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const inputElement = document.getElementById('upload-button');
+            inputElement && inputElement.click();
+        }
+    };
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center'>
             <div className='w-5/6 sm:w-1/2 xl:w-[40%] absolute bg-white p-4 rounded-xl shadow-lg z-10 relative animate__animated animate__fadeIn'>
                 <div className='mb-2'>
                     <IoClose
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleCloseModal();
+                            }
+                        }}
                         size={30}
                         onClick={handleCloseModal}
                         className='cursor-pointer absolute right-3 top-3'
                     />
                 </div>
                 <p className='text-center text-2xl font-bold mb-4'>Create Group Chat</p>
-                <form onSubmit={handleSubmit} className='flex flex-col gap-4 items-center relative'>
-                    <div className='flex items-center relative'>
-                        <img
-                            src={!groupChatImage ? "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" : previewImage}
-                            alt={'user'}
-                            className='rounded-full profile-img-modal'
-                            loading='eager'
-                        />
+                <form onSubmit={handleSubmit} className='flex flex-col gap-4 items-center'>
+                    <div className='flex items-center'>
+                        <label
+                            htmlFor="upload-button"
+                            className='relative'
+                            tabIndex={0}
+                            onKeyDown={(e) => handleImageKeyDown(e)}
+                        >
+                            <img
+                                src={!groupChatImage ? "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" : previewImage}
+                                alt={'user'}
+                                className='rounded-full profile-img-modal'
+                                loading='eager'
+                            />
+                            <FiEdit
+                                size={20}
+                                className='absolute top-[59px] right-[-30px] ms-2 cursor-pointer'
+                            />
+                        </label>
                         <input
                             type="file"
                             onChange={(e) => groupImage(e)}
@@ -100,20 +125,19 @@ const GroupChatModel = ({ handleCloseModal, toast }) => {
                             id="upload-button"
                             className="hidden"
                         />
-                        <label
-                            htmlFor="upload-button"
-                        >
-                            <FiEdit
-                                size={20}
-                                className='absolute ms-2 cursor-pointer'
-                            />
-                        </label>
                     </div>
                     <div className='flex items-center gap-2 justify-center w-full flex-wrap'>
                         {selectedUsers.map((user) => (
                             <div key={user._id} className='border flex items-center justify-center bg-gray-200 gap-1 rounded-full px-3 cursor-pointer'>
                                 <p className='capitalize'>{user.name}</p>
                                 <IoClose
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            handleDelete(user);
+                                        }
+                                    }}
                                     size={17}
                                     onClick={() => handleDelete(user)}
                                 />
@@ -150,6 +174,13 @@ const GroupChatModel = ({ handleCloseModal, toast }) => {
                                     <div
                                         key={user._id}
                                         user={user}
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                handleGroup(user);
+                                            }
+                                        }}
                                         onClick={() => handleGroup(user)}
                                         className='flex items-center gap-3 py-1 px-4 lg:ps-3 hover:bg-gray-100 cursor-pointer'
                                     >
