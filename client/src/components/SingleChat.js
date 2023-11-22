@@ -1,26 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { getSender } from "../config/config.js";
 import { ChatState } from '@/context/ChatProvider';
-import { BsInfoCircleFill, BsThreeDotsVertical } from "react-icons/bs";
 import { BsEmojiSmileFill } from "react-icons/bs";
-import { FaArrowLeft } from "react-icons/fa6";
 import NoChats from '../../public/icons/no-chats.svg';
 import { IoSend } from "react-icons/io5";
 import Image from 'next/image.js';
 import Modal from './Modal.js';
 import UpdateGroupChatModal from './UpdateGroupChatModal.js';
 import ScrollableChat from './ScrollableChat.js';
-import { AnimatePresence, motion } from 'framer-motion';
 import { LuLoader2 } from "react-icons/lu";
 import { io } from "socket.io-client";
-import { deleteAllMessages, deleteCurrentChat, getChats, getMessages, readMessages, sendMessage } from '@/utils/apiChats';
+import { deleteAllMessages, getChats, getMessages, readMessages, sendMessage } from '@/utils/apiChats';
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import useBooleanState from '@/hooks/useBooleanState.js';
-import { variants } from '@/utils/animations.js';
+import HeaderChat from './HeaderChat.js';
 
 const SingleChat = ({ functionShowContact, toast, user }) => {
-    const { selectedChat, setNotifications, setSelectedChat, setChats, notifications } = ChatState();
+    const { selectedChat, setNotifications, setChats, notifications } = ChatState();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
@@ -29,7 +26,6 @@ const SingleChat = ({ functionShowContact, toast, user }) => {
     const [showModalInfo, toggleShowModalInfo] = useBooleanState(false);
     const [showGroupChatModal, toggleShowGroupChatModal] = useBooleanState(false);
     const [socket, setSocket] = useState(null);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showEmojiPanel, setShowEmojiPanel] = useState(false);
     const [loader, setLoader] = useState(false);
 
@@ -40,10 +36,6 @@ const SingleChat = ({ functionShowContact, toast, user }) => {
     const onEmojiClick = (emojiObject) => {
         setNewMessage(prevMessage => prevMessage + emojiObject.native);
     };
-
-    const openMenuOptions = () => {
-        setIsMenuOpen(!isMenuOpen);
-    }
 
     useEffect(() => {
         const newSocket = io(process.env.NEXT_PUBLIC_URL);
@@ -141,52 +133,6 @@ const SingleChat = ({ functionShowContact, toast, user }) => {
         }, timerLength);
     };
 
-    const deleteMessages = async () => {
-        try {
-            await deleteAllMessages(selectedChat._id, user);
-            const updatedMessages = await getMessages(selectedChat._id, user);
-            setMessages((prevMessages) =>
-                prevMessages.map((message) => {
-                    const updatedMessage = updatedMessages.find((m) => m._id === message._id);
-                    if (updatedMessage && updatedMessage.deletedBy.includes(user._id)) {
-                        return { ...message, isDeleted: true };
-                    }
-                    return message;
-                })
-            );
-            setIsMenuOpen(false);
-            fetchMessages();
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const deleteChat = async () => {
-        try {
-            await deleteMessages();
-            await deleteCurrentChat(selectedChat._id, user);
-            setSelectedChat(null);
-            functionShowContact();
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleOutsideClick = (e) => {
-        if (e.target.closest(".img-container") === null && e.target.closest(".menu") === null &&
-            e.target.closest(".emoji-container") === null) {
-            setIsMenuOpen(false);
-            setShowEmojiPanel(false);
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener("mousedown", handleOutsideClick);
-
-        return () => {
-            document.removeEventListener("mousedown", handleOutsideClick);
-        };
-    }, []);
 
     return (
 
@@ -208,141 +154,15 @@ const SingleChat = ({ functionShowContact, toast, user }) => {
             )}
             {selectedChat ? (
                 <>
-                    <div className="flex justify-between items-center py-[6px] px-3 capitalize font-bold text-lg">
-                        <div className="flex items-center lg:gap-3 2xl:py-3">
-                            <FaArrowLeft
-                                tabIndex={0}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        e.preventDefault();
-                                        functionShowContact();
-                                    }
-                                }}
-                                size={25}
-                                className='me-3 lg:hidden cursor-pointer'
-                                onClick={functionShowContact}
-                            />
-                            {!selectedChat.isGroupChat ? (
-                                <div className='flex items-center 2xl:text-2xl gap-3 py-2' onClick={() => toggleShowModalInfo()}>
-                                    <img
-                                        src={getSender(user, selectedChat.users).picture}
-                                        height={36}
-                                        width={36}
-                                        alt={getSender(user, selectedChat.users).name}
-                                        className="rounded-full bg-cover profile-img"
-                                    />
-                                    {getSender(user, selectedChat.users).name}
-                                </div>
-                            ) : (
-                                <div className='flex items-center gap-3 px-1 py-2 lg:py-0' onClick={() => toggleShowGroupChatModal()}>
-                                    <img
-                                        src={selectedChat.picture}
-                                        alt={selectedChat.name}
-                                        className='rounded-full profile-img'
-                                    />
-                                    <div>
-                                        <p className='md:mb-[-9px] md:mt-[5px] md:text-lg'>{selectedChat.chatName}</p>
-                                        <div className='flex gap-1 flex-wrap'>
-                                            {[
-                                                ...selectedChat.users.filter(u => user.name !== u.name),
-                                                selectedChat.users.find(u => user.name === u.name)
-                                            ]?.map((u, index, arr) => (
-                                                <div key={u._id} className='text-[11px] font-normal lowercase capitalize'>
-                                                    <p className='leading-[1] sm:leading-7'>
-                                                        {u?.name === user.name ? "You" : u?.name}
-                                                        {index !== arr.length - 1 ? "," : ""}
-                                                    </p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                        <div className='flex items-center gap-1 lg:gap-2'>
-                            {!selectedChat.isGroupChat ? (
-                                <BsInfoCircleFill
-                                    size={28}
-                                    tabIndex={0}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            e.preventDefault();
-                                            toggleShowModalInfo();
-                                        }
-                                    }}
-                                    className='text-blue-600 cursor-pointer'
-                                    onClick={() => toggleShowModalInfo()}
-                                />
-                            ) : (
-                                <BsInfoCircleFill
-                                    size={28}
-                                    tabIndex={0}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            e.preventDefault();
-                                            toggleShowGroupChatModal();
-                                        }
-                                    }}
-                                    className='text-blue-600 cursor-pointer'
-                                    onClick={() => toggleShowGroupChatModal()}
-                                />
-                            )}
-                            <div className='relative img-container'>
-                                <BsThreeDotsVertical
-                                    tabIndex={0}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            e.preventDefault();
-                                            openMenuOptions();
-                                        }
-                                    }}
-                                    size={28}
-                                    className='text-blue-600 cursor-pointer'
-                                    onClick={openMenuOptions}
-                                />
-                                <AnimatePresence>
-                                    {isMenuOpen && (
-                                        <motion.div
-                                            initial="closed"
-                                            animate="open"
-                                            exit="closed"
-                                            variants={variants}
-                                            transition={{ duration: 0.15 }}
-                                            className='absolute right-2 top-0'>
-                                            <div className='menu absolute right-0 top-9 w-[150px] shadow-md text-sm 2xl:text-lg font-semibold lowercase capitalize bg-white rounded-md border z-40'>
-                                                <div
-                                                    tabIndex={0}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter') {
-                                                            e.preventDefault();
-                                                            deleteMessages();
-                                                        }
-                                                    }}
-                                                    onClick={deleteMessages}
-                                                    className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 2xl:py-3 2xl:px-6 cursor-pointer'
-                                                >
-                                                    <p>Clear Chat</p>
-                                                </div>
-                                                <div
-                                                    tabIndex={0}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter') {
-                                                            e.preventDefault();
-                                                            deleteChat();
-                                                        }
-                                                    }}
-                                                    onClick={deleteChat}
-                                                    className='flex items-center justify-between hover:bg-gray-100 p-2 px-4 2xl:py-3 2xl:px-6 cursor-pointer'
-                                                >
-                                                    <p>Delete Chat</p>
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                        </div>
-                    </div>
+                    <HeaderChat
+                        user={user}
+                        setMessages={setMessages}
+                        fetchMessages={fetchMessages}
+                        setShowEmojiPanel={setShowEmojiPanel}
+                        toggleShowGroupChatModal={toggleShowGroupChatModal}
+                        toggleShowModalInfo={toggleShowModalInfo}
+                        functionShowContact={functionShowContact}
+                    />
                     <div className='flex flex-grow bg-gray-100 flex-col h-[412px] border-t overflow-y-auto'>
                         {loader ? (
                             <div className='flex h-full items-center justify-center'>
